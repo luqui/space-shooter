@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.Content;
 
 namespace SpaceBattle
 {
-    class FollowerEnemy : Actor
+    class FollowerEnemy : Enemy
     {
         Vector2 position;
         Vector2 velocity;

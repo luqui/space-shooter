@@ -55,6 +55,19 @@ namespace SpaceBattle
         public const float FIELDWIDTH = 32.0f;
         public const float FIELDHEIGHT = 24.0f;
 
+        public static Random RANDOM = new Random();
+
+        public static Vector2 RandomPosition()
+        {
+            return new Vector2(Scale(-FIELDWIDTH / 2, FIELDWIDTH / 2, (float)RANDOM.NextDouble()),
+                               Scale(-FIELDHEIGHT / 2, FIELDHEIGHT / 2, (float)RANDOM.NextDouble()));
+        }
+
+        public static float Scale(float min, float max, float x)
+        {
+            return x * (max - min) + min;
+        }
+
         public static PlayerIndex OtherPlayer(PlayerIndex p)
         {
             return p == PlayerIndex.One ? PlayerIndex.Two : PlayerIndex.One;

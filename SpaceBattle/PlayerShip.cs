@@ -20,6 +20,8 @@ namespace SpaceBattle
         PlayerIndex player;
         Texture2D texture;
         Texture2D crosshair;
+        EnemyFactory[] factories;
+        int factoryIndex;
 
         float bulletTimeout = 0.0f;
 
@@ -29,7 +31,11 @@ namespace SpaceBattle
         const float TRIGGERLENGTH = 10.0f;
         const float SPAWNTHRESH = 10.0f;
 
-        public PlayerShip(PlayerIndex player) { this.player = player; }
+        public PlayerShip(PlayerIndex player) { 
+            this.player = player;
+            factories = new EnemyFactory[4] { null, null, null, null };
+            factoryIndex = 0;
+        }
 
         public void LoadContent(ContentManager Content)
         {
@@ -50,20 +56,26 @@ namespace SpaceBattle
             velocity = SPEED * GamePad.GetState(player).ThumbSticks.Left;
             position += dt * velocity;
 
+            foreach (var i in factories) { if (i != null) { i.Update(dt); } }
+
+            var input = GamePad.GetState(player);
+
             bulletTimeout -= dt;
             if (bulletTimeout <= 0) {
-                Vector2 dir = GamePad.GetState(player).ThumbSticks.Right;
+                Vector2 dir = input.ThumbSticks.Right;
                 if (dir.LengthSquared() > 0.125f)
                 {
-                    if (GamePad.GetState(player).Triggers.Right > 0.5f) {
-                        var newPos = position + TRIGGERLENGTH * dir;
-                        var other = Util.GetPlayer(Util.OtherPlayer(player));
-                        if ((newPos - other.Position).Length() > SPAWNTHRESH)
-                        {
-                            Util.Actors.Add(new FollowerEnemy(position + TRIGGERLENGTH * dir, other));
-                        }
+                    EnemyFactory enemy = null;
+                    if (enemy == null && input.Triggers.Left > 0.5f) { enemy = factories[0]; }
+                    if (enemy == null && input.Triggers.Right > 0.05f) { enemy = factories[1]; }
+                    if (enemy == null && input.Buttons.LeftShoulder == ButtonState.Pressed) { enemy = factories[2]; }
+                    if (enemy == null && input.Buttons.RightShoulder == ButtonState.Pressed) { enemy = factories[3]; }
+
+                    if (enemy != null) {
+                        Enemy e = enemy.Spawn(position + TRIGGERLENGTH * dir, Util.GetPlayer(Util.OtherPlayer(player)));
+                        if (e != null) { Util.Actors.Add(e); }
                     }
-                    else if (GamePad.GetState(player).Buttons.RightShoulder == ButtonState.Pressed) {
+                    else if (GamePad.GetState(player).Buttons.RightStick == ButtonState.Pressed) {
                         Util.Actors.Add(new Bullet(position + dir, BULLETSPEED * dir));
                     }
                     bulletTimeout = BULLETTIME;
@@ -86,6 +98,12 @@ namespace SpaceBattle
 
         public override void Collision(Actor other)
         {
+        }
+
+        public void Equip(EnemyFactory factory)
+        {
+            factories[factoryIndex++] = factory;
+            factoryIndex %= 4;
         }
     }
 }
