@@ -12,7 +12,11 @@ namespace SpaceBattle
     {
         Vector2 position;
         public override Vector2 Position { get { return position; } }
+        public override float Radius { get { return 0.25f; } }
         Vector2 velocity;
+
+        bool dead = false;
+        public override bool Dead { get { return dead; } } 
 
         static Texture2D texture;
 
@@ -36,6 +40,11 @@ namespace SpaceBattle
         {
             float rot = (float)Math.Atan2(velocity.Y, velocity.X);
             Util.DrawSprite(texture, position, rot, 0.75f);
+        }
+
+        public override void Collision(Actor other)
+        {
+            if (!(other is Bullet)) { dead = true; }
         }
     }
 }

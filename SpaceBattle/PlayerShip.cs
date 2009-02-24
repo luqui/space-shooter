@@ -13,6 +13,8 @@ namespace SpaceBattle
     {
         Vector2 position;
         public override Vector2 Position { get { return position; } }
+        public override bool Dead { get { return false; } }
+        public override float Radius { get { return 0.75f; } }
         Vector2 velocity;
 
         PlayerIndex player;
@@ -74,6 +76,10 @@ namespace SpaceBattle
             {
                 Util.DrawSprite(crosshair, position + TRIGGERLENGTH * dir, 0, 0.5f);
             }
+        }
+
+        public override void Collision(Actor other)
+        {
         }
     }
 }

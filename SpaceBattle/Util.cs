@@ -9,49 +9,37 @@ namespace SpaceBattle
 {
     class ActorList
     {
-        List<Actor> nonBullets = new List<Actor>();
-        List<Bullet> bullets = new List<Bullet>();
+        List<Actor> actors = new List<Actor>();
+        List<Actor> backBuffer = new List<Actor>();
 
         public void Add(Actor actor)
         {
-            Bullet b = actor as Bullet;
-            if (b != null) { bullets.Add(b); }
-            else { nonBullets.Add(actor); }
+            backBuffer.Add(actor);
         }
 
         public void Update(float dt)
         {
-            foreach (var a in new List<Actor>(nonBullets)) { a.Update(dt); }
-            foreach (var b in bullets) { b.Update(dt); }
+            foreach (var a in actors) { a.Update(dt); }
 
-            List<Actor> newActors = new List<Actor>();
-            foreach (var a in nonBullets)
+            foreach (var a in actors)
             {
-                bool hit = false;
-                List<Bullet> newBullets = new List<Bullet>();
-                foreach (var b in bullets)
+                foreach (var b in actors)
                 {
-                    if (a != b && (b.Position - a.Position).LengthSquared() < 0.25f)
-                    {
-                        hit = true;
-                    }
-                    else
-                    {
-                        newBullets.Add(b);
+                    if (a != b && (a.Position - b.Position).Length() < a.Radius + b.Radius) {
+                        a.Collision(b);
+                        b.Collision(a);
                     }
                 }
-
-                if (!hit) { newActors.Add(a); }
-                bullets = newBullets;
             }
 
-            nonBullets = newActors;
+            actors.RemoveAll(v => v.Dead);
+            actors.AddRange(backBuffer);
+            backBuffer = new List<Actor>();
         }
 
         public void Draw()
         {
-            foreach (var v in nonBullets) { v.Draw(); }
-            foreach (var v in bullets) { v.Draw(); }
+            foreach (var v in actors) { v.Draw(); }
         }
     }
 
