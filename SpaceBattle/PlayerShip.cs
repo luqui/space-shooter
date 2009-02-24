@@ -18,7 +18,11 @@ namespace SpaceBattle
         PlayerIndex player;
         Texture2D texture;
 
-        const float SPEED = 8.0f;
+        float bulletTimeout = 0.0f;
+
+        const float BULLETTIME = 0.1f;
+        const float SPEED = 3.0f;
+        const float BULLETSPEED = 20.0f;
 
         public PlayerShip(PlayerIndex player) { this.player = player; }
 
@@ -38,6 +42,15 @@ namespace SpaceBattle
         {
             velocity = SPEED * GamePad.GetState(player).ThumbSticks.Left;
             position += dt * velocity;
+
+            bulletTimeout -= dt;
+            if (bulletTimeout <= 0) {
+                Vector2 dir = GamePad.GetState(player).ThumbSticks.Right;
+                if (dir.LengthSquared() > 0.125f) {
+                    Util.Bullets.Add(new Bullet(position + dir, BULLETSPEED * dir));
+                    bulletTimeout = BULLETTIME;
+                }
+            }
         }
 
         public void Draw()
