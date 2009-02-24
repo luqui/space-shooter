@@ -11,7 +11,7 @@ namespace SpaceBattle
     {
         public static GraphicsDevice Device;
         public static SpriteBatch Batch;
-        public static List<Bullet> Bullets;
+        public static List<Actor> Actors;
 
         public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale) {
             float sc = 1.0f / tex.Width;

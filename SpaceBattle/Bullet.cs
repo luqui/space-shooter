@@ -8,10 +8,10 @@ using Microsoft.Xna.Framework.Content;
 
 namespace SpaceBattle
 {
-    class Bullet
+    class Bullet : Actor
     {
         Vector2 position;
-        public Vector2 Position { get { return position; } }
+        public override Vector2 Position { get { return position; } }
         Vector2 velocity;
 
         static Texture2D texture;
@@ -27,15 +27,15 @@ namespace SpaceBattle
             texture = Content.Load<Texture2D>("Bullet");
         }
 
-        public void Update(float dt)
+        public override void Update(float dt)
         {
             position += dt * velocity;
         }
 
-        public void Draw()
+        public override void Draw()
         {
             float rot = (float)Math.Atan2(velocity.Y, velocity.X);
-            Util.DrawSprite(texture, position, rot, 1);
+            Util.DrawSprite(texture, position, rot, 0.75f);
         }
     }
 }
