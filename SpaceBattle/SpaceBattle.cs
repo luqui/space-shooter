@@ -46,17 +46,16 @@ namespace SpaceBattle
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Util.Batch = spriteBatch;
-            Util.Actors = new ActorList();
             Util.player1 = new PlayerShip(PlayerIndex.One);
             Util.player2 = new PlayerShip(PlayerIndex.Two);
             Util.player1.LoadContent(Content);
             Util.player2.LoadContent(Content);
             PowerUps.LoadContent(Content);
-            Util.Actors.Add(Util.player1);
-            Util.Actors.Add(Util.player2);
             Bullet.LoadContent(Content);
             FollowerEnemy.LoadContent(Content);
             SplittyEnemy.LoadContent(Content);
+
+            Util.Reset();
         }
 
         protected override void UnloadContent()

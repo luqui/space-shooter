@@ -63,6 +63,13 @@ namespace SpaceBattle
                                Scale(-FIELDHEIGHT / 2, FIELDHEIGHT / 2, (float)RANDOM.NextDouble()));
         }
 
+        public static void Reset()
+        {
+            Actors = new ActorList();
+            Actors.Add(player1);
+            Actors.Add(player2);
+        }
+
         public static float Scale(float min, float max, float x)
         {
             return x * (max - min) + min;
