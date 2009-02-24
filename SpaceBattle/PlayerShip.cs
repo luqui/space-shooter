@@ -100,6 +100,41 @@ namespace SpaceBattle
             {
                 Util.DrawSprite(crosshair, position + TRIGGERLENGTH * dir, 0, 0.5f);
             }
+
+            if (player == PlayerIndex.One)
+            {
+                Vector2 r = new Vector2(-Util.FIELDWIDTH / 2 + 1, Util.FIELDHEIGHT / 2 - 1);
+                Util.DrawSprite(texture, r, 0, 1);
+                if (factories[0] != null)
+                {
+                    Util.DrawSprite(factories[0].Texture, r + new Vector2(2, 0), 0, 1);
+                }
+                if (factories[1] != null)
+                {
+                    Util.DrawSprite(factories[1].Texture, r + new Vector2(2, -1), 0, 1);
+                }
+                if (factories[2] != null)
+                {
+                    Util.DrawSprite(factories[2].Texture, r + new Vector2(3, -1), 0, 1);
+                }
+            }
+            else if (player == PlayerIndex.Two)
+            {
+                Vector2 r = new Vector2(Util.FIELDWIDTH / 2 - 1, Util.FIELDHEIGHT / 2 - 1);
+                Util.DrawSprite(texture, r, 0, 1);
+                if (factories[0] != null)
+                {
+                    Util.DrawSprite(factories[0].Texture, r + new Vector2(-3, 0), 0, 1);
+                }
+                if (factories[1] != null)
+                {
+                    Util.DrawSprite(factories[1].Texture, r + new Vector2(-3, -1), 0, 1);
+                }
+                if (factories[2] != null)
+                {
+                    Util.DrawSprite(factories[2].Texture, r + new Vector2(-2, -1), 0, 1);
+                }
+            }
         }
 
         public override void Collision(Actor other)

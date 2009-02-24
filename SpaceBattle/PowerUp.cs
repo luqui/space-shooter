@@ -57,11 +57,11 @@ namespace SpaceBattle
             switch (Util.RANDOM.Next(2))
             {
                 case 0: return new PowerUp(followerTex, position, ship => 
-                    ship.Equip(new EnemyFactory(0.2f, (pos, target) => 
+                    ship.Equip(new EnemyFactory(followerTex, 0.2f, (pos, target) => 
                         Guard(10.0f, target, new FollowerEnemy(pos, target)))));
 
                 case 1: return new PowerUp(splittyTex, position, ship =>
-                    ship.Equip(new EnemyFactory(0.4f, (pos, target) =>
+                    ship.Equip(new EnemyFactory(splittyTex, 0.4f, (pos, target) =>
                         Guard(8.0f, target, new SplittyEnemy(pos)))));
 
                 default: return null;
