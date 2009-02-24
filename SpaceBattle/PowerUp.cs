@@ -44,19 +44,26 @@ namespace SpaceBattle
     static class PowerUps
     {
         static Texture2D followerTex;
+        static Texture2D splittyTex;
 
         public static void LoadContent(ContentManager Content)
         {
             followerTex = Content.Load<Texture2D>("FollowerPowerup");
+            splittyTex = Content.Load<Texture2D>("SplittyPowerup");
         }
 
         public static PowerUp RandomPowerup(Vector2 position)
         {
-            switch (Util.RANDOM.Next(1))
+            switch (Util.RANDOM.Next(2))
             {
                 case 0: return new PowerUp(followerTex, position, ship => 
                     ship.Equip(new EnemyFactory(0.2f, (pos, target) => 
                         Guard(10.0f, target, new FollowerEnemy(pos, target)))));
+
+                case 1: return new PowerUp(splittyTex, position, ship =>
+                    ship.Equip(new EnemyFactory(0.4f, (pos, target) =>
+                        Guard(8.0f, target, new SplittyEnemy(pos)))));
+
                 default: return null;
             }
         }

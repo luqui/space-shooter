@@ -26,8 +26,7 @@ namespace SpaceBattle
                 foreach (var b in actors)
                 {
                     if (a != b && (a.Position - b.Position).Length() < a.Radius + b.Radius) {
-                        a.Collision(b);
-                        b.Collision(a);
+                        a.Collision(b); // symmetrical because we see each candidate twice.
                     }
                 }
             }
@@ -52,8 +51,8 @@ namespace SpaceBattle
         public static PlayerShip player1;
         public static PlayerShip player2;
 
-        public const float FIELDWIDTH = 32.0f;
-        public const float FIELDHEIGHT = 24.0f;
+        public const float FIELDWIDTH = 28.0f;
+        public const float FIELDHEIGHT = 21.0f;
 
         public static Random RANDOM = new Random();
 

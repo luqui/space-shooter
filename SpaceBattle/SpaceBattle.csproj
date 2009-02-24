@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="Actor.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="SplittyEnemy.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="FollowerEnemy.cs" />
     <Compile Include="PlayerShip.cs" />

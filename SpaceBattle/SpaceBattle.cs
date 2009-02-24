@@ -19,8 +19,8 @@ namespace SpaceBattle
         SpriteBatch spriteBatch;
         Matrix transform;
 
-        const float POWERUPTIMEOUT = 30.0f;
-        float powerupTimer = 10.0f;
+        const float POWERUPTIMEOUT = 15.0f;
+        float powerupTimer = 5.0f;
 
         public SpaceBattle()
         {
@@ -56,6 +56,7 @@ namespace SpaceBattle
             Util.Actors.Add(Util.player2);
             Bullet.LoadContent(Content);
             FollowerEnemy.LoadContent(Content);
+            SplittyEnemy.LoadContent(Content);
         }
 
         protected override void UnloadContent()

@@ -26,14 +26,14 @@ namespace SpaceBattle
         float bulletTimeout = 0.0f;
 
         const float BULLETTIME = 0.1f;
-        const float SPEED = 3.0f;
-        const float BULLETSPEED = 20.0f;
+        const float SPEED = 5.0f;
+        const float BULLETSPEED = 18.0f;
         const float TRIGGERLENGTH = 10.0f;
         const float SPAWNTHRESH = 10.0f;
 
         public PlayerShip(PlayerIndex player) { 
             this.player = player;
-            factories = new EnemyFactory[4] { null, null, null, null };
+            factories = new EnemyFactory[3] { null, null, null };
             factoryIndex = 0;
         }
 
@@ -61,23 +61,29 @@ namespace SpaceBattle
             var input = GamePad.GetState(player);
 
             bulletTimeout -= dt;
-            if (bulletTimeout <= 0) {
-                Vector2 dir = input.ThumbSticks.Right;
-                if (dir.LengthSquared() > 0.125f)
+            Vector2 dir = input.ThumbSticks.Right;
+            if (dir.LengthSquared() > 0.125f)
+            {
+                var pos = position + TRIGGERLENGTH * dir;
+                var other = Util.GetPlayer(Util.OtherPlayer(player));
+                Action<int> spawn = z =>
                 {
-                    EnemyFactory enemy = null;
-                    if (enemy == null && input.Triggers.Left > 0.5f) { enemy = factories[0]; }
-                    if (enemy == null && input.Triggers.Right > 0.05f) { enemy = factories[1]; }
-                    if (enemy == null && input.Buttons.LeftShoulder == ButtonState.Pressed) { enemy = factories[2]; }
-                    if (enemy == null && input.Buttons.RightShoulder == ButtonState.Pressed) { enemy = factories[3]; }
+                    if (factories[z] != null)
+                    {
+                        Enemy e = factories[z].Spawn(pos, other);
+                        if (e != null)
+                        {
+                            Util.Actors.Add(e);
+                        }
+                    }
+                };
 
-                    if (enemy != null) {
-                        Enemy e = enemy.Spawn(position + TRIGGERLENGTH * dir, Util.GetPlayer(Util.OtherPlayer(player)));
-                        if (e != null) { Util.Actors.Add(e); }
-                    }
-                    else if (GamePad.GetState(player).Buttons.RightStick == ButtonState.Pressed) {
-                        Util.Actors.Add(new Bullet(position + dir, BULLETSPEED * dir));
-                    }
+                if (input.Triggers.Left > 0.5f) { spawn(0); }
+                if (input.Buttons.LeftShoulder == ButtonState.Pressed) { spawn(1); }
+                if (input.Buttons.RightShoulder == ButtonState.Pressed) { spawn(2); }
+
+                if (input.Triggers.Right > 0.5f && bulletTimeout <= 0) {
+                    Util.Actors.Add(new Bullet(position + dir, BULLETSPEED * dir));
                     bulletTimeout = BULLETTIME;
                 }
             }
@@ -103,7 +109,7 @@ namespace SpaceBattle
         public void Equip(EnemyFactory factory)
         {
             factories[factoryIndex++] = factory;
-            factoryIndex %= 4;
+            factoryIndex %= 3;
         }
     }
 }
