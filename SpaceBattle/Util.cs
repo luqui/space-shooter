@@ -49,10 +49,31 @@ namespace SpaceBattle
         public static SpriteBatch Batch;
         public static ActorList Actors;
 
+        public static PlayerShip player1;
+        public static PlayerShip player2;
+
+        public const float FIELDWIDTH = 32.0f;
+        public const float FIELDHEIGHT = 24.0f;
+
+        public static PlayerIndex OtherPlayer(PlayerIndex p)
+        {
+            return p == PlayerIndex.One ? PlayerIndex.Two : PlayerIndex.One;
+        }
+
+        public static PlayerShip GetPlayer(PlayerIndex p)
+        {
+            return p == PlayerIndex.One ? player1 : player2;
+        }
+
         public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale) {
             float sc = 1.0f / tex.Width;
             pos.Y = -pos.Y;
             Batch.Draw(tex, pos, null, Color.White, -rot, new Vector2(tex.Width / 2, tex.Height / 2), sc*scale, SpriteEffects.None, 0);
+        }
+
+        public static bool OnScreen(Vector2 pos)
+        {
+            return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDWIDTH/2 && pos.Y <= FIELDWIDTH/2;
         }
     }
 }

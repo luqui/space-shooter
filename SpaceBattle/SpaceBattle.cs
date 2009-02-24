@@ -13,16 +13,10 @@ using Microsoft.Xna.Framework.Storage;
 
 namespace SpaceBattle
 {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
     public class SpaceBattle : Microsoft.Xna.Framework.Game
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-
-        PlayerShip player1;
-        PlayerShip player2;
         Matrix transform;
 
         public SpaceBattle()
@@ -39,7 +33,7 @@ namespace SpaceBattle
             float w = GraphicsDevice.Viewport.Width;
             float h = GraphicsDevice.Viewport.Height;
             transform = Matrix.Identity;
-            transform *= Matrix.CreateScale(1/8.0f, 1/6.0f, 1.0f);
+            transform *= Matrix.CreateScale(2/Util.FIELDWIDTH, 2/Util.FIELDHEIGHT, 1.0f);
             transform *= Matrix.CreateTranslation(1f, 1f, 0.0f);
             transform *= Matrix.CreateScale(w / 2, h / 2, 1.0f);
             //transform *= Matrix.CreateScale(2, 2, 1);
@@ -50,12 +44,12 @@ namespace SpaceBattle
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Util.Batch = spriteBatch;
             Util.Actors = new ActorList();
-            player1 = new PlayerShip(PlayerIndex.One);
-            player2 = new PlayerShip(PlayerIndex.Two);
-            player1.LoadContent(Content);
-            player2.LoadContent(Content);
-            Util.Actors.Add(player1);
-            Util.Actors.Add(player2);
+            Util.player1 = new PlayerShip(PlayerIndex.One);
+            Util.player2 = new PlayerShip(PlayerIndex.Two);
+            Util.player1.LoadContent(Content);
+            Util.player2.LoadContent(Content);
+            Util.Actors.Add(Util.player1);
+            Util.Actors.Add(Util.player2);
             Bullet.LoadContent(Content);
             FollowerEnemy.LoadContent(Content);
         }

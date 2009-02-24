@@ -25,7 +25,7 @@ namespace SpaceBattle
             texture = Content.Load<Texture2D>("FollowerEnemy");
         }
 
-        const float SPEED = 0.5f;
+        const float SPEED = 1.0f;
 
         public FollowerEnemy(Vector2 pos, Actor targ)
         {

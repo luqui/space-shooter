@@ -27,6 +27,7 @@ namespace SpaceBattle
         const float SPEED = 3.0f;
         const float BULLETSPEED = 20.0f;
         const float TRIGGERLENGTH = 10.0f;
+        const float SPAWNTHRESH = 10.0f;
 
         public PlayerShip(PlayerIndex player) { this.player = player; }
 
@@ -55,7 +56,12 @@ namespace SpaceBattle
                 if (dir.LengthSquared() > 0.125f)
                 {
                     if (GamePad.GetState(player).Triggers.Right > 0.5f) {
-                        Util.Actors.Add(new FollowerEnemy(position + TRIGGERLENGTH * dir, this));
+                        var newPos = position + TRIGGERLENGTH * dir;
+                        var other = Util.GetPlayer(Util.OtherPlayer(player));
+                        if ((newPos - other.Position).Length() > SPAWNTHRESH)
+                        {
+                            Util.Actors.Add(new FollowerEnemy(position + TRIGGERLENGTH * dir, other));
+                        }
                     }
                     else if (GamePad.GetState(player).Buttons.RightShoulder == ButtonState.Pressed) {
                         Util.Actors.Add(new Bullet(position + dir, BULLETSPEED * dir));

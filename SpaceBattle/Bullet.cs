@@ -34,6 +34,7 @@ namespace SpaceBattle
         public override void Update(float dt)
         {
             position += dt * velocity;
+            if (!Util.OnScreen(position)) { dead = true; } 
         }
 
         public override void Draw()
