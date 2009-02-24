@@ -49,11 +49,13 @@ namespace SpaceBattle
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Util.Batch = spriteBatch;
-            Util.Actors = new List<Actor>();
+            Util.Actors = new ActorList();
             player1 = new PlayerShip(PlayerIndex.One);
             player2 = new PlayerShip(PlayerIndex.Two);
             player1.LoadContent(Content);
             player2.LoadContent(Content);
+            Util.Actors.Add(player1);
+            Util.Actors.Add(player2);
             Bullet.LoadContent(Content);
             FollowerEnemy.LoadContent(Content);
         }
@@ -68,9 +70,7 @@ namespace SpaceBattle
                 this.Exit();
 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
-            player1.Update(dt);
-            player2.Update(dt);
-            foreach (var b in Util.Actors) { b.Update(dt); }
+            Util.Actors.Update(dt);
 
             base.Update(gameTime);
         }
@@ -80,9 +80,7 @@ namespace SpaceBattle
             GraphicsDevice.Clear(Color.Black);
 
             spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.Immediate, SaveStateMode.SaveState, transform);
-            player1.Draw();
-            player2.Draw();
-            foreach (var b in Util.Actors) { b.Draw(); }
+            Util.Actors.Draw();
             spriteBatch.End();
 
             base.Draw(gameTime);
