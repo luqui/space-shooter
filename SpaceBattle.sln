@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpaceBattle", "SpaceBattle\SpaceBattle.csproj", "{A6C85C14-5A5B-4073-B134-70AF5FCF6E4C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x86 = Debug|x86
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A6C85C14-5A5B-4073-B134-70AF5FCF6E4C}.Debug|x86.ActiveCfg = Debug|x86
+		{A6C85C14-5A5B-4073-B134-70AF5FCF6E4C}.Debug|x86.Build.0 = Debug|x86
+		{A6C85C14-5A5B-4073-B134-70AF5FCF6E4C}.Release|x86.ActiveCfg = Release|x86
+		{A6C85C14-5A5B-4073-B134-70AF5FCF6E4C}.Release|x86.Build.0 = Release|x86
+		{48E523B5-FC4F-4C1B-94BB-F4B5BA105DAC}.Debug|x86.ActiveCfg = Debug|x86
+		{48E523B5-FC4F-4C1B-94BB-F4B5BA105DAC}.Release|x86.ActiveCfg = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
