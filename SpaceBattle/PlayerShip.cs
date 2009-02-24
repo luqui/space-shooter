@@ -20,7 +20,6 @@ namespace SpaceBattle
         Texture2D crosshair;
 
         float bulletTimeout = 0.0f;
-        bool triggering = false;
 
         const float BULLETTIME = 0.1f;
         const float SPEED = 3.0f;
@@ -47,16 +46,13 @@ namespace SpaceBattle
         {
             velocity = SPEED * GamePad.GetState(player).ThumbSticks.Left;
             position += dt * velocity;
-            
-            bool wasTriggering = triggering;
-            triggering = GamePad.GetState(player).Triggers.Right > 0.5f;
 
             bulletTimeout -= dt;
             if (bulletTimeout <= 0) {
                 Vector2 dir = GamePad.GetState(player).ThumbSticks.Right;
-                if (!triggering && dir.LengthSquared() > 0.125f)
+                if (dir.LengthSquared() > 0.125f)
                 {
-                    if (wasTriggering) {
+                    if (GamePad.GetState(player).Triggers.Right > 0.5f) {
                         Util.Actors.Add(new FollowerEnemy(position + TRIGGERLENGTH * dir, this));
                     }
                     else if (GamePad.GetState(player).Buttons.RightShoulder == ButtonState.Pressed) {
@@ -73,9 +69,9 @@ namespace SpaceBattle
             float rot = (float)Math.Atan2(velocity.Y, velocity.X);
             Util.DrawSprite(texture, position, rot - (float)Math.PI/2, 1);
 
-            if (triggering)
+            Vector2 dir = GamePad.GetState(player).ThumbSticks.Right;
+            if (dir.Length() >= 0.125f)
             {
-                Vector2 dir = GamePad.GetState(player).ThumbSticks.Right;
                 Util.DrawSprite(crosshair, position + TRIGGERLENGTH * dir, 0, 0.5f);
             }
         }
