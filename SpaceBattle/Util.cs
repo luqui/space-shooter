@@ -21,12 +21,13 @@ namespace SpaceBattle
         {
             foreach (var a in actors) { a.Update(dt); }
 
-            foreach (var a in actors)
-            {
-                foreach (var b in actors)
-                {
-                    if (a != b && (a.Position - b.Position).Length() < a.Radius + b.Radius) {
-                        a.Collision(b); // symmetrical because we see each candidate twice.
+            for (int i = 0; i < actors.Count; i++) {
+                for (int j = i+1; j < actors.Count; j++) { 
+                    var a = actors[i];
+                    var b = actors[j];
+                    if ((a.Position - b.Position).Length() < a.Radius + b.Radius) {
+                        a.Collision(b);
+                        b.Collision(a);
                     }
                 }
             }

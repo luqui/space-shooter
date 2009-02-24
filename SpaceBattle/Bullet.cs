@@ -43,9 +43,6 @@ namespace SpaceBattle
             Util.DrawSprite(texture, position, rot, 0.75f);
         }
 
-        public override void Collision(Actor other)
-        {
-            if (!(other is Bullet)) { dead = true; }
-        }
+        public void SetDead() { dead = true; }
     }
 }

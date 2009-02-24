@@ -49,7 +49,8 @@ namespace SpaceBattle
 
         public override void Collision(Actor other)
         {
-            if (other is Bullet)
+            Bullet b = other as Bullet;
+            if (b != null && !b.Dead)
             {
                 if (!teeny)
                 {
@@ -64,6 +65,7 @@ namespace SpaceBattle
                         Util.Actors.Add(sub);
                     }
                 }
+                b.SetDead();
                 dead = true;
             }
         }

@@ -139,6 +139,8 @@ namespace SpaceBattle
 
         public override void Collision(Actor other)
         {
+            Bullet b = other as Bullet;
+            if (b != null) { b.SetDead(); }
         }
 
         public void Equip(EnemyFactory factory)
