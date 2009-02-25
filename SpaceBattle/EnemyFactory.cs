@@ -9,27 +9,36 @@ namespace SpaceBattle
 {
     class EnemyFactory
     {
-        public EnemyFactory(Action<Vector2> draw, float timeout, Func<Vector2, PlayerShip, Enemy> spawner)
+        public EnemyFactory(Action<Vector2> draw, int store, float refresh, float timeout, Func<Vector2, PlayerShip, Enemy> spawner)
         {
             this.draw = draw;
+            fire_timer = 0;
+            fire_timeout = timeout;
+            refresh_timer = refresh;
+            refresh_timeout = refresh;
+            this.store = 0;
+            this.maxstore = store;
             spawn = spawner;
-            this.timeout = timeout;
-            timer = 0;
         }
 
         Action<Vector2> draw;
         Func<Vector2, PlayerShip, Enemy> spawn;
-        float timer;
-        float timeout;
+        float fire_timer;
+        float fire_timeout;
+        float refresh_timer;
+        float refresh_timeout;
+        int store;
+        int maxstore;
 
         public void Draw(Vector2 position) { draw(position); }
 
         public Enemy Spawn(Vector2 pos, PlayerShip target)
         {
-            if (timer <= 0)
+            if (store > 0 && fire_timer <= 0)
             {
                 Enemy e = spawn(pos, target);
-                if (e != null) { timer = timeout; }
+                if (e != null) { fire_timer = fire_timeout; }
+                store--;
                 return e;
             }
             return null;
@@ -37,7 +46,14 @@ namespace SpaceBattle
 
         public void Update(float dt)
         {
-            timer -= dt;
+            fire_timer -= dt;
+            refresh_timer -= dt;
+            if (refresh_timer <= 0)
+            {
+                store++;
+                refresh_timer = refresh_timeout;
+                if (store > maxstore) store = maxstore;
+            }
         }
     }
 }

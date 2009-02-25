@@ -65,8 +65,10 @@ namespace SpaceBattle
             {
                 var pos = position + TRIGGERLENGTH * dir;
                 var other = Util.GetPlayer(Util.OtherPlayer(player));
+                bool spawned = false;
                 Action<int> spawn = z =>
                 {
+                    spawned = true;  // set when any spawn button is depressed
                     if (factories[z] != null)
                     {
                         Enemy e = factories[z].Spawn(pos, other);
@@ -81,7 +83,7 @@ namespace SpaceBattle
                 if (input.Buttons.LeftShoulder == ButtonState.Pressed) { spawn(1); }
                 if (input.Buttons.RightShoulder == ButtonState.Pressed) { spawn(2); }
 
-                if (input.Triggers.Right > 0.5f && bulletTimeout <= 0) {
+                if (!spawned && input.Triggers.Right > 0.5f && bulletTimeout <= 0) {
                     Util.Actors.Add(new Bullet(position + dir, BULLETSPEED * dir));
                     bulletTimeout = BULLETTIME;
                 }
