@@ -50,7 +50,7 @@ namespace SpaceBattle
             {
                 case 0: return new PowerUp(Textures.FollowerPowerup, position, ship =>
                     ship.Equip(new EnemyFactory(Textures.FollowerPowerup, 0.2f, (pos, target) =>
-                        Guard(8.0f, target, new Enemy(pos, target, new SlinkTowardBehavior(), null, null)))));
+                        Guard(8.0f, target, new Enemy(pos, target, null, new SlinkTowardSeeker(), null)))));
 
                 default: return null;
             }

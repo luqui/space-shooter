@@ -104,7 +104,12 @@ namespace SpaceBattle
         public abstract void Update(float dt);
     }
 
-    class SlinkTowardBehavior : BehaviorComponent
+    abstract class SeekerComponent : Component
+    {
+        public abstract void Update(float dt);
+    }
+
+    class SlinkTowardSeeker : SeekerComponent
     {
         public override void Draw()
         {
@@ -116,11 +121,6 @@ namespace SpaceBattle
             desired.Normalize();
             self.accel += desired - self.velocity;
         }
-    }
-
-    abstract class SeekerComponent : Component
-    {
-        public abstract void Update(float dt);
     }
 
     abstract class DamageComponent : Component
