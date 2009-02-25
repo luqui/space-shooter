@@ -63,8 +63,8 @@ namespace SpaceBattle
         public static PlayerShip player1;
         public static PlayerShip player2;
 
-        public const float FIELDWIDTH = 36.0f;
-        public const float FIELDHEIGHT = 27.0f;
+        public const float FIELDWIDTH = 28.0f;
+        public const float FIELDHEIGHT = 21.0f;
 
         public static Random RANDOM = new Random();
 
