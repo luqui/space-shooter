@@ -30,7 +30,10 @@ namespace SpaceBattle
         int store;
         int maxstore;
 
-        public void Draw(Vector2 position) { draw(position); }
+        public void Draw(Vector2 position) { 
+            draw(position);
+            Util.DrawText(position + new Vector2(1,0), store.ToString());
+        }
 
         public Enemy Spawn(Vector2 pos, PlayerShip target)
         {

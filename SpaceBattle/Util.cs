@@ -96,6 +96,12 @@ namespace SpaceBattle
             Batch.Draw(tex, pos, null, Color.White, -rot, new Vector2(tex.Width / 2, tex.Height / 2), sc*scale, SpriteEffects.None, 0);
         }
 
+        public static void DrawText(Vector2 pos, string text)
+        {
+            pos.Y = -pos.Y;
+            Batch.DrawString(Textures.Font, text, pos, Color.White, 0, new Vector2(12,12), 1.0f/24, SpriteEffects.None, 0);
+        }
+
         public static bool OnScreen(Vector2 pos)
         {
             return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDWIDTH/2 && pos.Y <= FIELDWIDTH/2;
