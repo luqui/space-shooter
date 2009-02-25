@@ -18,17 +18,10 @@ namespace SpaceBattle
         bool dead = false;
         public override bool Dead { get { return dead; } } 
 
-        static Texture2D texture;
-
         public Bullet(Vector2 pos, Vector2 vel)
         {
             position = pos;
             velocity = vel;
-        }
-
-        public static void LoadContent(ContentManager Content)
-        {
-            texture = Content.Load<Texture2D>("Bullet");
         }
 
         public override void Update(float dt)
@@ -40,7 +33,7 @@ namespace SpaceBattle
         public override void Draw()
         {
             float rot = (float)Math.Atan2(velocity.Y, velocity.X);
-            Util.DrawSprite(texture, position, rot, 0.75f);
+            Util.DrawSprite(Textures.Bullet, position, rot, 0.75f);
         }
 
         public void SetDead() { dead = true; }

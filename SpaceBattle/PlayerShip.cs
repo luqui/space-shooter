@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -38,19 +37,16 @@ namespace SpaceBattle
             factories = new EnemyFactory[3] { null, null, null };
             factoryIndex = 0;
             lives = 5;
-        }
 
-        public void LoadContent(ContentManager Content)
-        {
             if (player == PlayerIndex.One)
             {
-                texture = Content.Load<Texture2D>("RedShip");
-                crosshair = Content.Load<Texture2D>("RedCrosshair");
+                texture = Textures.RedShip;
+                crosshair = Textures.RedCrosshair;
             }
             else if (player == PlayerIndex.Two)
             {
-                texture = Content.Load<Texture2D>("BlueShip");
-                crosshair = Content.Load<Texture2D>("BlueCrosshair");
+                texture = Textures.BlueShip;
+                crosshair = Textures.BlueCrosshair;
             }
         }
 

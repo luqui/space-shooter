@@ -4,42 +4,127 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Content;
 
 namespace SpaceBattle
 {
-    class EnemyFactory
+    class Enemy : Actor
     {
-        public EnemyFactory(Texture2D texture, float timeout, Func<Vector2, PlayerShip, Enemy> spawner)
+        public Enemy(Vector2 pos, Actor targ,
+                     BehaviorComponent b, SeekerComponent s, DamageComponent d)
         {
-            this.texture = texture;
-            spawn = spawner;
-            this.timeout = timeout;
-            timer = 0;
+            position = pos;
+            target = targ;
+            Behavior = b;
+            Seeker = s;
+            Damage = d;
+            if (Behavior != null) Behavior.Reassign(this);
+            if (Seeker != null) Seeker.Reassign(this);
+            if (Damage != null) Damage.Reassign(this);
         }
 
-        public Texture2D Texture { get { return texture; } }
-        Texture2D texture;
-        Func<Vector2, PlayerShip, Enemy> spawn;
-        float timer;
-        float timeout;
+        // only for use in components:
+        public Vector2 position;
+        public Vector2 velocity;
+        public Vector2 accel;
+        public bool dead = false;
+        public Actor target = null;
 
-        public Enemy Spawn(Vector2 pos, PlayerShip target)
+        public BehaviorComponent Behavior = null;
+        public SeekerComponent Seeker = null;
+        public DamageComponent Damage = null;
+
+        public override void Draw()
         {
-            if (timer <= 0)
-            {
-                Enemy e = spawn(pos, target);
-                if (e != null) { timer = timeout; }
-                return e;
+            if (Behavior != null) Behavior.Draw();
+            if (Seeker != null) Seeker.Draw();
+            if (Damage != null) Damage.Draw();
+        }
+
+        public override void Update(float dt)
+        {
+            if (Behavior != null) Behavior.Update(dt);
+            if (Seeker != null) Seeker.Update(dt); 
+            velocity += dt * accel;
+            position += dt * velocity;
+            accel = new Vector2();
+        }
+
+        public override bool Dead { get { return dead; } }
+        public override Vector2 Position { get { return position; } }
+        public override float Radius { get { return 0.75f; } }
+
+        public override void Collision(Actor other)
+        {
+            Bullet b = other as Bullet;
+            if (b != null) { 
+                if (Damage != null) Damage.OnHit(b);
+                else
+                {
+                    dead = true;
+                    b.SetDead();
+                }
             }
+        }
+
+        public void Absorb(Enemy other)
+        {
+            if ((Behavior == null || other.Behavior == null)
+             && (Seeker == null || other.Seeker == null)
+             && (Damage == null || other.Damage == null))
+            {
+                Behavior = Join(Behavior, other.Behavior);
+                Seeker = Join(Seeker, other.Seeker);
+                Damage = Join(Damage, other.Damage);
+                other.dead = true;
+            }
+        }
+
+        static T Join<T>(T x, T y) where T:class
+        {
+            if (x == null) { return y; }
+            if (y == null) { return x; }
             return null;
         }
 
-        public void Update(float dt)
+    }
+
+    abstract class Component
+    {
+        protected Enemy self;
+        public virtual void Reassign(Enemy newself)
         {
-            timer -= dt;
+            self = newself;
+        }
+        public abstract void Draw();
+    }
+
+    abstract class BehaviorComponent : Component
+    {
+        public abstract void Update(float dt);
+    }
+
+    class SlinkTowardBehavior : BehaviorComponent
+    {
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.FollowerEnemy, self.position, 0, 1.0f);
+        }
+        public override void Update(float dt)
+        {
+            var desired = self.target.Position - self.position;
+            desired.Normalize();
+            self.accel += desired - self.velocity;
         }
     }
 
-    abstract class Enemy : Actor
-    { }
+    abstract class SeekerComponent : Component
+    {
+        public abstract void Update(float dt);
+    }
+
+    abstract class DamageComponent : Component
+    {
+        public abstract void OnHit(Bullet bullet);
+    }
 }
