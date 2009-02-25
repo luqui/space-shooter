@@ -34,6 +34,14 @@ namespace SpaceBattle
         public SeekerComponent Seeker = null;
         public DamageComponent Damage = null;
 
+        public Enemy Clone()
+        {
+            return new Enemy(position, target, 
+                Behavior == null ? null : Behavior.Clone(), 
+                Seeker == null ? null : Seeker.Clone(), 
+                Damage == null ? null : Damage.Clone());
+        }
+
         public override void Draw()
         {
             if (Behavior != null) Behavior.Draw();
@@ -102,11 +110,13 @@ namespace SpaceBattle
     abstract class BehaviorComponent : Component
     {
         public abstract void Update(float dt);
+        public abstract BehaviorComponent Clone();
     }
 
     abstract class SeekerComponent : Component
     {
         public abstract void Update(float dt);
+        public abstract SeekerComponent Clone();
     }
 
     class SlinkTowardSeeker : SeekerComponent
@@ -121,10 +131,44 @@ namespace SpaceBattle
             desired.Normalize();
             self.accel += desired - self.velocity;
         }
+        public override SeekerComponent Clone()
+        {
+            return new SlinkTowardSeeker();
+        }
     }
 
     abstract class DamageComponent : Component
     {
         public abstract void OnHit(Bullet bullet);
+        public abstract DamageComponent Clone();
+    }
+
+    class SplittyDamage : DamageComponent
+    {
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.SplittyEnemy, self.position, 0, 1.0f);
+        }
+        public override void OnHit(Bullet bullet)
+        {
+            self.dead = true;
+            bullet.SetDead();
+            Enemy child1 = self.Clone(); child1.Damage = null;
+            Enemy child2 = self.Clone(); child2.Damage = null;
+            Enemy child3 = self.Clone(); child3.Damage = null;
+            child1.position.X += Util.RandRange(-1, 1);
+            child1.position.Y += Util.RandRange(-1, 1);
+            child2.position.X += Util.RandRange(-1, 1);
+            child2.position.Y += Util.RandRange(-1, 1);
+            child3.position.X += Util.RandRange(-1, 1);
+            child3.position.Y += Util.RandRange(-1, 1);
+            Util.Actors.Add(child1);
+            Util.Actors.Add(child2);
+            Util.Actors.Add(child3);
+        }
+        public override DamageComponent Clone()
+        {
+            return new SplittyDamage();
+        }
     }
 }

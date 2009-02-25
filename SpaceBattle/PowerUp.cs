@@ -46,14 +46,20 @@ namespace SpaceBattle
 
         public static PowerUp RandomPowerup(Vector2 position)
         {
-            switch (Util.RANDOM.Next(1))
-            {
-                case 0: return new PowerUp(Textures.FollowerPowerup, position, ship =>
-                    ship.Equip(new EnemyFactory(Textures.FollowerPowerup, 0.2f, (pos, target) =>
-                        Guard(8.0f, target, new Enemy(pos, target, null, new SlinkTowardSeeker(), null)))));
+            var behavior = Switch<BehaviorComponent>();
+            var seeker = Switch<SeekerComponent>(() => new SlinkTowardSeeker());
+            var damage = Switch<DamageComponent>(() => new SplittyDamage());
 
-                default: return null;
-            }
+            return new PowerUp(Textures.FollowerPowerup, position, ship =>
+                    ship.Equip(new EnemyFactory(Textures.FollowerPowerup, 0.2f, (pos, target) =>
+                        Guard(8.0f, target, new Enemy(pos, target, behavior(), seeker(), damage())))));
+        }
+
+        static Func<T> Switch<T>(params Func<T>[] ps) where T:class
+        {
+            int pick = Util.RANDOM.Next(ps.Count() + 1);
+            if (pick == 0) { return () => null; }
+            else { return ps[pick - 1]; }
         }
 
         static Enemy Guard(float radius, Actor target, Enemy e)
