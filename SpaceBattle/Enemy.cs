@@ -120,6 +120,27 @@ namespace SpaceBattle
         public abstract BehaviorComponent Clone();
     }
 
+    class TwirlyBehavior : BehaviorComponent
+    {
+        float timer = 0;
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.TwirlyEnemy, self.position, timer, 1.0f);
+        }
+        public override void Update(float dt)
+        {
+            self.position.X -= (float)Math.Cos(4 * timer);
+            self.position.Y -= (float)Math.Sin(4 * timer);
+            timer += dt;
+            self.position.X += (float)Math.Cos(4 * timer);
+            self.position.Y += (float)Math.Sin(4 * timer);
+        }
+        public override BehaviorComponent Clone()
+        {
+            return new TwirlyBehavior();
+        }
+    }
+
     abstract class SeekerComponent : Component
     {
         public abstract void Update(float dt);

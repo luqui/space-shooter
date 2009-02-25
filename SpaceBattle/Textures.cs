@@ -20,6 +20,7 @@ namespace SpaceBattle
             EmptyEnemy = Content.Load<Texture2D>("EmptyEnemy");
             RandomPowerup = Content.Load<Texture2D>("RandomPowerup");
             StrongEnemy = Content.Load<Texture2D>("StrongEnemy");
+            TwirlyEnemy = Content.Load<Texture2D>("TwirlyEnemy");
         }
         public static Texture2D FollowerEnemy;
         public static Texture2D SplittyEnemy;
@@ -31,5 +32,6 @@ namespace SpaceBattle
         public static Texture2D EmptyEnemy;
         public static Texture2D RandomPowerup;
         public static Texture2D StrongEnemy;
+        public static Texture2D TwirlyEnemy;
     }
 }

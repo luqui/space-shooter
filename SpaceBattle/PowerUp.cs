@@ -60,7 +60,8 @@ namespace SpaceBattle
     {
         public static PowerUp RandomPowerup(Vector2 position)
         {
-            var behavior = Switch<BehaviorComponent>();
+            var behavior = Switch<BehaviorComponent>(
+                new ComponentFactory<BehaviorComponent>(() => new TwirlyBehavior(), Textures.TwirlyEnemy));
             var seeker = Switch(
                 new ComponentFactory<SeekerComponent>(() => new SlinkTowardSeeker(), Textures.FollowerEnemy));
             var damage = Switch(
