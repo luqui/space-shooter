@@ -40,8 +40,11 @@ namespace SpaceBattle
             if (store > 0 && fire_timer <= 0)
             {
                 Enemy e = spawn(pos, target);
-                if (e != null) { fire_timer = fire_timeout; }
-                store--;
+                if (e != null)
+                {
+                    fire_timer = fire_timeout;
+                    store--;
+                }
                 return e;
             }
             return null;
