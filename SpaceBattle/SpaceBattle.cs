@@ -39,7 +39,6 @@ namespace SpaceBattle
             transform *= Matrix.CreateScale(2/Util.FIELDWIDTH, 2/Util.FIELDHEIGHT, 1.0f);
             transform *= Matrix.CreateTranslation(1f, 1f, 0.0f);
             transform *= Matrix.CreateScale(w / 2, h / 2, 1.0f);
-            //transform *= Matrix.CreateScale(2, 2, 1);
         }
 
         protected override void LoadContent()

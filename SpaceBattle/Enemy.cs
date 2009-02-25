@@ -78,6 +78,7 @@ namespace SpaceBattle
                 {
                     dead = true;
                     b.SetDead();
+                    Util.RandomExplosion(position);
                 }
             }
         }
@@ -193,6 +194,7 @@ namespace SpaceBattle
             Util.Actors.Add(child1);
             Util.Actors.Add(child2);
             Util.Actors.Add(child3);
+            Util.RandomExplosion(self.position);
         }
         public override DamageComponent Clone()
         {
@@ -212,7 +214,11 @@ namespace SpaceBattle
         {
             bullet.SetDead();
             hitPoints--;
-            if (hitPoints <= 0) self.dead = true;
+            if (hitPoints <= 0)
+            {
+                self.dead = true;
+                Util.RandomExplosion(self.position);
+            }
         }
         public override DamageComponent Clone()
         {

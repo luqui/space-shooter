@@ -12,9 +12,16 @@ namespace SpaceBattle
         List<Actor> actors = new List<Actor>();
         List<Actor> backBuffer = new List<Actor>();
 
+        List<Explosion> explosions = new List<Explosion>();
+
         public void Add(Actor actor)
         {
             backBuffer.Add(actor);
+        }
+
+        public void Add(Explosion ex)
+        {
+            explosions.Add(ex);
         }
 
         public void Update(float dt)
@@ -35,11 +42,15 @@ namespace SpaceBattle
             actors.RemoveAll(v => v.Dead);
             actors.AddRange(backBuffer);
             backBuffer = new List<Actor>();
+
+            foreach (var e in explosions) { e.Update(dt); }
+            explosions.RemoveAll(v => v.Done);
         }
 
         public void Draw()
         {
             foreach (var v in actors) { v.Draw(); }
+            foreach (var e in explosions) { e.Draw(); }
         }
     }
 
@@ -52,8 +63,8 @@ namespace SpaceBattle
         public static PlayerShip player1;
         public static PlayerShip player2;
 
-        public const float FIELDWIDTH = 28.0f;
-        public const float FIELDHEIGHT = 21.0f;
+        public const float FIELDWIDTH = 36.0f;
+        public const float FIELDHEIGHT = 27.0f;
 
         public static Random RANDOM = new Random();
 
@@ -90,16 +101,28 @@ namespace SpaceBattle
             return p == PlayerIndex.One ? player1 : player2;
         }
 
-        public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale) {
+        public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale, Vector4 color)
+        {
             float sc = 1.0f / tex.Width;
             pos.Y = -pos.Y;
-            Batch.Draw(tex, pos, null, Color.White, -rot, new Vector2(tex.Width / 2, tex.Height / 2), sc*scale, SpriteEffects.None, 0);
+            Batch.Draw(tex, pos, null, new Color(color), -rot, new Vector2(tex.Width / 2, tex.Height / 2), sc * scale, SpriteEffects.None, 0);
+        }
+
+        public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale)
+        {
+            DrawSprite(tex, pos, rot, scale, new Vector4(1, 1, 1, 1));
         }
 
         public static void DrawText(Vector2 pos, string text)
         {
             pos.Y = -pos.Y;
             Batch.DrawString(Textures.Font, text, pos, Color.White, 0, new Vector2(12,12), 1.0f/24, SpriteEffects.None, 0);
+        }
+
+        public static void RandomExplosion(Vector2 pos)
+        {
+            Actors.Add(new Explosion(pos, new Vector3(RandRange(0.5f, 1), RandRange(0.5f, 1), RandRange(0.5f, 1)), 
+                       50, RandRange(10,40), RandRange(1,3), RandRange(0.1f, 0.4f)));
         }
 
         public static bool OnScreen(Vector2 pos)
