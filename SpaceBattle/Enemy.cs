@@ -178,4 +178,24 @@ namespace SpaceBattle
             return new SplittyDamage();
         }
     }
+
+    class ToughDamage : DamageComponent
+    {
+        int hitPoints = 4;
+
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.StrongEnemy, self.Position, 0, 1.0f);
+        }
+        public override void OnHit(Bullet bullet)
+        {
+            bullet.SetDead();
+            hitPoints--;
+            if (hitPoints <= 0) self.dead = true;
+        }
+        public override DamageComponent Clone()
+        {
+            return new ToughDamage();  // keep damage?
+        }
+    }
 }

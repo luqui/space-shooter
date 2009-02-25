@@ -61,10 +61,11 @@ namespace SpaceBattle
         public static PowerUp RandomPowerup(Vector2 position)
         {
             var behavior = Switch<BehaviorComponent>();
-            var seeker = Switch<SeekerComponent>(
+            var seeker = Switch(
                 new ComponentFactory<SeekerComponent>(() => new SlinkTowardSeeker(), Textures.FollowerEnemy));
-            var damage = Switch<DamageComponent>(
-                new ComponentFactory<DamageComponent>(() => new SplittyDamage(), Textures.SplittyEnemy));
+            var damage = Switch(
+                new ComponentFactory<DamageComponent>(() => new SplittyDamage(), Textures.SplittyEnemy),
+                new ComponentFactory<DamageComponent>(() => new ToughDamage(), Textures.StrongEnemy));
 
             return new PowerUp(Textures.RandomPowerup, position, ship =>
                     ship.Equip(new EnemyFactory(pos => { behavior.Draw(pos); seeker.Draw(pos); damage.Draw(pos); }, 0.2f, (pos, target) =>
