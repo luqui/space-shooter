@@ -67,7 +67,7 @@ namespace SpaceBattle
 
         public override bool Dead { get { return dead; } }
         public override Vector2 Position { get { return position; } }
-        public override float Radius { get { return 0.75f; } }
+        public override float Radius { get { return 0.50f; } }
 
         public override void Collision(Actor other)
         {
@@ -155,8 +155,8 @@ namespace SpaceBattle
         }
         public override void Update(float dt)
         {
-            var desired = self.target.Position - self.position;
-            desired.Normalize();
+            var diff = self.target.Position - self.position;
+            var desired = 3 * diff / diff.Length(); 
             self.accel += desired - self.velocity;
         }
         public override SeekerComponent Clone()

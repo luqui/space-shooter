@@ -13,7 +13,7 @@ namespace SpaceBattle
         Vector2 position;
         public override Vector2 Position { get { return position; } }
         public override bool Dead { get { return false; } }
-        public override float Radius { get { return 0.75f; } }
+        public override float Radius { get { return 0.50f; } }
         Vector2 velocity;
 
         PlayerIndex player;
