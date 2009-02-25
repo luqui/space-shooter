@@ -66,7 +66,7 @@ namespace SpaceBattle
             var damage = Switch<DamageComponent>(
                 new ComponentFactory<DamageComponent>(() => new SplittyDamage(), Textures.SplittyEnemy));
 
-            return new PowerUp(Textures.FollowerPowerup, position, ship =>
+            return new PowerUp(Textures.RandomPowerup, position, ship =>
                     ship.Equip(new EnemyFactory(pos => { behavior.Draw(pos); seeker.Draw(pos); damage.Draw(pos); }, 0.2f, (pos, target) =>
                         Guard(8.0f, target, new Enemy(pos, target, behavior.Create(), seeker.Create(), damage.Create())))));
         }
