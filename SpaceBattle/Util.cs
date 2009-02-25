@@ -101,4 +101,5 @@ namespace SpaceBattle
             return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDWIDTH/2 && pos.Y <= FIELDWIDTH/2;
         }
     }
+
 }

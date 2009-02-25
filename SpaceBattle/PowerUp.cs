@@ -41,24 +41,40 @@ namespace SpaceBattle
         }
     }
 
+    class ComponentFactory<C>
+    {
+        public ComponentFactory(Func<C> create, Action<Vector2> draw) {
+            Create = create;
+            Draw = draw;
+        }
+        public ComponentFactory(Func<C> create, Texture2D tex)
+        {
+            Create = create;
+            Draw = pos => Util.DrawSprite(tex, pos, 0, 1.0f);
+        }
+        public readonly Func<C> Create;
+        public readonly Action<Vector2> Draw;
+    }
+
     static class PowerUps
     {
-
         public static PowerUp RandomPowerup(Vector2 position)
         {
             var behavior = Switch<BehaviorComponent>();
-            var seeker = Switch<SeekerComponent>(() => new SlinkTowardSeeker());
-            var damage = Switch<DamageComponent>(() => new SplittyDamage());
+            var seeker = Switch<SeekerComponent>(
+                new ComponentFactory<SeekerComponent>(() => new SlinkTowardSeeker(), Textures.FollowerEnemy));
+            var damage = Switch<DamageComponent>(
+                new ComponentFactory<DamageComponent>(() => new SplittyDamage(), Textures.SplittyEnemy));
 
             return new PowerUp(Textures.FollowerPowerup, position, ship =>
-                    ship.Equip(new EnemyFactory(Textures.FollowerPowerup, 0.2f, (pos, target) =>
-                        Guard(8.0f, target, new Enemy(pos, target, behavior(), seeker(), damage())))));
+                    ship.Equip(new EnemyFactory(pos => { behavior.Draw(pos); seeker.Draw(pos); damage.Draw(pos); }, 0.2f, (pos, target) =>
+                        Guard(8.0f, target, new Enemy(pos, target, behavior.Create(), seeker.Create(), damage.Create())))));
         }
 
-        static Func<T> Switch<T>(params Func<T>[] ps) where T:class
+        static ComponentFactory<T> Switch<T>(params ComponentFactory<T>[] ps) where T:class
         {
             int pick = Util.RANDOM.Next(ps.Count() + 1);
-            if (pick == 0) { return () => null; }
+            if (pick == 0) { return new ComponentFactory<T>(() => null, v => { }); }
             else { return ps[pick - 1]; }
         }
 

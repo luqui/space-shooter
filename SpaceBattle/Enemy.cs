@@ -44,9 +44,16 @@ namespace SpaceBattle
 
         public override void Draw()
         {
-            if (Behavior != null) Behavior.Draw();
-            if (Seeker != null) Seeker.Draw();
-            if (Damage != null) Damage.Draw();
+            if (Behavior == null && Seeker == null && Damage == null)
+            {
+                Util.DrawSprite(Textures.EmptyEnemy, position, 0, 1.0f);
+            }
+            else
+            {
+                if (Behavior != null) Behavior.Draw();
+                if (Seeker != null) Seeker.Draw();
+                if (Damage != null) Damage.Draw();
+            }
         }
 
         public override void Update(float dt)

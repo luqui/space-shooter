@@ -19,6 +19,7 @@ namespace SpaceBattle
             BlueShip = Content.Load<Texture2D>("BlueShip");
             RedCrosshair = Content.Load<Texture2D>("RedCrosshair");
             BlueCrosshair = Content.Load<Texture2D>("BlueCrosshair");
+            EmptyEnemy = Content.Load<Texture2D>("EmptyEnemy");
         }
         public static Texture2D FollowerEnemy;
         public static Texture2D SplittyEnemy;
@@ -29,5 +30,6 @@ namespace SpaceBattle
         public static Texture2D BlueShip;
         public static Texture2D RedCrosshair;
         public static Texture2D BlueCrosshair;
+        public static Texture2D EmptyEnemy;
     }
 }

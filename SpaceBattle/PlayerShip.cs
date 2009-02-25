@@ -110,15 +110,15 @@ namespace SpaceBattle
 
                 if (factories[0] != null)
                 {
-                    Util.DrawSprite(factories[0].Texture, r + new Vector2(0, -1), 0, 1);
+                    factories[0].Draw(r + new Vector2(0, -1));
                 }
                 if (factories[1] != null)
                 {
-                    Util.DrawSprite(factories[1].Texture, r + new Vector2(0, -2), 0, 1);
+                    factories[1].Draw(r + new Vector2(0, -2));
                 }
                 if (factories[2] != null)
                 {
-                    Util.DrawSprite(factories[2].Texture, r + new Vector2(2, -2), 0, 1);
+                    factories[2].Draw(r + new Vector2(2, -2));
                 }
             }
             else if (player == PlayerIndex.Two)
@@ -131,15 +131,15 @@ namespace SpaceBattle
 
                 if (factories[0] != null)
                 {
-                    Util.DrawSprite(factories[0].Texture, r + new Vector2(-2, -1), 0, 1);
+                    factories[0].Draw(r + new Vector2(-2, -1));
                 }
                 if (factories[1] != null)
                 {
-                    Util.DrawSprite(factories[1].Texture, r + new Vector2(-2, -2), 0, 1);
+                    factories[1].Draw(r + new Vector2(-2, 2));
                 }
                 if (factories[2] != null)
                 {
-                    Util.DrawSprite(factories[2].Texture, r + new Vector2(0, -2), 0, 1);
+                    factories[2].Draw(r + new Vector2(0, -2));
                 }
             }
         }

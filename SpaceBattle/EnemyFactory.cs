@@ -9,19 +9,20 @@ namespace SpaceBattle
 {
     class EnemyFactory
     {
-        public EnemyFactory(Texture2D texture, float timeout, Func<Vector2, PlayerShip, Enemy> spawner)
+        public EnemyFactory(Action<Vector2> draw, float timeout, Func<Vector2, PlayerShip, Enemy> spawner)
         {
-            this.texture = texture;
+            this.draw = draw;
             spawn = spawner;
             this.timeout = timeout;
             timer = 0;
         }
 
-        public Texture2D Texture { get { return texture; } }
-        Texture2D texture;
+        Action<Vector2> draw;
         Func<Vector2, PlayerShip, Enemy> spawn;
         float timer;
         float timeout;
+
+        public void Draw(Vector2 position) { draw(position); }
 
         public Enemy Spawn(Vector2 pos, PlayerShip target)
         {
