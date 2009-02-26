@@ -30,8 +30,10 @@ namespace SpaceBattle
         int[,] storage;
 
         float bulletTimeout = 0.0f;
+        float enemyTimeout = 0.0f;
 
         const float BULLETTIME = 0.1f;
+        const float ENEMYTIME = 0.1f;
         const float SPEED = 5.0f;
         const float BULLETSPEED = 18.0f;
         const float TRIGGERLENGTH = 10.0f;
@@ -87,19 +89,21 @@ namespace SpaceBattle
             if (pressed(i => i.A)) { resetAmmo = true; damages.Next(); }
 
             bulletTimeout -= dt;
+            enemyTimeout -= dt;
+
             Vector2 dir = input.ThumbSticks.Right;
             if (dir.LengthSquared() > 0.125f)
             {
                 var pos = position + TRIGGERLENGTH * dir;
                 var other = Util.GetPlayer(Util.OtherPlayer(player));
 
-                if (input.Triggers.Left > 0.5f && bulletTimeout <= 0)
+                if (input.Triggers.Left > 0.5f && enemyTimeout <= 0)
                 {
                     if (behaviors.Ammo > 0 && seekers.Ammo > 0 && damages.Ammo > 0)
                     {
                         Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
                         Util.Actors.Add(e);
-                        bulletTimeout = BULLETTIME;
+                        enemyTimeout = ENEMYTIME;
                         resetAmmo = true;
                     }
                 }
