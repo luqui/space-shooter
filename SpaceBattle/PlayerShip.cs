@@ -197,7 +197,8 @@ namespace SpaceBattle
                 Util.GetPlayer(Util.OtherPlayer(player)).Equip("Empty", 1);
             }
 
-            if (other is Enemy)
+            Enemy e = other as Enemy;
+            if (e != null && e.fadeIn <= 0)
             {
                 lives--;
                 Util.Reset();
