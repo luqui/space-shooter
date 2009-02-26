@@ -15,5 +15,7 @@ namespace SpaceBattle
         public virtual void Update(float dt) { }
         public virtual void Draw() { }
         public virtual void Collision(Actor other) { }
+        public virtual void Start() { }
+        public virtual void Finish() { }
     }
 }

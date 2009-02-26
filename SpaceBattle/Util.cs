@@ -17,6 +17,7 @@ namespace SpaceBattle
         public void Add(Actor actor)
         {
             backBuffer.Add(actor);
+            actor.Start();
         }
 
         public void Add(Explosion ex)
@@ -39,7 +40,19 @@ namespace SpaceBattle
                 }
             }
 
-            actors.RemoveAll(v => v.Dead || !Util.OnScreen(v.Position));
+            actors.RemoveAll(v =>
+            {
+                if (v.Dead || !Util.OnScreen(v.Position))
+                {
+                    v.Finish();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
+
             actors.AddRange(backBuffer);
             backBuffer = new List<Actor>();
 

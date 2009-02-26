@@ -59,7 +59,10 @@ namespace SpaceBattle
             SoundID id = new SoundID();
             lock (mutex)
             {
-                measure[semidemi].Add(new Beat(id, sound));
+                if (!measure[semidemi].Any(i => i.cue == sound))
+                {
+                    measure[semidemi].Add(new Beat(id, sound));
+                }
             }
             return id;
         }
@@ -104,5 +107,14 @@ namespace SpaceBattle
         public static string[] Triangle = { "tri2", "tri3", "tri4", "tri5" };
         public static string[] Woodblock = { "woodblock1", "woodblock2", "woodpop1", "woodpop2" };
 
+        public static string Select(string[] data)
+        {
+            return data[Util.RANDOM.Next(data.Count())];
+        }
+
+        public static SoundID StartSound(string[] selection)
+        {
+            return Util.Sequencer.Enqueue(Select(selection));
+        }
     }
 }

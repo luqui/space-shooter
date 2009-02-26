@@ -14,6 +14,7 @@ namespace SpaceBattle
             self = newself;
         }
         public abstract void Draw();
+        public virtual void Start() { }
     }
 
     abstract class BehaviorComponent : Component
@@ -93,6 +94,10 @@ namespace SpaceBattle
         {
             return new TwirlyBehavior();
         }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.ShortRattle));
+        }
     }
 
     class DodgeBehavior : BehaviorComponent
@@ -116,6 +121,10 @@ namespace SpaceBattle
         {
             return new DodgeBehavior();
         }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.LightCym));
+        }
     }
 
     class SlinkTowardSeeker : SeekerComponent
@@ -133,6 +142,10 @@ namespace SpaceBattle
         public override SeekerComponent Clone()
         {
             return new SlinkTowardSeeker();
+        }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.Bongos));
         }
     }
 
@@ -164,6 +177,10 @@ namespace SpaceBattle
         public override SeekerComponent Clone()
         {
             return new FastSeeker();
+        }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.Kettle));
         }
     }
 
@@ -198,6 +215,10 @@ namespace SpaceBattle
         {
             return new SplittyDamage();
         }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.Clave));
+        }
     }
 
     class ToughDamage : DamageComponent
@@ -225,6 +246,10 @@ namespace SpaceBattle
         public override DamageComponent Clone()
         {
             return new ToughDamage();  // keep damage?
+        }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.Conga));
         }
     }
 
@@ -255,6 +280,10 @@ namespace SpaceBattle
         public override DamageComponent Clone()
         {
             return new MineDamage();
+        }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.Woodblock));
         }
     }
 }
