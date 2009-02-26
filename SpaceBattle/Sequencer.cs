@@ -32,9 +32,9 @@ namespace SpaceBattle
 
         public Sequencer()
         {
-            engine = new AudioEngine("..\\..\\..\\Content\\Win\\Audio.xgs");
-            wavebank = new WaveBank(engine, "..\\..\\..\\Content\\Win\\Wave Bank.xwb");
-            soundbank = new SoundBank(engine, "..\\..\\..\\Content\\Win\\Sound Bank.xsb");
+            engine = new AudioEngine("Content\\Win\\Audio.xgs");
+            wavebank = new WaveBank(engine, "Content\\Win\\Wave Bank.xwb");
+            soundbank = new SoundBank(engine, "Content\\Win\\Sound Bank.xsb");
 
             measure = new List<List<Beat>>();
             for (int i = 0; i < 16; i++)
