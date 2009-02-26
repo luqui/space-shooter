@@ -131,6 +131,7 @@ namespace SpaceBattle
                     behaviors.Index = storage[dpad, 0];
                     seekers.Index = storage[dpad, 1];
                     damages.Index = storage[dpad, 2];
+                    resetAmmo = true;
                 }
             }
 
