@@ -74,9 +74,14 @@ namespace SpaceBattle
 
         public int Ammo { get { return buf[index].ammo; } }
 
-        public void Draw(Vector2 pos)
+        public void Draw(Vector2 pos, Vector2 stride)
         {
-            buf[index].factory.Draw(pos);
+            for (int i = 0; i < buf.Count; i++)
+            {
+                int j = (i + index) % buf.Count;
+                buf[j].factory.Draw(pos + 2 * i * stride);
+                Util.DrawText(pos + (2 * i + 1) * stride, buf[j].ammo.ToString());
+            }
         }
 
         public void Add(string id, int amount)

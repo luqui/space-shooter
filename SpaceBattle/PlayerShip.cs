@@ -62,9 +62,9 @@ namespace SpaceBattle
             Func<Func<GamePadButtons, ButtonState>, bool> pressed = f => 
                 f(lastState.Buttons) == ButtonState.Released && f(input.Buttons) == ButtonState.Pressed;
 
-            if (pressed(i => i.X)) { behaviors.Next(); }
-            if (pressed(i => i.Y)) { seekers.Next(); }
-            if (pressed(i => i.B)) { damages.Next(); }
+            if (pressed(i => i.Y)) { behaviors.Next(); }
+            if (pressed(i => i.X)) { seekers.Next(); }
+            if (pressed(i => i.A)) { damages.Next(); }
 
             bulletTimeout -= dt;
             Vector2 dir = input.ThumbSticks.Right;
@@ -110,26 +110,20 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(texture, r + new Vector2(i / 2.0f, 0), 0, 0.5f);
                 }
-                behaviors.Draw(r + new Vector2(0, -1));
-                Util.DrawText(r + new Vector2(1, -1), behaviors.Ammo.ToString());
-                seekers.Draw(r + new Vector2(2, -1));
-                Util.DrawText(r + new Vector2(3, -1), seekers.Ammo.ToString());
-                damages.Draw(r + new Vector2(4, -1));
-                Util.DrawText(r + new Vector2(5, -1), damages.Ammo.ToString());
+                behaviors.Draw(r + new Vector2(0, -1), new Vector2(1, 0));
+                seekers.Draw(r + new Vector2(0, -2), new Vector2(1, 0));
+                damages.Draw(r + new Vector2(0, -3), new Vector2(1, 0));
            }
-           else if (player == PlayerIndex.Two)
-           {
+            else if (player == PlayerIndex.Two)
+            {
                 Vector2 r = new Vector2(Util.FIELDWIDTH / 2 - 1, Util.FIELDHEIGHT / 2 - 1);
                 for (int i = 0; i < lives; i++)
                 {
                     Util.DrawSprite(texture, r + new Vector2(-i / 2.0f, 0), 0, 0.5f);
                 }
-                behaviors.Draw(r + new Vector2(-5, -1));
-                Util.DrawText(r + new Vector2(-4, -1), behaviors.Ammo.ToString());
-                seekers.Draw(r + new Vector2(-3, -1));
-                Util.DrawText(r + new Vector2(-2, -1), seekers.Ammo.ToString());
-                damages.Draw(r + new Vector2(-1, -1));
-                Util.DrawText(r + new Vector2(0, -1), damages.Ammo.ToString());
+                behaviors.Draw(r + new Vector2(0, -1), new Vector2(-1, 0));
+                seekers.Draw(r + new Vector2(0, -2), new Vector2(-1, 0));
+                damages.Draw(r + new Vector2(0, -3), new Vector2(-1, 0));
             }
         }
 
