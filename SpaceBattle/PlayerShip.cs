@@ -198,19 +198,24 @@ namespace SpaceBattle
         {
             Bullet b = other as Bullet;
             if (b != null) { 
-                b.SetDead();
+                b.Die();
                 Util.GetPlayer(Util.OtherPlayer(player)).Equip("Empty", 1);
             }
 
             Enemy e = other as Enemy;
             if (e != null && e.fadeIn <= 0)
             {
-                lives--;
-                Util.Reset();
-                Util.Sequencer.PlayOnce(Sounds.Select(Sounds.Gong));
-                Vector3 color = player == PlayerIndex.One ? new Vector3(1, 0, 0) : new Vector3(0, 0.3f, 1.0f);
-                Util.Actors.Add(new Explosion(position, color, 300, 25, 5, 0.5f));
+                Die();
             }
+        }
+
+        public override void Die()
+        {
+            lives--;
+            Util.Reset();
+            Util.Sequencer.PlayOnce(Sounds.Select(Sounds.Gong));
+            Vector3 color = player == PlayerIndex.One ? new Vector3(1, 0, 0) : new Vector3(0, 0.3f, 1.0f);
+            Util.Actors.Add(new Explosion(position, color, 300, 25, 5, 0.5f));
         }
 
         public void Equip(string e, int amount)

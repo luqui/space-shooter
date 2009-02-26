@@ -37,6 +37,6 @@ namespace SpaceBattle
             Util.DrawSprite(Textures.Bullet, position, rot, 0.75f);
         }
 
-        public void SetDead() { dead = true; }
+        public override void Die() { dead = true; }
     }
 }

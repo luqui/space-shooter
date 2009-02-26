@@ -40,6 +40,11 @@ namespace SpaceBattle
                 action(ship);
             }
         }
+
+        public override void Die()
+        {
+            dead = true;
+        }
     }
 
     static class PowerUps

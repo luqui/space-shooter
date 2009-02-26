@@ -32,6 +32,7 @@ namespace SpaceBattle
     abstract class DamageComponent : Component
     {
         public abstract void OnHit(Actor other);
+        public abstract void Die();
         public abstract DamageComponent Clone();
     }
 
@@ -194,9 +195,12 @@ namespace SpaceBattle
         {
             Bullet bullet = other as Bullet;
             if (bullet == null || bullet.Dead) return;
-
+            bullet.Die();
+            self.Die();
+        }
+        public override void Die()
+        {
             self.dead = true;
-            bullet.SetDead();
             Enemy child1 = self.Clone(); child1.Damage = null;
             Enemy child2 = self.Clone(); child2.Damage = null;
             Enemy child3 = self.Clone(); child3.Damage = null;
@@ -235,13 +239,17 @@ namespace SpaceBattle
             Bullet bullet = other as Bullet;
             if (bullet == null || bullet.Dead) return;
 
-            bullet.SetDead();
+            bullet.Die();
             hitPoints--;
             if (hitPoints <= 0)
             {
-                self.dead = true;
-                Util.RandomExplosion(self.position);
+                self.Die();
             }
+        }
+        public override void Die()
+        {
+            self.dead = true;
+            Util.RandomExplosion(self.position);
         }
         public override DamageComponent Clone()
         {
@@ -263,26 +271,14 @@ namespace SpaceBattle
         {
             Enemy enemy = other as Enemy;
             if (enemy != null && enemy.Damage is MineDamage) return;
-
-            bool blowup = false;
-            foreach (var actor in Util.Actors.ActorsNear(self.position, 2.5f)) {
-                Enemy e = actor as Enemy;
-                if (e != null && !e.dead)
-                {
-                    e.dead = true;
-                    Util.EnemyDeath(e.position);
-                    Util.RandomExplosion(e.position);
-                    blowup = true;
-                }
-            }
-
-            Bullet b = other as Bullet;
-            if (b != null && !b.Dead) { b.SetDead(); blowup = true;  }
-            if (blowup)
-            {
-                Util.RandomExplosion(self.position);
-                self.dead = true;
-            }
+            self.Die();
+        }
+        public override void Die()
+        {
+            self.dead = true;
+            Util.RandomExplosion(self.position);
+            List<Actor> deaths = new List<Actor>(Util.Actors.ActorsNear(self.position, 2.5f).Where(a => a != self));
+            foreach (var a in deaths) { a.Die(); }
         }
         public override DamageComponent Clone()
         {

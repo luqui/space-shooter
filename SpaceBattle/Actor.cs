@@ -17,5 +17,6 @@ namespace SpaceBattle
         public virtual void Collision(Actor other) { }
         public virtual void Start() { }
         public virtual void Finish() { }
+        public abstract void Die(); 
     }
 }

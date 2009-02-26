@@ -101,14 +101,24 @@ namespace SpaceBattle
             }
             else {
                 Bullet b = other as Bullet;
-                if (b != null && !b.Dead) { 
-                    dead = true;
-                    b.SetDead();
-                    Util.RandomExplosion(position);
+                if (b != null && !b.Dead) {
+                    b.Die();
+                    Die();
                 }
             }
-            if (dead)
+        }
+
+        public override void Die()
+        {
+            if (dead) return;
+            if (Damage != null)
             {
+                Damage.Die();
+            }
+            else
+            {
+                dead = true;
+                Util.RandomExplosion(position);
                 Util.EnemyDeath(position);
             }
         }
