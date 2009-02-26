@@ -26,9 +26,9 @@ namespace SpaceBattle
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-            graphics.IsFullScreen = true;
-            graphics.PreferredBackBufferWidth = 1366;
-            graphics.PreferredBackBufferHeight = 768;
+            //graphics.IsFullScreen = true;
+            //graphics.PreferredBackBufferWidth = 1366;
+            //graphics.PreferredBackBufferHeight = 768;
         }
 
         protected override void Initialize()
