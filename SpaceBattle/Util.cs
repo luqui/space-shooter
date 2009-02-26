@@ -164,12 +164,12 @@ namespace SpaceBattle
 
         public static bool OnScreen(Vector2 pos)
         {
-            return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDWIDTH/2 && pos.Y <= FIELDWIDTH/2;
+            return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDHEIGHT/2 && pos.Y <= FIELDHEIGHT/2;
         }
 
         public static void EnemyDeath(Vector2 pos)
         {
-            if (RANDOM.Next(19) == 0)
+            if (RANDOM.Next(11) == 0)
             {
                 Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
                 Actors.Add(PowerUps.RandomPowerup(pos));

@@ -91,6 +91,7 @@ namespace SpaceBattle
                 {
                     soundbank.PlayCue(i.cue);
                 }
+
                 semidemi++;
                 semidemi %= measure.Count;
                 engine.Update();
@@ -114,7 +115,7 @@ namespace SpaceBattle
         public static string[] Crash = { "crash1", "crash2", "crash3", "crash4", "crash5", "crash6", "crash7", "crash8", "crash9", "crash10" };
         public static string[] Gong = { "gong1", "gong2", "gong3", "gong4" };
 
-        public static string Select(string[] data)
+        public static T Select<T>(T[] data)
         {
             return data[Util.RANDOM.Next(data.Count())];
         }

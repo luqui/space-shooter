@@ -132,6 +132,11 @@ namespace SpaceBattle
 
             if (resetAmmo) ResetAmmo();
             lastState = input;
+
+            if (position.X < -Util.FIELDWIDTH / 2) position.X = -Util.FIELDWIDTH / 2;
+            if (position.X > Util.FIELDWIDTH / 2) position.X = Util.FIELDWIDTH / 2;
+            if (position.Y < -Util.FIELDHEIGHT / 2) position.Y = -Util.FIELDHEIGHT / 2;
+            if (position.Y > Util.FIELDHEIGHT / 2) position.Y = Util.FIELDHEIGHT / 2;
         }
 
         int DPadDirection(GamePadState input)
