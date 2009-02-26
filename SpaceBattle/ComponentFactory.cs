@@ -79,8 +79,8 @@ namespace SpaceBattle
             for (int i = 0; i < buf.Count; i++)
             {
                 int j = (i + index) % buf.Count;
-                buf[j].factory.Draw(pos + 2 * i * stride);
-                Util.DrawText(pos + (2 * i + 1) * stride, buf[j].ammo.ToString());
+                buf[j].factory.Draw(pos + i * stride);
+                Util.DrawText(pos + i * stride + new Vector2(1,0), buf[j].ammo.ToString());
             }
         }
 

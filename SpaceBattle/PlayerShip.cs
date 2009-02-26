@@ -110,9 +110,9 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(texture, r + new Vector2(i / 2.0f, 0), 0, 0.5f);
                 }
-                behaviors.Draw(r + new Vector2(0, -1), new Vector2(1, 0));
-                seekers.Draw(r + new Vector2(0, -2), new Vector2(1, 0));
-                damages.Draw(r + new Vector2(0, -3), new Vector2(1, 0));
+                behaviors.Draw(r + new Vector2(0, -1), new Vector2(2, 0));
+                seekers.Draw(r + new Vector2(0, -2), new Vector2(2, 0));
+                damages.Draw(r + new Vector2(0, -3), new Vector2(2, 0));
            }
             else if (player == PlayerIndex.Two)
             {
@@ -121,21 +121,26 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(texture, r + new Vector2(-i / 2.0f, 0), 0, 0.5f);
                 }
-                behaviors.Draw(r + new Vector2(0, -1), new Vector2(-1, 0));
-                seekers.Draw(r + new Vector2(0, -2), new Vector2(-1, 0));
-                damages.Draw(r + new Vector2(0, -3), new Vector2(-1, 0));
+                behaviors.Draw(r + new Vector2(-1, -1), new Vector2(-2, 0));
+                seekers.Draw(r + new Vector2(-1, -2), new Vector2(-2, 0));
+                damages.Draw(r + new Vector2(-1, -3), new Vector2(-2, 0));
             }
         }
 
         public override void Collision(Actor other)
         {
             Bullet b = other as Bullet;
-            if (b != null) { b.SetDead(); }
+            if (b != null) { 
+                b.SetDead();
+                Util.GetPlayer(Util.OtherPlayer(player)).Equip("Empty", 1);
+            }
 
             if (other is Enemy)
             {
                 lives--;
                 Util.Reset();
+                Vector3 color = player == PlayerIndex.One ? new Vector3(1, 0, 0) : new Vector3(0, 0.3f, 1.0f);
+                Util.Actors.Add(new Explosion(position, color, 300, 25, 5, 0.5f));
             }
         }
 

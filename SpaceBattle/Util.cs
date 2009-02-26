@@ -52,6 +52,11 @@ namespace SpaceBattle
             foreach (var v in actors) { v.Draw(); }
             foreach (var e in explosions) { e.Draw(); }
         }
+
+        public void Reset()
+        {
+            actors.RemoveAll(v => !(v is PlayerShip));
+        }
     }
 
     static class Util
@@ -81,9 +86,7 @@ namespace SpaceBattle
 
         public static void Reset()
         {
-            Actors = new ActorList();
-            Actors.Add(player1);
-            Actors.Add(player2);
+            Actors.Reset();
         }
 
         public static float Scale(float min, float max, float x)
