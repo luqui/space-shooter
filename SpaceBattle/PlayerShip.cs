@@ -19,8 +19,8 @@ namespace SpaceBattle
         PlayerIndex player;
         Texture2D texture;
         Texture2D crosshair;
-        EnemyFactory[] factories;
-        int factoryIndex;
+
+        int[] ammo;
 
         int lives;
 
@@ -34,9 +34,8 @@ namespace SpaceBattle
 
         public PlayerShip(PlayerIndex player) { 
             this.player = player;
-            factories = new EnemyFactory[3] { null, null, null };
-            factoryIndex = 0;
             lives = 5;
+            ammo = new int[12];
 
             if (player == PlayerIndex.One)
             {
@@ -55,8 +54,6 @@ namespace SpaceBattle
             velocity = SPEED * GamePad.GetState(player).ThumbSticks.Left;
             position += dt * velocity;
 
-            foreach (var i in factories) { if (i != null) { i.Update(dt); } }
-
             var input = GamePad.GetState(player);
 
             bulletTimeout -= dt;
@@ -65,25 +62,8 @@ namespace SpaceBattle
             {
                 var pos = position + TRIGGERLENGTH * dir;
                 var other = Util.GetPlayer(Util.OtherPlayer(player));
-                bool spawned = false;
-                Action<int> spawn = z =>
-                {
-                    spawned = true;  // set when any spawn button is depressed
-                    if (factories[z] != null)
-                    {
-                        Enemy e = factories[z].Spawn(pos, other);
-                        if (e != null)
-                        {
-                            Util.Actors.Add(e);
-                        }
-                    }
-                };
 
-                if (input.Triggers.Left > 0.5f) { spawn(0); }
-                if (input.Buttons.LeftShoulder == ButtonState.Pressed) { spawn(1); }
-                if (input.Buttons.RightShoulder == ButtonState.Pressed) { spawn(2); }
-
-                if (!spawned && input.Triggers.Right > 0.5f && bulletTimeout <= 0) {
+                if (input.Triggers.Right > 0.5f && bulletTimeout <= 0) {
                     Util.Actors.Add(new Bullet(position + dir, BULLETSPEED * dir));
                     bulletTimeout = BULLETTIME;
                 }
@@ -109,39 +89,13 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(texture, r + new Vector2(i / 2.0f, 0), 0, 0.5f);
                 }
-
-                if (factories[0] != null)
-                {
-                    factories[0].Draw(r + new Vector2(0, -1));
-                }
-                if (factories[1] != null)
-                {
-                    factories[1].Draw(r + new Vector2(0, -2));
-                }
-                if (factories[2] != null)
-                {
-                    factories[2].Draw(r + new Vector2(2, -2));
-                }
-            }
+           }
             else if (player == PlayerIndex.Two)
             {
                 Vector2 r = new Vector2(Util.FIELDWIDTH / 2 - 1, Util.FIELDHEIGHT / 2 - 1);
                 for (int i = 0; i < lives; i++)
                 {
                     Util.DrawSprite(texture, r + new Vector2(-i / 2.0f, 0), 0, 0.5f);
-                }
-
-                if (factories[0] != null)
-                {
-                    factories[0].Draw(r + new Vector2(-2, -1));
-                }
-                if (factories[1] != null)
-                {
-                    factories[1].Draw(r + new Vector2(-2, 2));
-                }
-                if (factories[2] != null)
-                {
-                    factories[2].Draw(r + new Vector2(0, -2));
                 }
             }
         }
@@ -156,12 +110,6 @@ namespace SpaceBattle
                 lives--;
                 Util.Reset();
             }
-        }
-
-        public void Equip(EnemyFactory factory)
-        {
-            factories[factoryIndex++] = factory;
-            factoryIndex %= 3;
         }
     }
 }
