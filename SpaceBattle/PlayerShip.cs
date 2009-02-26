@@ -20,7 +20,10 @@ namespace SpaceBattle
         Texture2D texture;
         Texture2D crosshair;
 
-        int[] ammo;
+        ComponentRing<BehaviorComponent> behaviors = Components.MakeBehaviorRing();
+        ComponentRing<SeekerComponent> seekers = Components.MakeSeekerRing();
+        ComponentRing<DamageComponent> damages = Components.MakeDamageRing();
+        GamePadState lastState;
 
         int lives;
 
@@ -35,7 +38,8 @@ namespace SpaceBattle
         public PlayerShip(PlayerIndex player) { 
             this.player = player;
             lives = 5;
-            ammo = new int[12];
+
+            lastState = new GamePadState();
 
             if (player == PlayerIndex.One)
             {
@@ -55,6 +59,12 @@ namespace SpaceBattle
             position += dt * velocity;
 
             var input = GamePad.GetState(player);
+            Func<Func<GamePadButtons, ButtonState>, bool> pressed = f => 
+                f(lastState.Buttons) == ButtonState.Released && f(input.Buttons) == ButtonState.Pressed;
+
+            if (pressed(i => i.X)) { behaviors.Next(); }
+            if (pressed(i => i.Y)) { seekers.Next(); }
+            if (pressed(i => i.B)) { damages.Next(); }
 
             bulletTimeout -= dt;
             Vector2 dir = input.ThumbSticks.Right;
@@ -63,12 +73,23 @@ namespace SpaceBattle
                 var pos = position + TRIGGERLENGTH * dir;
                 var other = Util.GetPlayer(Util.OtherPlayer(player));
 
-                if (input.Triggers.Right > 0.5f && bulletTimeout <= 0) {
+                if (input.Triggers.Left > 0.5f && bulletTimeout <= 0)
+                {
+                    if (behaviors.Ammo > 0 && seekers.Ammo > 0 && damages.Ammo > 0)
+                    {
+                        Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
+                        Util.Actors.Add(e);
+                        bulletTimeout = BULLETTIME;
+                    }
+                }
+                else if (input.Triggers.Right > 0.5f && bulletTimeout <= 0)
+                {
                     Util.Actors.Add(new Bullet(position + dir, BULLETSPEED * dir));
                     bulletTimeout = BULLETTIME;
                 }
             }
 
+            lastState = input;
         }
 
         public override void Draw()
@@ -89,14 +110,26 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(texture, r + new Vector2(i / 2.0f, 0), 0, 0.5f);
                 }
+                behaviors.Draw(r + new Vector2(0, -1));
+                Util.DrawText(r + new Vector2(1, -1), behaviors.Ammo.ToString());
+                seekers.Draw(r + new Vector2(2, -1));
+                Util.DrawText(r + new Vector2(3, -1), seekers.Ammo.ToString());
+                damages.Draw(r + new Vector2(4, -1));
+                Util.DrawText(r + new Vector2(5, -1), damages.Ammo.ToString());
            }
-            else if (player == PlayerIndex.Two)
-            {
+           else if (player == PlayerIndex.Two)
+           {
                 Vector2 r = new Vector2(Util.FIELDWIDTH / 2 - 1, Util.FIELDHEIGHT / 2 - 1);
                 for (int i = 0; i < lives; i++)
                 {
                     Util.DrawSprite(texture, r + new Vector2(-i / 2.0f, 0), 0, 0.5f);
                 }
+                behaviors.Draw(r + new Vector2(-5, -1));
+                Util.DrawText(r + new Vector2(-4, -1), behaviors.Ammo.ToString());
+                seekers.Draw(r + new Vector2(-3, -1));
+                Util.DrawText(r + new Vector2(-2, -1), seekers.Ammo.ToString());
+                damages.Draw(r + new Vector2(-1, -1));
+                Util.DrawText(r + new Vector2(0, -1), damages.Ammo.ToString());
             }
         }
 
@@ -110,6 +143,13 @@ namespace SpaceBattle
                 lives--;
                 Util.Reset();
             }
+        }
+
+        public void Equip(string e, int amount)
+        {
+            behaviors.Add(e, amount);
+            seekers.Add(e, amount);
+            damages.Add(e, amount);
         }
     }
 }

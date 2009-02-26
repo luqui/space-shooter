@@ -33,6 +33,42 @@ namespace SpaceBattle
         public abstract DamageComponent Clone();
     }
 
+    static class Components
+    {
+        public static List<ComponentFactory<BehaviorComponent>> Behaviors = 
+            new List<ComponentFactory<BehaviorComponent>> {
+                new ComponentFactory<BehaviorComponent>("Empty", () => null, pos => {}),
+                new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), pos => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, 1.0f)) 
+            };
+
+        public static List<ComponentFactory<SeekerComponent>> Seekers =
+            new List<ComponentFactory<SeekerComponent>> {
+                new ComponentFactory<SeekerComponent>("Empty", () => null, pos => {}),
+                new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), pos => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 1.0f)) 
+            };
+
+        public static List<ComponentFactory<DamageComponent>> Damages =
+            new List<ComponentFactory<DamageComponent>> {
+                new ComponentFactory<DamageComponent>("Empty", () => null, pos => {}),
+                new ComponentFactory<DamageComponent>("Splitty", () => new SplittyDamage(), pos => Util.DrawSprite(Textures.SplittyEnemy, pos, 0, 1.0f)),
+                new ComponentFactory<DamageComponent>("Tough", () => new ToughDamage(), pos => Util.DrawSprite(Textures.StrongEnemy, pos, 0, 1.0f))
+            };
+
+        public static ComponentRing<BehaviorComponent> MakeBehaviorRing()
+        {
+            return new ComponentRing<BehaviorComponent>(Behaviors);
+        }
+
+        public static ComponentRing<SeekerComponent> MakeSeekerRing()
+        {
+            return new ComponentRing<SeekerComponent>(Seekers);
+        }
+
+        public static ComponentRing<DamageComponent> MakeDamageRing()
+        {
+            return new ComponentRing<DamageComponent>(Damages);
+        }
+    }
 
     class TwirlyBehavior : BehaviorComponent
     {
