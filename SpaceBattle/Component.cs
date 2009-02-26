@@ -39,14 +39,15 @@ namespace SpaceBattle
         public static List<ComponentFactory<BehaviorComponent>> Behaviors = 
             new List<ComponentFactory<BehaviorComponent>> {
                 new ComponentFactory<BehaviorComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), pos => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, 1.0f)) 
+                new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), pos => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, 1.0f)),
+                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), pos => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, 1.0f))
             };
 
         public static List<ComponentFactory<SeekerComponent>> Seekers =
             new List<ComponentFactory<SeekerComponent>> {
                 new ComponentFactory<SeekerComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), pos => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<SeekerComponent>("FastSeeker", () => new FastSeeker(), pos => Util.DrawSprite(Textures.FastEnemy, pos, 0, 1.0f))
+                new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), pos => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 2.0f)),
+                new ComponentFactory<SeekerComponent>("FastSeeker", () => new FastSeeker(), pos => Util.DrawSprite(Textures.FastEnemy, pos, 0, 2.0f))
             };
 
         public static List<ComponentFactory<DamageComponent>> Damages =
@@ -91,6 +92,34 @@ namespace SpaceBattle
         public override BehaviorComponent Clone()
         {
             return new TwirlyBehavior();
+        }
+    }
+
+    class DodgeBehavior : BehaviorComponent
+    {
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.DodgeEnemy, self.position, 0, 1.0f);
+        }
+        public override void Update(float dt)
+        {
+            foreach (var actor in Util.Actors.ActorsNear(self.position, 2.5f))
+            {
+                Bullet b = actor as Bullet;
+                if (b != null)
+                {
+                    Vector2 veldir = b.Velocity;
+                    veldir.Normalize();
+                    Vector2 diffdir = self.position - b.Position;
+                    diffdir.Normalize();
+                    float cross = (float)Math.Abs(veldir.X * diffdir.Y - veldir.Y * diffdir.X);
+                    self.position += 4 * dt * cross * diffdir;
+                }
+            }
+        }
+        public override BehaviorComponent Clone()
+        {
+            return new DodgeBehavior();
         }
     }
 

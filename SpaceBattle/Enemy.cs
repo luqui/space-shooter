@@ -37,10 +37,12 @@ namespace SpaceBattle
 
         public Enemy Clone()
         {
-            return new Enemy(position, target, 
+            Enemy e = new Enemy(position, target, 
                 Behavior == null ? null : Behavior.Clone(), 
                 Seeker == null ? null : Seeker.Clone(), 
                 Damage == null ? null : Damage.Clone());
+            e.fadeIn = 0;
+            return e;
         }
 
         public override void Draw()
@@ -73,7 +75,7 @@ namespace SpaceBattle
 
         public override bool Dead { get { return dead; } }
         public override Vector2 Position { get { return position; } }
-        public override float Radius { get { return 0.50f; } }
+        public override float Radius { get { return 0.5f; } }
 
         public override void Collision(Actor other)
         {

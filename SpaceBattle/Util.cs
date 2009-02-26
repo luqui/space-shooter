@@ -39,12 +39,18 @@ namespace SpaceBattle
                 }
             }
 
-            actors.RemoveAll(v => v.Dead);
+            actors.RemoveAll(v => v.Dead || !Util.OnScreen(v.Position));
             actors.AddRange(backBuffer);
             backBuffer = new List<Actor>();
 
             foreach (var e in explosions) { e.Update(dt); }
             explosions.RemoveAll(v => v.Done);
+        }
+
+        public IEnumerable<Actor> ActorsNear(Vector2 pos, float radius)
+        {
+            // slooow, need quadtree
+            return actors.Where(a => (a.Position - pos).LengthSquared() < radius * radius);
         }
 
         public void Draw()
