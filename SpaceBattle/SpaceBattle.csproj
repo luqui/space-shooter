@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="Actor.cs" />
     <Compile Include="Bullet.cs" />
+    <Compile Include="Component.cs" />
     <Compile Include="EnemyFactory.cs" />
     <Compile Include="Enemy.cs" />
     <Compile Include="Explosion.cs" />
