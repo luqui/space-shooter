@@ -71,6 +71,7 @@ namespace SpaceBattle
 
         public override void Collision(Actor other)
         {
+            if (dead) return;
             if (Damage != null)
             {
                 Damage.OnHit(other);
@@ -83,6 +84,7 @@ namespace SpaceBattle
                     Util.RandomExplosion(position);
                 }
             }
+            if (dead) Util.EnemyDeath(position);
         }
 
         public void Absorb(Enemy other)

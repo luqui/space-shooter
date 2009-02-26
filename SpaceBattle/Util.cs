@@ -132,6 +132,14 @@ namespace SpaceBattle
         {
             return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDWIDTH/2 && pos.Y <= FIELDWIDTH/2;
         }
+
+        public static void EnemyDeath(Vector2 pos)
+        {
+            if (RANDOM.Next(29) == 0)
+            {
+                Actors.Add(PowerUps.RandomPowerup(pos));
+            }
+        }
     }
 
 }

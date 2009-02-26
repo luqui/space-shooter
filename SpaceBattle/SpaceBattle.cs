@@ -19,9 +19,6 @@ namespace SpaceBattle
         SpriteBatch spriteBatch;
         Matrix transform;
 
-        const float POWERUPTIMEOUT = 15.0f;
-        float powerupTimer = 5.0f;
-
         public SpaceBattle()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -68,13 +65,6 @@ namespace SpaceBattle
 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Util.Actors.Update(dt);
-
-            powerupTimer -= dt;
-            if (powerupTimer <= 0)
-            {
-                Util.Actors.Add(PowerUps.RandomPowerup(Util.RandomPosition()));
-                powerupTimer = POWERUPTIMEOUT;
-            }
 
             base.Update(gameTime);
         }
