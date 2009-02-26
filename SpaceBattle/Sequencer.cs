@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
 using System.Threading;
+using System.IO;
 
 namespace SpaceBattle
 {
@@ -32,9 +33,10 @@ namespace SpaceBattle
 
         public Sequencer()
         {
-            engine = new AudioEngine("Content\\Win\\Audio.xgs");
-            wavebank = new WaveBank(engine, "Content\\Win\\Wave Bank.xwb");
-            soundbank = new SoundBank(engine, "Content\\Win\\Sound Bank.xsb");
+            string prefix = Directory.Exists("Content\\Win") ? "Content\\Win" : "Content";
+            engine = new AudioEngine(prefix + "\\Audio.xgs");
+            wavebank = new WaveBank(engine, prefix + "\\Wave Bank.xwb");
+            soundbank = new SoundBank(engine, prefix + "\\Sound Bank.xsb");
 
             measure = new List<List<Beat>>();
             for (int i = 0; i < 16; i++)
