@@ -22,6 +22,7 @@ namespace SpaceBattle
             StrongEnemy = Content.Load<Texture2D>("StrongEnemy");
             TwirlyEnemy = Content.Load<Texture2D>("TwirlyEnemy");
             Particle = Content.Load<Texture2D>("Particle");
+            MineEnemy = Content.Load<Texture2D>("MineEnemy");
             Font = Content.Load<SpriteFont>("Font");
         }
         public static Texture2D FollowerEnemy;
@@ -36,6 +37,7 @@ namespace SpaceBattle
         public static Texture2D StrongEnemy;
         public static Texture2D TwirlyEnemy;
         public static Texture2D Particle;
+        public static Texture2D MineEnemy;
 
         public static SpriteFont Font;
     }

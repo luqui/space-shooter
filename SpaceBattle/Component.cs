@@ -29,7 +29,7 @@ namespace SpaceBattle
 
     abstract class DamageComponent : Component
     {
-        public abstract void OnHit(Bullet bullet);
+        public abstract void OnHit(Actor other);
         public abstract DamageComponent Clone();
     }
 
@@ -51,7 +51,8 @@ namespace SpaceBattle
             new List<ComponentFactory<DamageComponent>> {
                 new ComponentFactory<DamageComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
                 new ComponentFactory<DamageComponent>("Splitty", () => new SplittyDamage(), pos => Util.DrawSprite(Textures.SplittyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<DamageComponent>("Tough", () => new ToughDamage(), pos => Util.DrawSprite(Textures.StrongEnemy, pos, 0, 1.0f))
+                new ComponentFactory<DamageComponent>("Tough", () => new ToughDamage(), pos => Util.DrawSprite(Textures.StrongEnemy, pos, 0, 1.0f)),
+                new ComponentFactory<DamageComponent>("Mine", () => new MineDamage(), pos => Util.DrawSprite(Textures.MineEnemy, pos, 0, 1.0f))
             };
 
         public static ComponentRing<BehaviorComponent> MakeBehaviorRing()
@@ -115,8 +116,11 @@ namespace SpaceBattle
         {
             Util.DrawSprite(Textures.SplittyEnemy, self.position, 0, 1.0f);
         }
-        public override void OnHit(Bullet bullet)
+        public override void OnHit(Actor other)
         {
+            Bullet bullet = other as Bullet;
+            if (bullet == null) return;
+
             self.dead = true;
             bullet.SetDead();
             Enemy child1 = self.Clone(); child1.Damage = null;
@@ -147,8 +151,11 @@ namespace SpaceBattle
         {
             Util.DrawSprite(Textures.StrongEnemy, self.Position, 0, 1.0f);
         }
-        public override void OnHit(Bullet bullet)
+        public override void OnHit(Actor other)
         {
+            Bullet bullet = other as Bullet;
+            if (bullet == null) return;
+
             bullet.SetDead();
             hitPoints--;
             if (hitPoints <= 0)
@@ -160,6 +167,30 @@ namespace SpaceBattle
         public override DamageComponent Clone()
         {
             return new ToughDamage();  // keep damage?
+        }
+    }
+
+    class MineDamage : DamageComponent
+    {
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.MineEnemy, self.position, 0, 1.0f);
+        }
+        public override void OnHit(Actor other)
+        {
+            Enemy enemy = other as Enemy;
+            if (enemy != null)
+            {
+                if (enemy.Damage is MineDamage) return;
+                enemy.dead = true;
+                Util.RandomExplosion(enemy.position);
+            }
+            self.dead = true;
+            Util.RandomExplosion(self.position);
+        }
+        public override DamageComponent Clone()
+        {
+            return new MineDamage();
         }
     }
 }

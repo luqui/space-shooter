@@ -71,11 +71,13 @@ namespace SpaceBattle
 
         public override void Collision(Actor other)
         {
-            Bullet b = other as Bullet;
-            if (b != null) { 
-                if (Damage != null) Damage.OnHit(b);
-                else
-                {
+            if (Damage != null)
+            {
+                Damage.OnHit(other);
+            }
+            else {
+                Bullet b = other as Bullet;
+                if (b != null) { 
                     dead = true;
                     b.SetDead();
                     Util.RandomExplosion(position);
