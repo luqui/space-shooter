@@ -70,6 +70,7 @@ namespace SpaceBattle
         public static GraphicsDevice Device;
         public static SpriteBatch Batch;
         public static ActorList Actors;
+        public static Sequencer Sequencer;
 
         public static PlayerShip player1;
         public static PlayerShip player2;

@@ -21,6 +21,9 @@ namespace SpaceBattle
             if (Behavior != null) Behavior.Reassign(this);
             if (Seeker != null) Seeker.Reassign(this);
             if (Damage != null) Damage.Reassign(this);
+
+            int sid = Util.RANDOM.Next(8) + 1;
+            soundid = Util.Sequencer.Enqueue("bongo" + sid.ToString());
         }
 
         // only for use in components:
@@ -34,6 +37,8 @@ namespace SpaceBattle
         public SeekerComponent Seeker = null;
         public DamageComponent Damage = null;
         public float fadeIn = 2.0f;
+
+        SoundID soundid;
 
         public Enemy Clone()
         {
@@ -93,7 +98,11 @@ namespace SpaceBattle
                     Util.RandomExplosion(position);
                 }
             }
-            if (dead) Util.EnemyDeath(position);
+            if (dead)
+            {
+                Util.Sequencer.Dequeue(soundid);
+                Util.EnemyDeath(position);
+            }
         }
 
         public void Absorb(Enemy other)

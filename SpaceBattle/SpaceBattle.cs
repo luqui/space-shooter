@@ -45,6 +45,9 @@ namespace SpaceBattle
             spriteBatch = new SpriteBatch(GraphicsDevice);
             Util.Batch = spriteBatch;
             Textures.LoadContent(Content);
+            Util.Sequencer = new Sequencer();
+            Util.Sequencer.Start();
+
             Util.player1 = new PlayerShip(PlayerIndex.One);
             Util.player2 = new PlayerShip(PlayerIndex.Two);
 
