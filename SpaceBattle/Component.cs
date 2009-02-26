@@ -193,7 +193,7 @@ namespace SpaceBattle
         public override void OnHit(Actor other)
         {
             Bullet bullet = other as Bullet;
-            if (bullet == null) return;
+            if (bullet == null || bullet.Dead) return;
 
             self.dead = true;
             bullet.SetDead();
@@ -233,7 +233,7 @@ namespace SpaceBattle
         public override void OnHit(Actor other)
         {
             Bullet bullet = other as Bullet;
-            if (bullet == null) return;
+            if (bullet == null || bullet.Dead) return;
 
             bullet.SetDead();
             hitPoints--;
@@ -277,7 +277,7 @@ namespace SpaceBattle
             }
 
             Bullet b = other as Bullet;
-            if (b != null) { b.SetDead(); blowup = true;  }
+            if (b != null && !b.Dead) { b.SetDead(); blowup = true;  }
             if (blowup)
             {
                 Util.RandomExplosion(self.position);

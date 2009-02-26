@@ -101,7 +101,7 @@ namespace SpaceBattle
             }
             else {
                 Bullet b = other as Bullet;
-                if (b != null) { 
+                if (b != null && !b.Dead) { 
                     dead = true;
                     b.SetDead();
                     Util.RandomExplosion(position);
