@@ -185,6 +185,13 @@ namespace SpaceBattle
                 enemy.dead = true;
                 Util.RandomExplosion(enemy.position);
             }
+
+            Bullet bullet = other as Bullet;
+            if (bullet != null)
+            {
+                bullet.SetDead();
+            }
+
             self.dead = true;
             Util.RandomExplosion(self.position);
         }
