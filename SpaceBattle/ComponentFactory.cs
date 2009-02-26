@@ -41,10 +41,25 @@ namespace SpaceBattle
         List<Entry> buf;
         int index;
 
+        public int Index
+        {
+            get { return index; }
+            set
+            {
+                if (value < 0 || value >= buf.Count) throw new Exception("Index out of range!");
+                index = value;
+            }
+        }
+
         public ComponentRing(IEnumerable<ComponentFactory<T>> contents)
         {
             buf = new List<Entry>(contents.Select(f => new Entry(f, 0)));
             index = 0;
+        }
+
+        public bool Empty()
+        {
+            return buf.All(b => b.ammo == 0);
         }
 
         public void Next()
@@ -76,11 +91,14 @@ namespace SpaceBattle
 
         public void Draw(Vector2 pos, Vector2 stride)
         {
+            Vector2 offset = pos;
             for (int i = 0; i < buf.Count; i++)
             {
                 int j = (i + index) % buf.Count;
-                buf[j].factory.Draw(pos + i * stride);
-                Util.DrawText(pos + i * stride + new Vector2(1,0), buf[j].ammo.ToString());
+                if (buf[j].ammo == 0) continue;
+                buf[j].factory.Draw(offset);
+                Util.DrawText(offset + new Vector2(1,0), buf[j].ammo.ToString());
+                offset += stride;
             }
         }
 

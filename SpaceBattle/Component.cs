@@ -149,7 +149,8 @@ namespace SpaceBattle
 
         public override void Draw()
         {
-            Util.DrawSprite(Textures.StrongEnemy, self.Position, 0, 1.0f);
+            float size = 0.25f * hitPoints + 0.5f;
+            Util.DrawSprite(Textures.StrongEnemy, self.Position, 0, size);
         }
         public override void OnHit(Actor other)
         {

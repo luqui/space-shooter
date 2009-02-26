@@ -27,6 +27,8 @@ namespace SpaceBattle
 
         int lives;
 
+        int[,] storage;
+
         float bulletTimeout = 0.0f;
 
         const float BULLETTIME = 0.1f;
@@ -38,6 +40,7 @@ namespace SpaceBattle
         public PlayerShip(PlayerIndex player) { 
             this.player = player;
             lives = 5;
+            storage = new int[8, 3];
 
             lastState = new GamePadState();
 
@@ -53,6 +56,22 @@ namespace SpaceBattle
             }
         }
 
+        void ResetAmmo()
+        {
+            if (!behaviors.Empty())
+            {
+                while (behaviors.Ammo == 0) { behaviors.Next(); }
+            }
+            if (!seekers.Empty())
+            {
+                while (seekers.Ammo == 0) { seekers.Next(); }
+            }
+            if (!damages.Empty())
+            {
+                while (damages.Ammo == 0) { damages.Next(); }
+            }
+        }
+
         public override void Update(float dt)
         {
             velocity = SPEED * GamePad.GetState(player).ThumbSticks.Left;
@@ -62,9 +81,10 @@ namespace SpaceBattle
             Func<Func<GamePadButtons, ButtonState>, bool> pressed = f => 
                 f(lastState.Buttons) == ButtonState.Released && f(input.Buttons) == ButtonState.Pressed;
 
-            if (pressed(i => i.Y)) { behaviors.Next(); }
-            if (pressed(i => i.X)) { seekers.Next(); }
-            if (pressed(i => i.A)) { damages.Next(); }
+            bool resetAmmo = false;
+            if (pressed(i => i.Y)) { resetAmmo = true; behaviors.Next(); }
+            if (pressed(i => i.X)) { resetAmmo = true; seekers.Next(); }
+            if (pressed(i => i.A)) { resetAmmo = true; damages.Next(); }
 
             bulletTimeout -= dt;
             Vector2 dir = input.ThumbSticks.Right;
@@ -80,6 +100,7 @@ namespace SpaceBattle
                         Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
                         Util.Actors.Add(e);
                         bulletTimeout = BULLETTIME;
+                        resetAmmo = true;
                     }
                 }
                 else if (input.Triggers.Right > 0.5f && bulletTimeout <= 0)
@@ -89,7 +110,48 @@ namespace SpaceBattle
                 }
             }
 
+            int dpad = DPadDirection(input);
+            if (input.Buttons.RightShoulder == ButtonState.Pressed)
+            {
+                if (dpad > 0)
+                {
+                    storage[dpad, 0] = behaviors.Index;
+                    storage[dpad, 1] = seekers.Index;
+                    storage[dpad, 2] = damages.Index;
+                }
+            }
+            else
+            {
+                if (dpad > 0)
+                {
+                    behaviors.Index = storage[dpad, 0];
+                    seekers.Index = storage[dpad, 1];
+                    damages.Index = storage[dpad, 2];
+                }
+            }
+
+            if (resetAmmo) ResetAmmo();
             lastState = input;
+        }
+
+        int DPadDirection(GamePadState input)
+        {
+            bool u = input.DPad.Up == ButtonState.Pressed;
+            bool d = input.DPad.Down == ButtonState.Pressed;
+            bool l = input.DPad.Left == ButtonState.Pressed;
+            bool r = input.DPad.Right == ButtonState.Pressed;
+
+            // starting from top, clockwise: 0-7
+            int dir =
+                u && l ? 7 :
+                u && r ? 1 :
+                d && r ? 3 :
+                d && l ? 5 :
+                u ? 0 :
+                r ? 2 :
+                d ? 4 :
+                l ? 6 : -1;
+            return dir;
         }
 
         public override void Draw()
@@ -149,6 +211,7 @@ namespace SpaceBattle
             behaviors.Add(e, amount);
             seekers.Add(e, amount);
             damages.Add(e, amount);
+            ResetAmmo();
         }
     }
 }

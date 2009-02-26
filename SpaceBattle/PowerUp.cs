@@ -47,9 +47,9 @@ namespace SpaceBattle
         public static PowerUp RandomPowerup(Vector2 position)
         {
             List<ComponentFactory> factories = new List<ComponentFactory>();
-            factories.AddRange(Components.Behaviors.Cast<ComponentFactory>());
-            factories.AddRange(Components.Seekers.Cast<ComponentFactory>());
-            factories.AddRange(Components.Damages.Cast<ComponentFactory>());
+            factories.AddRange(Components.Behaviors.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
+            factories.AddRange(Components.Seekers.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
+            factories.AddRange(Components.Damages.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
 
             ComponentFactory f = factories[Util.RANDOM.Next(factories.Count)];
             int amount = Util.RANDOM.Next(10)+5;
