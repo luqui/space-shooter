@@ -262,20 +262,27 @@ namespace SpaceBattle
         public override void OnHit(Actor other)
         {
             Enemy enemy = other as Enemy;
-            if (enemy != null)
-            {
-                if (enemy.Damage is MineDamage) return;
-                enemy.Collision(new Bullet(enemy.Position, 18*(enemy.Position - self.position)/(enemy.Position - self.Position).Length()));
+            if (enemy != null && enemy.Damage is MineDamage) return;
+
+            bool blowup = false;
+            foreach (var actor in Util.Actors.ActorsNear(self.position, 2.5f)) {
+                Enemy e = actor as Enemy;
+                if (e != null && !e.dead)
+                {
+                    e.dead = true;
+                    Util.EnemyDeath(e.position);
+                    Util.RandomExplosion(e.position);
+                    blowup = true;
+                }
             }
 
-            Bullet bullet = other as Bullet;
-            if (bullet != null)
+            Bullet b = other as Bullet;
+            if (b != null) { b.SetDead(); blowup = true;  }
+            if (blowup)
             {
-                bullet.SetDead();
+                Util.RandomExplosion(self.position);
+                self.dead = true;
             }
-
-            self.dead = true;
-            Util.RandomExplosion(self.position);
         }
         public override DamageComponent Clone()
         {
