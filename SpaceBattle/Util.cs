@@ -95,6 +95,7 @@ namespace SpaceBattle
         public static SpriteBatch Batch;
         public static ActorList Actors;
         public static Sequencer Sequencer;
+        public static Scheduler Scheduler;
 
         public static PlayerShip player1;
         public static PlayerShip player2;

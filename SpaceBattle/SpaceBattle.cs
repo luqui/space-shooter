@@ -49,6 +49,7 @@ namespace SpaceBattle
             Textures.LoadContent(Content);
             Util.Sequencer = new Sequencer();
             Util.Sequencer.Start();
+            Util.Scheduler = new Scheduler();
 
             Util.player1 = new PlayerShip(PlayerIndex.One);
             Util.player2 = new PlayerShip(PlayerIndex.Two);
@@ -71,6 +72,7 @@ namespace SpaceBattle
 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Util.Actors.Update(dt);
+            Util.Scheduler.Update(dt);
 
             base.Update(gameTime);
         }

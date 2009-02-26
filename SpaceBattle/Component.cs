@@ -278,7 +278,13 @@ namespace SpaceBattle
             self.dead = true;
             Util.RandomExplosion(self.position);
             List<Actor> deaths = new List<Actor>(Util.Actors.ActorsNear(self.position, 2.5f).Where(a => a != self));
-            foreach (var a in deaths) { a.Die(); }
+            Util.Scheduler.Enqueue(0.1f, () =>
+            {
+                foreach (var a in deaths)
+                {
+                    a.Die();
+                }
+            });
         }
         public override DamageComponent Clone()
         {
