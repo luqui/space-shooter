@@ -160,6 +160,7 @@ namespace SpaceBattle
         {
             if (RANDOM.Next(19) == 0)
             {
+                Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
                 Actors.Add(PowerUps.RandomPowerup(pos));
             }
         }

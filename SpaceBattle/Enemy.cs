@@ -54,6 +54,11 @@ namespace SpaceBattle
             if (Damage != null) { Damage.Start(); }
         }
 
+        public override void Finish()
+        {
+            foreach (var id in soundids) { Util.Sequencer.Dequeue(id); }
+        }
+
         public override void Draw()
         {
             float prealpha = Util.AlphaHack;
@@ -104,7 +109,6 @@ namespace SpaceBattle
             }
             if (dead)
             {
-                foreach (var id in soundids) { Util.Sequencer.Dequeue(id); }
                 Util.EnemyDeath(position);
             }
         }

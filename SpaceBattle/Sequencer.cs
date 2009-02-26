@@ -54,15 +54,20 @@ namespace SpaceBattle
             timer.Dispose();
         }
 
+        public void PlayOnce(string sound)
+        {
+            lock (mutex)
+            {
+                soundbank.PlayCue(sound);
+            }
+        }
+
         public SoundID Enqueue(string sound)
         {
             SoundID id = new SoundID();
             lock (mutex)
             {
-                if (!measure[semidemi].Any(i => i.cue == sound))
-                {
-                    measure[semidemi].Add(new Beat(id, sound));
-                }
+                measure[semidemi].Add(new Beat(id, sound));
             }
             return id;
         }
@@ -106,6 +111,7 @@ namespace SpaceBattle
         public static string[] Tambourine = { "tambo1", "tambo2", "tambo3", "tambo4", "tambo5", "tambo6", "tambo7", "tambo8", "tambo9", "tambo10" };
         public static string[] Triangle = { "tri2", "tri3", "tri4", "tri5" };
         public static string[] Woodblock = { "woodblock1", "woodblock2", "woodpop1", "woodpop2" };
+        public static string[] Crash = { "crash1", "crash2", "crash3", "crash4", "crash5", "crash6", "crash7", "crash8", "crash9", "crash10" };
 
         public static string Select(string[] data)
         {
