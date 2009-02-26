@@ -33,6 +33,7 @@ namespace SpaceBattle
         public BehaviorComponent Behavior = null;
         public SeekerComponent Seeker = null;
         public DamageComponent Damage = null;
+        public float fadeIn = 2.0f;
 
         public Enemy Clone()
         {
@@ -44,6 +45,8 @@ namespace SpaceBattle
 
         public override void Draw()
         {
+            float prealpha = Util.AlphaHack;
+            if (fadeIn > 0) { Util.AlphaHack = 1 - fadeIn / 2; }
             if (Behavior == null && Seeker == null && Damage == null)
             {
                 Util.DrawSprite(Textures.EmptyEnemy, position, 0, 1.0f);
@@ -54,10 +57,13 @@ namespace SpaceBattle
                 if (Seeker != null) Seeker.Draw();
                 if (Damage != null) Damage.Draw();
             }
+            Util.AlphaHack = prealpha;
         }
 
         public override void Update(float dt)
         {
+            fadeIn -= dt;
+            if (fadeIn > 0) return;
             if (Behavior != null) Behavior.Update(dt);
             if (Seeker != null) Seeker.Update(dt); 
             velocity += dt * accel;
@@ -71,6 +77,7 @@ namespace SpaceBattle
 
         public override void Collision(Actor other)
         {
+            if (fadeIn > 0) return;
             if (dead) return;
             if (Damage != null)
             {
