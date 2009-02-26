@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 
 namespace SpaceBattle
 {
@@ -44,7 +45,8 @@ namespace SpaceBattle
         public static List<ComponentFactory<SeekerComponent>> Seekers =
             new List<ComponentFactory<SeekerComponent>> {
                 new ComponentFactory<SeekerComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), pos => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 1.0f)) 
+                new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), pos => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 1.0f)),
+                new ComponentFactory<SeekerComponent>("FastSeeker", () => new FastSeeker(), pos => Util.DrawSprite(Textures.FastEnemy, pos, 0, 1.0f))
             };
 
         public static List<ComponentFactory<DamageComponent>> Damages =
@@ -107,6 +109,37 @@ namespace SpaceBattle
         public override SeekerComponent Clone()
         {
             return new SlinkTowardSeeker();
+        }
+    }
+
+    class FastSeeker : SeekerComponent
+    {
+        public override void Draw()
+        {
+            float rot = (float)(Math.Atan2(self.velocity.Y, self.velocity.X) - Math.PI / 2);
+            Util.DrawSprite(Textures.FastEnemy, self.position, rot, 1.0f);
+        }
+        public override void Update(float dt)
+        {
+            Vector2 dir = self.velocity;
+            Vector2 tdir = self.target.Position - self.position;
+            if (dir.LengthSquared() == 0) { dir = tdir; }
+            dir.Normalize();
+            tdir.Normalize();
+
+            float scale = (float)Math.Abs(Vector2.Dot(dir, tdir));
+            if (scale < 0.2f)
+            {
+                self.accel += tdir - 5 * self.velocity;
+            }
+            else
+            {
+                self.accel += 5 * tdir * scale;
+            }
+        }
+        public override SeekerComponent Clone()
+        {
+            return new FastSeeker();
         }
     }
 

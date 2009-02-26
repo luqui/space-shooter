@@ -33,7 +33,7 @@ namespace SpaceBattle
     {
         class Entry
         {
-            public Entry(ComponentFactory<T> f, int a) { factory = f; ammo = a; }
+            public Entry(ComponentFactory<T> f, int a) { factory = f; ammo = 0; }
             public ComponentFactory<T> factory;
             public int ammo;
         };

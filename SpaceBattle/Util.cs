@@ -138,7 +138,7 @@ namespace SpaceBattle
 
         public static void EnemyDeath(Vector2 pos)
         {
-            if (RANDOM.Next(29) == 0)
+            if (RANDOM.Next(19) == 0)
             {
                 Actors.Add(PowerUps.RandomPowerup(pos));
             }
