@@ -74,7 +74,18 @@ namespace SpaceBattle
 
         public void Reset()
         {
-            actors.RemoveAll(v => !(v is PlayerShip));
+            actors.RemoveAll(v =>
+            {
+                if (!(v is PlayerShip))
+                {
+                    v.Finish();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            });
         }
     }
 

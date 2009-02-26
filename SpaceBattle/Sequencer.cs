@@ -112,6 +112,7 @@ namespace SpaceBattle
         public static string[] Triangle = { "tri2", "tri3", "tri4", "tri5" };
         public static string[] Woodblock = { "woodblock1", "woodblock2", "woodpop1", "woodpop2" };
         public static string[] Crash = { "crash1", "crash2", "crash3", "crash4", "crash5", "crash6", "crash7", "crash8", "crash9", "crash10" };
+        public static string[] Gong = { "gong1", "gong2", "gong3", "gong4" };
 
         public static string Select(string[] data)
         {
