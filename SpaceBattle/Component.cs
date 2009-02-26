@@ -105,16 +105,11 @@ namespace SpaceBattle
         {
             foreach (var actor in Util.Actors.ActorsNear(self.position, 2.5f))
             {
-                Bullet b = actor as Bullet;
-                if (b != null)
-                {
-                    Vector2 veldir = b.Velocity;
-                    veldir.Normalize();
-                    Vector2 diffdir = self.position - b.Position;
-                    diffdir.Normalize();
-                    float cross = (float)Math.Abs(veldir.X * diffdir.Y - veldir.Y * diffdir.X);
-                    self.position += 4 * dt * cross * diffdir;
-                }
+                if (actor == self) continue;
+                Vector2 diffdir = self.position - actor.Position;
+                diffdir.Normalize();
+                if (actor == self.target) diffdir = -diffdir;
+                self.position += 3 * dt * diffdir;
             }
         }
         public override BehaviorComponent Clone()
@@ -245,8 +240,7 @@ namespace SpaceBattle
             if (enemy != null)
             {
                 if (enemy.Damage is MineDamage) return;
-                enemy.dead = true;
-                Util.RandomExplosion(enemy.position);
+                enemy.Collision(new Bullet(enemy.Position, 18*(enemy.Position - self.position)/(enemy.Position - self.Position).Length()));
             }
 
             Bullet bullet = other as Bullet;
