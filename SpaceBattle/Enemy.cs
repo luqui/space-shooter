@@ -24,6 +24,7 @@ namespace SpaceBattle
         }
 
         public const float FADEINTIME = 2.0f;
+        float upgrade = 0;
 
         // only for use in components:
         public Vector2 position;
@@ -91,6 +92,20 @@ namespace SpaceBattle
             velocity += dt * accel;
             position += dt * velocity;
             accel = new Vector2();
+
+            upgrade += dt;
+            if (upgrade >= 60)
+            {
+                upgrade -= 60;
+                List<ComponentFactory> factories = new List<ComponentFactory>();
+                factories.AddRange(Components.Behaviors.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
+                factories.AddRange(Components.Seekers.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
+                factories.AddRange(Components.Damages.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
+                ComponentFactory f = factories[Util.RANDOM.Next(factories.Count)];
+                if (Behavior == null && f is ComponentFactory<BehaviorComponent>) { Behavior = ((ComponentFactory<BehaviorComponent>)f).Spawn(); Behavior.Reassign(this); Behavior.Start(); }
+                if (Seeker == null && f is ComponentFactory<SeekerComponent>) { Seeker = ((ComponentFactory<SeekerComponent>)f).Spawn(); Seeker.Reassign(this); Seeker.Start();  }
+                if (Damage == null && f is ComponentFactory<DamageComponent>) { Damage = ((ComponentFactory<DamageComponent>)f).Spawn(); Damage.Reassign(this); Damage.Start(); }
+            }
         }
 
         public override bool Dead { get { return dead; } }

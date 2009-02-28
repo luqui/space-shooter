@@ -32,6 +32,7 @@ namespace SpaceBattle
         int semidemi = 0;
         int measures = 0;
         int bpm = 100;
+        bool played_this_measure = false;
 
         public Sequencer()
         {
@@ -47,6 +48,18 @@ namespace SpaceBattle
             }
 
             mutex = new Mutex();
+        }
+
+        public Cue StartCue(string name)
+        {
+            Cue ret = soundbank.GetCue(name);
+            ret.Play();
+            return ret;
+        }
+
+        public void StopCue(Cue cue)
+        {
+            cue.Stop(AudioStopOptions.Immediate);
         }
 
         public void Start()
@@ -94,13 +107,14 @@ namespace SpaceBattle
                 foreach (var i in measure[semidemi])
                 {
                     soundbank.PlayCue(i.cue);
+                    played_this_measure = true;
                 }
 
                 semidemi++;
                 if (semidemi == measure.Count)
                 {
                     semidemi = 0;
-                    // every 64 measures, change the meter.
+                    // every 64 measures, change the meter, up the tempo
                     measures++;
                     if (measures == 64)
                     {
@@ -108,11 +122,18 @@ namespace SpaceBattle
                         int newsize = (Util.RANDOM.Next(2) + 3) * (Util.RANDOM.Next(3) + 3);
                         while (measure.Count < newsize) { measure.Add(new List<Beat>()); }
                         while (measure.Count > newsize) { measure.RemoveAt(0); }
-                        bpm = Util.RANDOM.Next(50) + 80;
+                        bpm += Util.RANDOM.Next(15);
+                        if (bpm > 140) bpm = 80;  // yikes that's fast
                         timer.Change(0, 15000 / bpm);
                     }
+                    if (!played_this_measure)
+                    {
+                        // a measure of silence means we can change it up
+                        bpm = Util.RANDOM.Next(30) + 80;
+                        timer.Change(0, 15000 / bpm);
+                    }
+                    played_this_measure = false;
                 }
-                semidemi %= measure.Count;
                 engine.Update();
             }
         }
@@ -134,6 +155,7 @@ namespace SpaceBattle
         public static string[] Crash = { "crash1", "crash2", "crash3", "crash4", "crash5", "crash6", "crash7", "crash8", "crash9", "crash10" };
         public static string[] Gong = { "gong1", "gong2", "gong3", "gong4" };
         public static string[] Tabla = { "tabla1", "tabla2", "tabla3", "tabla4", "tabla5", "tabla6", "tabla7", "tabla8", "tabla9", "tabla10", "tabla11", "tabla12", "tabla13", "tabla14" };
+        public static string[] SingingBowl = { "singingbowl1", "singingbowl2", "singingbowl3" };
 
         public static T Select<T>(T[] data)
         {

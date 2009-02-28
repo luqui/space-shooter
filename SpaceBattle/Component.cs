@@ -141,6 +141,7 @@ namespace SpaceBattle
     class RingBehavior : BehaviorComponent
     {
         bool started = false;
+        Microsoft.Xna.Framework.Audio.Cue soundid;
         public override void Draw()
         {
             Util.DrawSprite(Textures.RingEnemy, self.position, 0, 6.0f);
@@ -159,9 +160,11 @@ namespace SpaceBattle
         }
         public override void Start()
         {
+            soundid = Util.Sequencer.StartCue(Sounds.Select(Sounds.SingingBowl));
         }
         public override void Finish()
         {
+            Util.Sequencer.StopCue(soundid);
             if (started)
             {
                 Util.Actors.RemoveRing(self);

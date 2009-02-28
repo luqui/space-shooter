@@ -42,9 +42,16 @@ namespace SpaceBattle
                 float ringstrength = 0;
                 foreach (var r in rings) {
                     if (a == r) continue;
-                    ringstrength += 4 / (a.Position - r.Position).LengthSquared();
+                    ringstrength += 4 / ((a.Position - r.Position).LengthSquared() + 0.01f);
                 }
-                a.Update(dt / (1+ringstrength));
+                if (Util.MODE == Util.Mode.OnePlayer)
+                {
+                    a.Update(dt * (1 + ringstrength/16));
+                }
+                else
+                {
+                    a.Update(dt / (1 + ringstrength));
+                }
             }
 
             for (int i = 0; i < actors.Count; i++) {

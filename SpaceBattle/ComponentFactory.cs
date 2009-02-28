@@ -53,7 +53,7 @@ namespace SpaceBattle
 
         public ComponentRing(IEnumerable<ComponentFactory<T>> contents)
         {
-            buf = new List<Entry>(contents.Select(f => new Entry(f, 10)));
+            buf = new List<Entry>(contents.Select(f => new Entry(f, 0)));
             index = 0;
         }
 
