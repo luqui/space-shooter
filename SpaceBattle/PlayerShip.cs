@@ -32,8 +32,9 @@ namespace SpaceBattle
 
         float bulletTimeout = 0.0f;
         float enemyTimeout = 0.0f;
+        float shotrate = 0.1f;
+        int numshots = 1;
 
-        const float BULLETTIME = 0.1f;
         const float ENEMYTIME = 0.1f;
         const float SPEED = 5.0f;
         const float BULLETSPEED = 18.0f;
@@ -91,6 +92,9 @@ namespace SpaceBattle
 
             bulletTimeout -= dt;
             enemyTimeout -= dt;
+            int shots = 0;
+
+            while (bulletTimeout <= 0) { shots++; bulletTimeout += dt; }
 
             Vector2 dir = input.ThumbSticks.Right;
             if (dir.LengthSquared() > 0.125f)
@@ -111,10 +115,23 @@ namespace SpaceBattle
                         resetAmmo = true;
                     }
                 }
-                if (bulletShoot && bulletTimeout <= 0)
+
+                float offset = 1.2f;
+                for (int shot = 0; shot < shots; shot++)
                 {
-                    Util.Actors.Add(new Bullet(position + (1.2f * dir / dir.Length()), BULLETSPEED * dir));
-                    bulletTimeout = BULLETTIME;
+                    bulletTimeout += shotrate;
+                    if (bulletShoot)
+                    {
+                        float thetastep = 5 * (float)Math.PI / 180;
+                        float theta = (float)Math.Atan2(dir.Y, dir.X) - numshots * thetastep / 2;
+                        for (int i = 0; i < numshots; i++)
+                        {
+                            Vector2 dir2 = new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta));
+                            Util.Actors.Add(new Bullet(position + offset * dir2, BULLETSPEED * dir2));
+                            theta += thetastep;
+                        }
+                        offset += 0.3f;
+                    }
                 }
             }
 
@@ -237,6 +254,18 @@ namespace SpaceBattle
             seekers.Add(e, amount);
             damages.Add(e, amount);
             ResetAmmo();
+        }
+
+        public void FasterShots()
+        {
+            shotrate *= 0.8f;
+            Util.Scheduler.Enqueue(30, () => shotrate /= 0.8f);
+        }
+
+        public void MoreShots()
+        {
+            numshots++;
+            Util.Scheduler.Enqueue(30, () => numshots--);
         }
     }
 }

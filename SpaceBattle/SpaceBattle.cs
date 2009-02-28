@@ -74,7 +74,7 @@ namespace SpaceBattle
         }
 
         float emptyTimer = 0.0f;
-        float scoreTimer = 10.0f;
+        float scoreTimer = 0.0f;
 
         protected override void Update(GameTime gameTime)
         {

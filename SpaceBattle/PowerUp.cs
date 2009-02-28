@@ -57,7 +57,7 @@ namespace SpaceBattle
             factories.AddRange(Components.Damages.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
 
             ComponentFactory f = factories[Util.RANDOM.Next(factories.Count)];
-            int amount = Util.RANDOM.Next(10)+5;
+            int amount = Util.RANDOM.Next(10) + 5;
             Action<Vector2> draw = v =>
             {
                 f.Draw(v);

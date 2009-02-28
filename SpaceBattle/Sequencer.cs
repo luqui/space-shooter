@@ -30,6 +30,7 @@ namespace SpaceBattle
 
         List<List<Beat>> measure;
         int semidemi = 0;
+        int measures = 0;
 
         public Sequencer()
         {
@@ -95,6 +96,19 @@ namespace SpaceBattle
                 }
 
                 semidemi++;
+                if (semidemi == measure.Count)
+                {
+                    semidemi = 0;
+                    // every 64 measures, change the meter.
+                    measures++;
+                    if (measures == 64)
+                    {
+                        measures = 0;
+                        int newsize = (Util.RANDOM.Next(2) + 3) * (Util.RANDOM.Next(3) + 3);
+                        while (measure.Count < newsize) { measure.Add(new List<Beat>()); }
+                        while (measure.Count > newsize) { measure.RemoveAt(0); }
+                    }
+                }
                 semidemi %= measure.Count;
                 engine.Update();
             }

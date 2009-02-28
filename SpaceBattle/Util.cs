@@ -107,6 +107,7 @@ namespace SpaceBattle
         public static Mode MODE = Mode.OnePlayer;
 
         public static int SCORE = 0;
+        public static int BLANKS = 0;
 
         public static Random RANDOM = new Random();
 
@@ -177,8 +178,24 @@ namespace SpaceBattle
         {
             if (RANDOM.Next(11) == 0)
             {
-                Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
-                Actors.Add(PowerUps.RandomPowerup(MODE == Mode.OnePlayer ? player1.Position : pos));
+                int sel = RANDOM.Next(25);
+                if (sel <= 22)
+                {
+                    Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
+                    Actors.Add(PowerUps.RandomPowerup(MODE == Mode.OnePlayer ? player1.Position : pos));
+                }
+                else if (sel == 23)
+                {
+                    Sequencer.PlayOnce("tri1");
+                    Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RatePowerup, v, 0, 1.0f),
+                                       pos, ship => ship.FasterShots()));
+                }
+                else if (sel == 24)
+                {
+                    Sequencer.PlayOnce("tri3");
+                    Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1.0f),
+                                       pos, ship => ship.MoreShots()));
+                }
             }
         }
     }

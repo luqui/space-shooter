@@ -53,11 +53,13 @@ namespace SpaceBattle
             if (Behavior != null) { Behavior.Start(); }
             if (Seeker != null) { Seeker.Start(); }
             if (Damage != null) { Damage.Start(); }
+            if (Behavior == null && Seeker == null && Damage == null) { Util.BLANKS++; }
         }
 
         public override void Finish()
         {
             foreach (var id in soundids) { Util.Sequencer.Dequeue(id); }
+            if (Behavior == null && Seeker == null && Damage == null) { Util.BLANKS--; }
         }
 
         public override void Draw()

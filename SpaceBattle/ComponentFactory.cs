@@ -109,6 +109,7 @@ namespace SpaceBattle
                 if (s.factory.Name == id)
                 {
                     s.ammo += amount;
+                    if (s.ammo > 99) s.ammo = 99;
                     break;
                 }
             }
