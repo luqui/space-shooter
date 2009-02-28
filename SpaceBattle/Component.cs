@@ -103,6 +103,7 @@ namespace SpaceBattle
 
     class DodgeBehavior : BehaviorComponent
     {
+        const float SPEED = 3.0f;
         public override void Draw()
         {
             Util.DrawSprite(Textures.DodgeEnemy, self.position, 0, 1.0f);
@@ -115,8 +116,12 @@ namespace SpaceBattle
                 Vector2 diffdir = self.position - actor.Position;
                 diffdir.Normalize();
                 if (actor == self.target) diffdir = -diffdir;
-                self.position += 3 * dt * diffdir;
+                self.position += SPEED * dt * diffdir;
             }
+            if (self.position.X - 2.5f < -Util.FIELDWIDTH / 2) { self.position.X += SPEED * dt; }
+            if (self.position.X + 2.5f > Util.FIELDWIDTH / 2) { self.position.X -= SPEED * dt; }
+            if (self.position.Y - 2.5f < -Util.FIELDHEIGHT / 2) { self.position.Y += SPEED * dt; }
+            if (self.position.Y + 2.5f > Util.FIELDHEIGHT / 2) { self.position.Y -= SPEED * dt; }
         }
         public override BehaviorComponent Clone()
         {
