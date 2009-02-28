@@ -94,12 +94,15 @@ namespace SpaceBattle
             Vector2 dir = input.ThumbSticks.Right;
             if (dir.LengthSquared() > 0.125f)
             {
-                var pos = position + TRIGGERLENGTH * dir;
-                var other = Util.GetPlayer(Util.OtherPlayer(player));
+                bool enemyShoot = Util.MODE == Util.Mode.OnePlayer ? true : input.Triggers.Left > 0.5f;
+                bool bulletShoot = Util.MODE == Util.Mode.OnePlayer ? true : input.Triggers.Right > 0.5f;
 
-                if (input.Triggers.Left > 0.5f && enemyTimeout <= 0)
+                var pos = Util.MODE == Util.Mode.OnePlayer ? position - TRIGGERLENGTH * dir : position + TRIGGERLENGTH * dir;
+                var other = Util.MODE == Util.Mode.OnePlayer ? this : Util.GetPlayer(Util.OtherPlayer(player));
+
+                if (enemyShoot && enemyTimeout <= 0)
                 {
-                    if (behaviors.Ammo > 0 && seekers.Ammo > 0 && damages.Ammo > 0)
+                    if (behaviors.Ammo > 0 && seekers.Ammo > 0 && damages.Ammo > 0 && Util.OnScreen(pos))
                     {
                         Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
                         Util.Actors.Add(e);
@@ -107,12 +110,13 @@ namespace SpaceBattle
                         resetAmmo = true;
                     }
                 }
-                if (input.Triggers.Right > 0.5f && bulletTimeout <= 0)
+                if (bulletShoot && bulletTimeout <= 0)
                 {
                     Util.Actors.Add(new Bullet(position + (1.2f * dir / dir.Length()), BULLETSPEED * dir));
                     bulletTimeout = BULLETTIME;
                 }
             }
+
 
             int dpad = DPadDirection(input);
             if (input.Buttons.RightShoulder == ButtonState.Pressed)
@@ -204,7 +208,10 @@ namespace SpaceBattle
             Bullet b = other as Bullet;
             if (b != null) { 
                 b.Die();
-                Util.GetPlayer(Util.OtherPlayer(player)).Equip("Empty", 1);
+                if (Util.MODE == Util.Mode.TwoPlayer)
+                {
+                    Util.GetPlayer(Util.OtherPlayer(player)).Equip("Empty", 1);
+                }
             }
 
             Enemy e = other as Enemy;

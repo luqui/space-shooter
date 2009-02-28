@@ -103,6 +103,11 @@ namespace SpaceBattle
         public const float FIELDWIDTH = 28.0f;
         public const float FIELDHEIGHT = 21.0f;
 
+        public enum Mode { OnePlayer, TwoPlayer };
+        public static Mode MODE = Mode.OnePlayer;
+
+        public static int SCORE = 0;
+
         public static Random RANDOM = new Random();
 
         public static Vector2 RandomPosition()
@@ -173,8 +178,9 @@ namespace SpaceBattle
             if (RANDOM.Next(11) == 0)
             {
                 Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
-                Actors.Add(PowerUps.RandomPowerup(pos));
+                Actors.Add(PowerUps.RandomPowerup(MODE == Mode.OnePlayer ? player1.Position : pos));
             }
+            SCORE++;
         }
     }
 

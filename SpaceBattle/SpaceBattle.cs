@@ -28,6 +28,15 @@ namespace SpaceBattle
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
 #endif
+            var result = System.Windows.Forms.MessageBox.Show("Two player mode?", "Mode selection", System.Windows.Forms.MessageBoxButtons.YesNo);
+            if (result == System.Windows.Forms.DialogResult.Yes)
+            {
+                Util.MODE = Util.Mode.TwoPlayer;
+            }
+            else
+            {
+                Util.MODE = Util.Mode.OnePlayer;
+            }
         }
 
         protected override void Initialize()
@@ -56,13 +65,16 @@ namespace SpaceBattle
 
             Util.Actors = new ActorList();
             Util.Actors.Add(Util.player1);
-            Util.Actors.Add(Util.player2);
+            if (Util.MODE == Util.Mode.TwoPlayer) { Util.Actors.Add(Util.player2); }
             Util.Reset();
         }
 
         protected override void UnloadContent()
         {
         }
+
+        float emptyTimer = 0.0f;
+        float scoreTimer = 10.0f;
 
         protected override void Update(GameTime gameTime)
         {
@@ -74,6 +86,23 @@ namespace SpaceBattle
             Util.Actors.Update(dt);
             Util.Scheduler.Update(dt);
 
+            if (Util.MODE == Util.Mode.OnePlayer)
+            {
+                emptyTimer -= dt;
+                while (emptyTimer < 0)
+                {
+                    emptyTimer += 0.25f;
+                    Util.player1.Equip("Empty", 1);
+                }
+
+                scoreTimer -= dt;
+                while (scoreTimer < 0)
+                {
+                    scoreTimer += 0.35f;
+                    Util.SCORE--;
+                }
+            }
+
             base.Update(gameTime);
         }
 
@@ -83,6 +112,10 @@ namespace SpaceBattle
 
             spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.Immediate, SaveStateMode.SaveState, transform);
             Util.Actors.Draw();
+            if (Util.MODE == Util.Mode.OnePlayer)
+            {
+                Util.DrawText(new Vector2(0, Util.FIELDHEIGHT / 2-1), Util.SCORE.ToString());
+            }
             spriteBatch.End();
 
             base.Draw(gameTime);
