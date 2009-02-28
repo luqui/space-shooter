@@ -115,6 +115,8 @@ namespace SpaceBattle
             {
                 if (actor == self) continue;
                 Vector2 diffdir = self.position - actor.Position;
+                if (diffdir.LengthSquared() == 0)
+                    diffdir = new Vector2(Util.RandRange(-1, 1), Util.RandRange(-1, 1));
                 diffdir.Normalize();
                 if (actor == self.target) diffdir = -diffdir;
                 self.position += SPEED * dt * diffdir;
