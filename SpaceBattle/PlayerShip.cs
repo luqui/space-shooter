@@ -15,6 +15,7 @@ namespace SpaceBattle
         public override bool Dead { get { return false; } }
         public override float Radius { get { return 0.50f; } }
         Vector2 velocity;
+        public Vector2 Velocity { get { return velocity; } }
 
         PlayerIndex player;
         Texture2D texture;

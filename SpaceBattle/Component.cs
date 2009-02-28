@@ -49,7 +49,8 @@ namespace SpaceBattle
             new List<ComponentFactory<SeekerComponent>> {
                 new ComponentFactory<SeekerComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
                 new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), pos => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 2.0f)),
-                new ComponentFactory<SeekerComponent>("FastSeeker", () => new FastSeeker(), pos => Util.DrawSprite(Textures.FastEnemy, pos, 0, 2.0f))
+                new ComponentFactory<SeekerComponent>("FastSeeker", () => new FastSeeker(), pos => Util.DrawSprite(Textures.FastEnemy, pos, 0, 2.0f)),
+                new ComponentFactory<SeekerComponent>("ProjectorSeeker", () => new ProjectorSeeker(), pos => Util.DrawSprite(Textures.ProjectorEnemy, pos, 0, 2.0f))
             };
 
         public static List<ComponentFactory<DamageComponent>> Damages =
@@ -190,6 +191,37 @@ namespace SpaceBattle
         }
     }
 
+    class ProjectorSeeker : SeekerComponent
+    {
+        float countdown = 3.0f;
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.ProjectorEnemy, self.position, 0, 1.0f);
+        }
+        public override void Update(float dt)
+        {
+            countdown -= dt;
+            if (countdown <= 0)
+            {
+                countdown += 3.0f;
+                Vector2 target = self.target.Position + Enemy.FADEINTIME/2 * self.target.Velocity;
+                Enemy newenemy = self.Clone();
+                newenemy.position = target;
+                newenemy.Seeker = new SlinkTowardSeeker();
+                newenemy.Seeker.Reassign(newenemy);
+                Util.Actors.Add(newenemy);
+            }
+        }
+        public override SeekerComponent Clone()
+        {
+            return new ProjectorSeeker();
+        }
+        public override void Start()
+        {
+            self.soundids.Add(Sounds.StartSound(Sounds.Tabla));
+        }
+    }
+
     class SplittyDamage : DamageComponent
     {
         public override void Draw()
@@ -211,10 +243,13 @@ namespace SpaceBattle
             Enemy child3 = self.Clone(); child3.Damage = null;
             child1.position.X += Util.RandRange(-1, 1);
             child1.position.Y += Util.RandRange(-1, 1);
+            child1.fadeIn = 0;
             child2.position.X += Util.RandRange(-1, 1);
             child2.position.Y += Util.RandRange(-1, 1);
+            child2.fadeIn = 0;
             child3.position.X += Util.RandRange(-1, 1);
             child3.position.Y += Util.RandRange(-1, 1);
+            child3.fadeIn = 0;
             Util.Actors.Add(child1);
             Util.Actors.Add(child2);
             Util.Actors.Add(child3);

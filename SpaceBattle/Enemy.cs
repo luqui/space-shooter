@@ -10,7 +10,7 @@ namespace SpaceBattle
 {
     class Enemy : Actor
     {
-        public Enemy(Vector2 pos, Actor targ,
+        public Enemy(Vector2 pos, PlayerShip targ,
                      BehaviorComponent b, SeekerComponent s, DamageComponent d)
         {
             position = pos;
@@ -23,17 +23,19 @@ namespace SpaceBattle
             if (Damage != null) Damage.Reassign(this);
         }
 
+        public const float FADEINTIME = 2.0f;
+
         // only for use in components:
         public Vector2 position;
         public Vector2 velocity;
         public Vector2 accel;
         public bool dead = false;
-        public Actor target = null;
+        public PlayerShip target = null;
 
         public BehaviorComponent Behavior = null;
         public SeekerComponent Seeker = null;
         public DamageComponent Damage = null;
-        public float fadeIn = 2.0f;
+        public float fadeIn = FADEINTIME;
 
         public List<SoundID> soundids = new List<SoundID>();
 
@@ -43,7 +45,6 @@ namespace SpaceBattle
                 Behavior == null ? null : Behavior.Clone(), 
                 Seeker == null ? null : Seeker.Clone(), 
                 Damage == null ? null : Damage.Clone());
-            e.fadeIn = 0;
             return e;
         }
 
@@ -62,7 +63,7 @@ namespace SpaceBattle
         public override void Draw()
         {
             float prealpha = Util.AlphaHack;
-            if (fadeIn > 0) { Util.AlphaHack = 1 - fadeIn / 2; }
+            if (fadeIn > 0) { Util.AlphaHack = 1 - fadeIn / FADEINTIME; }
             if (Behavior == null && Seeker == null && Damage == null)
             {
                 Util.DrawSprite(Textures.EmptyEnemy, position, 0, 1.0f);
