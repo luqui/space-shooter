@@ -31,6 +31,7 @@ namespace SpaceBattle
         List<List<Beat>> measure;
         int semidemi = 0;
         int measures = 0;
+        int bpm = 100;
 
         public Sequencer()
         {
@@ -50,7 +51,7 @@ namespace SpaceBattle
 
         public void Start()
         {
-            timer = new Timer(Fire, null, 0, 150);  // 100BPM (400 Hz)
+            timer = new Timer(Fire, null, 0, 15000/bpm);
         }
         public void Stop()
         {
@@ -107,6 +108,8 @@ namespace SpaceBattle
                         int newsize = (Util.RANDOM.Next(2) + 3) * (Util.RANDOM.Next(3) + 3);
                         while (measure.Count < newsize) { measure.Add(new List<Beat>()); }
                         while (measure.Count > newsize) { measure.RemoveAt(0); }
+                        bpm = Util.RANDOM.Next(50) + 80;
+                        timer.Change(0, 15000 / bpm);
                     }
                 }
                 semidemi %= measure.Count;

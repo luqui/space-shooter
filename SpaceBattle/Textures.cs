@@ -28,6 +28,8 @@ namespace SpaceBattle
             ProjectorEnemy = Content.Load<Texture2D>("ProjectorEnemy");
             RatePowerup = Content.Load<Texture2D>("RatePowerup");
             NumPowerup = Content.Load<Texture2D>("NumPowerup");
+            RingEnemy = Content.Load<Texture2D>("RingEnemy");
+            RingIcon = Content.Load<Texture2D>("RingIcon");
 
             Font = Content.Load<SpriteFont>("Font");
         }
@@ -49,6 +51,8 @@ namespace SpaceBattle
         public static Texture2D ProjectorEnemy;
         public static Texture2D RatePowerup;
         public static Texture2D NumPowerup;
+        public static Texture2D RingEnemy;
+        public static Texture2D RingIcon;
 
         public static SpriteFont Font;
     }

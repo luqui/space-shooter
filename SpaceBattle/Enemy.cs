@@ -59,6 +59,9 @@ namespace SpaceBattle
         public override void Finish()
         {
             foreach (var id in soundids) { Util.Sequencer.Dequeue(id); }
+            if (Behavior != null) { Behavior.Finish(); }
+            if (Seeker != null) { Seeker.Finish(); }
+            if (Damage != null) { Damage.Finish(); }
             if (Behavior == null && Seeker == null && Damage == null) { Util.BLANKS--; }
         }
 

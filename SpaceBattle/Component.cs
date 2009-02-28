@@ -15,6 +15,7 @@ namespace SpaceBattle
         }
         public abstract void Draw();
         public virtual void Start() { }
+        public virtual void Finish() { }
     }
 
     abstract class BehaviorComponent : Component
@@ -42,7 +43,8 @@ namespace SpaceBattle
             new List<ComponentFactory<BehaviorComponent>> {
                 new ComponentFactory<BehaviorComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
                 new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), pos => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), pos => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, 1.0f))
+                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), pos => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, 1.0f)),
+                new ComponentFactory<BehaviorComponent>("Ring", () => new RingBehavior(), pos => Util.DrawSprite(Textures.RingIcon, pos, 0, 1.0f))
             };
 
         public static List<ComponentFactory<SeekerComponent>> Seekers =
@@ -133,6 +135,37 @@ namespace SpaceBattle
         public override void Start()
         {
             self.soundids.Add(Sounds.StartSound(Sounds.LightCym));
+        }
+    }
+
+    class RingBehavior : BehaviorComponent
+    {
+        bool started = false;
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.RingEnemy, self.position, 0, 6.0f);
+        }
+        public override void Update(float dt)
+        {
+            if (self.fadeIn <= 0 && !started)
+            {
+                started = true;
+                Util.Actors.AddRing(self);
+            }
+        }
+        public override BehaviorComponent Clone()
+        {
+            return null;  // can't clone rings (sorry?)
+        }
+        public override void Start()
+        {
+        }
+        public override void Finish()
+        {
+            if (started)
+            {
+                Util.Actors.RemoveRing(self);
+            }
         }
     }
 

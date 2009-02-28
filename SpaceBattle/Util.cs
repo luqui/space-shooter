@@ -11,6 +11,7 @@ namespace SpaceBattle
     {
         List<Actor> actors = new List<Actor>();
         List<Actor> backBuffer = new List<Actor>();
+        List<Actor> rings = new List<Actor>();
 
         List<Explosion> explosions = new List<Explosion>();
 
@@ -25,9 +26,26 @@ namespace SpaceBattle
             explosions.Add(ex);
         }
 
+        public void AddRing(Actor actor)
+        {
+            rings.Add(actor);
+        }
+
+        public void RemoveRing(Actor actor)
+        {
+            rings.Remove(actor);
+        }
+
         public void Update(float dt)
         {
-            foreach (var a in actors) { a.Update(dt); }
+            foreach (var a in actors) {
+                float ringstrength = 0;
+                foreach (var r in rings) {
+                    if (a == r) continue;
+                    ringstrength += 4 / (a.Position - r.Position).LengthSquared();
+                }
+                a.Update(dt / (1+ringstrength));
+            }
 
             for (int i = 0; i < actors.Count; i++) {
                 for (int j = i+1; j < actors.Count; j++) { 

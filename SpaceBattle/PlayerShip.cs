@@ -35,6 +35,8 @@ namespace SpaceBattle
         float shotrate = 0.1f;
         int numshots = 1;
 
+        float immunity = 5.0f;
+
         const float ENEMYTIME = 0.1f;
         const float SPEED = 5.0f;
         const float BULLETSPEED = 18.0f;
@@ -90,6 +92,7 @@ namespace SpaceBattle
             if (pressed(i => i.X)) { resetAmmo = true; seekers.Next(); }
             if (pressed(i => i.A)) { resetAmmo = true; damages.Next(); }
 
+            immunity -= dt;
             bulletTimeout -= dt;
             enemyTimeout -= dt;
             int shots = 0;
@@ -107,7 +110,7 @@ namespace SpaceBattle
 
                 if (enemyShoot && enemyTimeout <= 0)
                 {
-                    if (behaviors.Ammo > 0 && seekers.Ammo > 0 && damages.Ammo > 0 && Util.OnScreen(pos))
+                    if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0) && Util.OnScreen(pos))
                     {
                         Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
                         Util.Actors.Add(e);
@@ -127,7 +130,8 @@ namespace SpaceBattle
                         for (int i = 0; i < numshots; i++)
                         {
                             Vector2 dir2 = new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta));
-                            Util.Actors.Add(new Bullet(position + offset * dir2, BULLETSPEED * dir2));
+                            Vector4 color = player == PlayerIndex.One ? new Vector4(0, 1, 0, 1) : new Vector4(0.3f, 0.6f, 1, 1);
+                            Util.Actors.Add(new Bullet(position + offset * dir2, BULLETSPEED * dir2, color));
                             theta += thetastep;
                         }
                         offset += 0.3f;
@@ -241,11 +245,13 @@ namespace SpaceBattle
 
         public override void Die()
         {
+            if (immunity > 0) return;
             lives--;
             Util.Reset();
             Util.Sequencer.PlayOnce(Sounds.Select(Sounds.Gong));
             Vector3 color = player == PlayerIndex.One ? new Vector3(1, 0, 0) : new Vector3(0, 0.3f, 1.0f);
             Util.Actors.Add(new Explosion(position, color, 300, 25, 5, 0.5f));
+            immunity = 5.0f;
         }
 
         public void Equip(string e, int amount)
