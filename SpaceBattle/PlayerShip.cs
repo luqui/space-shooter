@@ -107,7 +107,7 @@ namespace SpaceBattle
                         resetAmmo = true;
                     }
                 }
-                else if (input.Triggers.Right > 0.5f && bulletTimeout <= 0)
+                if (input.Triggers.Right > 0.5f && bulletTimeout <= 0)
                 {
                     Util.Actors.Add(new Bullet(position + (1.2f * dir / dir.Length()), BULLETSPEED * dir));
                     bulletTimeout = BULLETTIME;
