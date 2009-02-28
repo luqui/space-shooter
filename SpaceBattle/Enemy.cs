@@ -112,6 +112,7 @@ namespace SpaceBattle
         public override void Die()
         {
             if (dead) return;
+            if (Behavior != null || Seeker != null || Damage != null) Util.SCORE++;
             if (Damage != null)
             {
                 Damage.Die();

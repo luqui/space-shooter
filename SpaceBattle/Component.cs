@@ -204,7 +204,7 @@ namespace SpaceBattle
             if (countdown <= 0)
             {
                 countdown += 3.0f;
-                Vector2 target = self.target.Position + Enemy.FADEINTIME/2 * self.target.Velocity;
+                Vector2 target = self.position;
                 Enemy newenemy = self.Clone();
                 newenemy.position = target;
                 newenemy.Seeker = new SlinkTowardSeeker();

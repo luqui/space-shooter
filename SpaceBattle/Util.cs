@@ -180,7 +180,6 @@ namespace SpaceBattle
                 Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
                 Actors.Add(PowerUps.RandomPowerup(MODE == Mode.OnePlayer ? player1.Position : pos));
             }
-            SCORE++;
         }
     }
 
