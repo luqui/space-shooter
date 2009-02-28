@@ -12,17 +12,28 @@ namespace SpaceBattle
     {
         Action<Vector2> draw;
         Vector2 position;
+        Vector2 velocity;
         public override Vector2 Position { get { return position; } }
         public override float Radius { get { return 0.75f; } }
         bool dead = false;
         public override bool Dead { get { return dead; } }
         Action<PlayerShip> action;
 
-        public PowerUp(Action<Vector2> draw, Vector2 position, Action<PlayerShip> action)
+        public PowerUp(Action<Vector2> draw, Vector2 position, Vector2 velocity, Action<PlayerShip> action)
         {
             this.draw = draw;
             this.position = position;
             this.action = action;
+            this.velocity = velocity;
+        }
+
+        public override void Update(float dt)
+        {
+            if (position.X + dt * velocity.X > Util.FIELDWIDTH / 2
+              || position.X + dt * velocity.X < -Util.FIELDWIDTH / 2) { velocity.X = -velocity.X; }
+            if (position.Y + dt * velocity.Y > Util.FIELDHEIGHT / 2
+              || position.Y + dt * velocity.Y < -Util.FIELDHEIGHT / 2) { velocity.Y = -velocity.Y; }
+            position += dt * velocity;
         }
 
         public override void Draw()
@@ -49,7 +60,7 @@ namespace SpaceBattle
 
     static class PowerUps
     {
-        public static PowerUp RandomPowerup(Vector2 position)
+        public static PowerUp RandomPowerup(Vector2 position, Vector2 velocity)
         {
             List<ComponentFactory> factories = new List<ComponentFactory>();
             factories.AddRange(Components.Behaviors.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
@@ -63,7 +74,7 @@ namespace SpaceBattle
                 f.Draw(v);
                 Util.DrawText(v + new Vector2(0.75f, 0), amount.ToString());
             };
-            return new PowerUp(draw, position, ship =>
+            return new PowerUp(draw, position, velocity, ship =>
             {
                 ship.Equip(f.Name, amount);
             });

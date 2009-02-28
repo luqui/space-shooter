@@ -179,22 +179,30 @@ namespace SpaceBattle
             if (RANDOM.Next(11) == 0)
             {
                 int sel = RANDOM.Next(25);
+                Vector2 vel = new Vector2(RandRange(-3, 3), RandRange(-3, 3));
                 if (sel <= 22)
                 {
                     Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
-                    Actors.Add(PowerUps.RandomPowerup(MODE == Mode.OnePlayer ? player1.Position : pos));
+                    if (MODE == Mode.OnePlayer)
+                    {
+                        Actors.Add(PowerUps.RandomPowerup(player1.Position, new Vector2()));
+                    }
+                    else
+                    {
+                        Actors.Add(PowerUps.RandomPowerup(pos, vel));
+                    }
                 }
                 else if (sel == 23)
                 {
                     Sequencer.PlayOnce("tri1");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RatePowerup, v, 0, 1.0f),
-                                       pos, ship => ship.FasterShots()));
+                                       pos, vel, ship => ship.FasterShots()));
                 }
                 else if (sel == 24)
                 {
                     Sequencer.PlayOnce("tri3");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1.0f),
-                                       pos, ship => ship.MoreShots()));
+                                       pos, vel, ship => ship.MoreShots()));
                 }
             }
         }
