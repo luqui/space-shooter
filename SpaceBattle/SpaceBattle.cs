@@ -102,6 +102,16 @@ namespace SpaceBattle
                     Util.SCORE--;
                 }
             }
+            else
+            {
+                emptyTimer -= dt;
+                while (emptyTimer < 0)
+                {
+                    emptyTimer += 0.5f;
+                    Util.player1.Equip("Empty", 1);
+                    Util.player2.Equip("Empty", 1);
+                }
+            }
 
             base.Update(gameTime);
         }

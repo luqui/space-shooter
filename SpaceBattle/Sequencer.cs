@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Audio;
 using System.Threading;
@@ -10,7 +11,10 @@ using System.IO;
 namespace SpaceBattle
 {
     class SoundID
-    { }
+    {
+        public SoundID(Func<Vector2> pos) { this.pos = pos; }
+        public Func<Vector2> pos;
+    }
 
     class Sequencer
     {
@@ -18,6 +22,7 @@ namespace SpaceBattle
         WaveBank wavebank;
         SoundBank soundbank;
         Timer timer;
+        AudioListener listener;
 
         Mutex mutex;
 
@@ -40,6 +45,10 @@ namespace SpaceBattle
             engine = new AudioEngine(prefix + "\\Audio.xgs");
             wavebank = new WaveBank(engine, prefix + "\\Wave Bank.xwb");
             soundbank = new SoundBank(engine, prefix + "\\Sound Bank.xsb");
+            listener = new AudioListener();
+            listener.Position = new Vector3(0, 0, 16);
+            listener.Forward = new Vector3(0, 0, -1);
+            listener.Up = new Vector3(0, 1, 0);
 
             measure = new List<List<Beat>>();
             for (int i = 0; i < 16; i++)
@@ -50,9 +59,12 @@ namespace SpaceBattle
             mutex = new Mutex();
         }
 
-        public Cue StartCue(string name)
+        public Cue StartCue(Vector2 pos, string name)
         {
+            var emitter = new AudioEmitter();
+            emitter.Position = new Vector3(pos, 0);
             Cue ret = soundbank.GetCue(name);
+            ret.Apply3D(listener, emitter);
             ret.Play();
             return ret;
         }
@@ -71,17 +83,19 @@ namespace SpaceBattle
             timer.Dispose();
         }
 
-        public void PlayOnce(string sound)
+        public void PlayOnce(Vector2 pos, string sound)
         {
+            var emitter = new AudioEmitter();
+            emitter.Position = new Vector3(pos,0);
             lock (mutex)
             {
                 soundbank.PlayCue(sound);
             }
         }
 
-        public SoundID Enqueue(string sound)
+        public SoundID Enqueue(Func<Vector2> pos, string sound)
         {
-            SoundID id = new SoundID();
+            SoundID id = new SoundID(pos);
             lock (mutex)
             {
                 measure[semidemi].Add(new Beat(id, sound));
@@ -106,7 +120,9 @@ namespace SpaceBattle
             {
                 foreach (var i in measure[semidemi])
                 {
-                    soundbank.PlayCue(i.cue);
+                    var emitter = new AudioEmitter();
+                    emitter.Position = new Vector3(i.id.pos(), 0);
+                    soundbank.PlayCue(i.cue, listener, emitter);
                     played_this_measure = true;
                 }
 
@@ -162,9 +178,9 @@ namespace SpaceBattle
             return data[Util.RANDOM.Next(data.Count())];
         }
 
-        public static SoundID StartSound(string[] selection)
+        public static SoundID StartSound(Func<Vector2> pos, string[] selection)
         {
-            return Util.Sequencer.Enqueue(Select(selection));
+            return Util.Sequencer.Enqueue(pos, Select(selection));
         }
     }
 }

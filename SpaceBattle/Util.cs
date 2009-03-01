@@ -217,7 +217,7 @@ namespace SpaceBattle
                 Vector2 vel = new Vector2(RandRange(-3, 3), RandRange(-3, 3));
                 if (sel <= 22)
                 {
-                    Sequencer.PlayOnce(Sounds.Select(Sounds.Crash));
+                    Sequencer.PlayOnce(pos, Sounds.Select(Sounds.Crash));
                     if (MODE == Mode.OnePlayer)
                     {
                         Actors.Add(PowerUps.RandomPowerup(player1.Position, new Vector2()));
@@ -230,19 +230,19 @@ namespace SpaceBattle
 
                 else if (sel == 23)
                 {
-                    Sequencer.PlayOnce("tri1");
+                    Sequencer.PlayOnce(pos, "tri1");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RatePowerup, v, 0, 1.0f),
                                        pos, vel, ship => ship.FasterShots()));
                 }
                 else if (sel == 24)
                 {
-                    Sequencer.PlayOnce("tri3");
+                    Sequencer.PlayOnce(pos, "tri3");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1.0f),
                                        pos, vel, ship => ship.MoreShots()));
                 }
                 else if (sel == 25)
                 {
-                    Sequencer.PlayOnce("tri2");
+                    Sequencer.PlayOnce(pos, "tri2");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RingIcon, v, 0, 1.0f),
                                        pos, vel, ship => ship.AddRing()));
                 }

@@ -99,7 +99,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.ShortRattle));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.ShortRattle));
         }
     }
 
@@ -133,7 +133,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.LightCym));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.LightCym));
         }
     }
 
@@ -155,7 +155,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.Bongos));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.Bongos));
         }
     }
 
@@ -190,7 +190,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.Kettle));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.Kettle));
         }
     }
 
@@ -221,7 +221,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.Tabla));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.Tabla));
         }
     }
 
@@ -265,7 +265,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.Clave));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.Clave));
         }
     }
 
@@ -302,7 +302,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.Conga));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.Conga));
         }
     }
 
@@ -338,7 +338,7 @@ namespace SpaceBattle
         }
         public override void Start()
         {
-            self.soundids.Add(Sounds.StartSound(Sounds.Woodblock));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.Woodblock));
         }
     }
 }

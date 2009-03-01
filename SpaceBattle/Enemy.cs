@@ -110,7 +110,7 @@ namespace SpaceBattle
 
         public override bool Dead { get { return dead; } }
         public override Vector2 Position { get { return position; } }
-        public override float Radius { get { return 0.5f; } }
+        public override float Radius { get { return 0.3f; } }
 
         public override void Collision(Actor other)
         {
