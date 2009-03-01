@@ -323,6 +323,7 @@ namespace SpaceBattle
             Sequencer.Stop();
             Sequencer.Start();
             Actors.Reset();
+            EXPLOSIONS = new Explosion();
             player1 = new PlayerShip(PlayerIndex.One);
             player2 = new PlayerShip(PlayerIndex.Two);
             MODE = Mode.Menu;
