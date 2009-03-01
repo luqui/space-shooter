@@ -21,7 +21,7 @@ namespace SpaceBattle
         LinkedList<LinkedList<Particle>> particles;
         LinkedListNode<LinkedList<Particle>> idx;
         int total = 0;
-        const int CAP = 1500;
+        public static int CAP = 1500;
 
         public Explosion()
         {

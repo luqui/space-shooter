@@ -18,6 +18,7 @@ namespace SpaceBattle
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Matrix transform;
+        Menu menu;
 
         public SpaceBattle()
         {
@@ -28,15 +29,6 @@ namespace SpaceBattle
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
 #endif
-            var result = System.Windows.Forms.MessageBox.Show("Two player mode?", "Mode selection", System.Windows.Forms.MessageBoxButtons.YesNo);
-            if (result == System.Windows.Forms.DialogResult.Yes)
-            {
-                Util.MODE = Util.Mode.TwoPlayer;
-            }
-            else
-            {
-                Util.MODE = Util.Mode.OnePlayer;
-            }
         }
 
         protected override void Initialize()
@@ -49,13 +41,7 @@ namespace SpaceBattle
             transform *= Matrix.CreateScale(2/Util.FIELDWIDTH, 2/Util.FIELDHEIGHT, 1.0f);
             transform *= Matrix.CreateTranslation(1f, 1f, 0.0f);
             transform *= Matrix.CreateScale(w / 2, h / 2, 1.0f);
-        }
 
-        protected override void LoadContent()
-        {
-            spriteBatch = new SpriteBatch(GraphicsDevice);
-            Util.Batch = spriteBatch;
-            Textures.LoadContent(Content);
             Util.Sequencer = new Sequencer();
             Util.Sequencer.Start();
             Util.Scheduler = new Scheduler();
@@ -63,9 +49,20 @@ namespace SpaceBattle
 
             Util.player1 = new PlayerShip(PlayerIndex.One);
             Util.player2 = new PlayerShip(PlayerIndex.Two);
-
+            
             Util.Actors = new ActorList(8,6);
+            
             Util.Reset();
+
+            Util.MODE = Util.Mode.Menu;
+        }
+
+        protected override void LoadContent()
+        {
+            spriteBatch = new SpriteBatch(GraphicsDevice);
+            Util.Batch = spriteBatch;
+            Textures.LoadContent(Content);
+            menu = new Menu(Content.Load<SpriteFont>("MenuFont"));
         }
 
         protected override void UnloadContent()
@@ -87,31 +84,38 @@ namespace SpaceBattle
             Util.Scheduler.Update(dt);
             Util.EXPLOSIONS.Update(dt);
 
-            if (Util.MODE == Util.Mode.OnePlayer)
+            switch(Util.MODE)
             {
-                emptyTimer -= dt;
-                while (emptyTimer < 0)
-                {
-                    emptyTimer += 0.25f;
-                    Util.player1.Equip("Empty", 1);
-                }
+                case Util.Mode.OnePlayer:
+                    emptyTimer -= dt;
+                    while (emptyTimer < 0)
+                    {
+                        emptyTimer += 0.25f;
+                        Util.player1.Equip("Empty", 1);
+                    }
 
-                scoreTimer -= dt;
-                while (!Util.player1.Dead && scoreTimer < 0)
-                {
-                    scoreTimer += 0.5f;
-                    Util.SCORE--;
-                }
-            }
-            else
-            {
-                emptyTimer -= dt;
-                while (emptyTimer < 0)
-                {
-                    emptyTimer += 0.5f;
-                    Util.player1.Equip("Empty", 1);
-                    Util.player2.Equip("Empty", 1);
-                }
+                    scoreTimer -= dt;
+                    while (!Util.player1.Dead && scoreTimer < 0)
+                    {
+                        scoreTimer += 0.5f;
+                        Util.SCORE--;
+                    }
+                    break;
+                case Util.Mode.TwoPlayer:
+                    emptyTimer -= dt;
+                    while (emptyTimer < 0)
+                    {
+                        emptyTimer += 0.5f;
+                        Util.player1.Equip("Empty", 1);
+                        Util.player2.Equip("Empty", 1);
+                    }
+                    break;
+                case Util.Mode.Menu:
+                    menu.Update(GamePad.GetState(PlayerIndex.One));
+                    break;
+                case Util.Mode.Exit:
+                    Exit();
+                    break;
             }
 
             base.Update(gameTime);
@@ -121,15 +125,26 @@ namespace SpaceBattle
         {
             GraphicsDevice.Clear(Color.Black);
 
-            spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.Immediate, SaveStateMode.SaveState, transform);
-            Util.Actors.Draw();
-            Util.EXPLOSIONS.Draw();
-            if (Util.MODE == Util.Mode.OnePlayer)
+            switch (Util.MODE)
             {
-                Util.DrawText(new Vector2(0, Util.FIELDHEIGHT / 2-1), Util.SCORE.ToString());
+                case Util.Mode.Menu:
+                    spriteBatch.Begin();
+                    var vp = graphics.GraphicsDevice.Viewport;
+                    menu.Draw(spriteBatch, new Rectangle(vp.X,vp.Y,vp.Width,vp.Height));
+                    spriteBatch.End();
+                    break;
+                case Util.Mode.OnePlayer:
+                case Util.Mode.TwoPlayer:
+                    spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.Immediate, SaveStateMode.SaveState, transform);
+                    Util.Actors.Draw();
+                    Util.EXPLOSIONS.Draw();
+                    if (Util.MODE == Util.Mode.OnePlayer)
+                    {
+                        Util.DrawText(new Vector2(0, Util.FIELDHEIGHT / 2 - 1), Util.SCORE.ToString());
+                    }
+                    spriteBatch.End();
+                    break;
             }
-            spriteBatch.End();
-
             base.Draw(gameTime);
         }
     }
