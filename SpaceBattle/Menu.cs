@@ -131,9 +131,39 @@ namespace SpaceBattle
             }
 
             //left menu:
+            if (stack.Count > 0)
+            {
+                var ixParentHighlight = stack.Peek().listSubItems.IndexOf(menu);
+                for (var ixItems = 0; ixItems < stack.Peek().listSubItems.Count; ixItems++)
+                {
+                    var color = ixItems == ixParentHighlight ? Color.DarkRed : Color.White;
+                    sb.DrawString(font,
+                        stack.Peek().listSubItems[ixItems].sText,
+                        new Vector2(20, TOP + ixItems * HEIGHT/2),
+                        color,
+                        0.0f,
+                        Vector2.Zero,
+                        0.5f,
+                        SpriteEffects.None,
+                        0.0f);
+                }
+            }
             //right menu:
-            //foreach(var s in menu.listSubItems)
-            //if stack is not empty, include a 'Back'
+            if (menu.listSubItems[ixSubItems].listSubItems != null)
+            {
+                for (var ixItems = 0; ixItems < menu.listSubItems[ixSubItems].listSubItems.Count; ixItems++)
+                {
+                    sb.DrawString(font,
+                        menu.listSubItems[ixSubItems].listSubItems[ixItems].sText,
+                        new Vector2(3 * rectViewport.Width / 5, TOP + ixItems * HEIGHT / 2),
+                        Color.White,
+                        0.0f,
+                        Vector2.Zero,
+                        0.5f,
+                        SpriteEffects.None,
+                        0.0f);
+                }
+            }
         }
     }
 }
