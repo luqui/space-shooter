@@ -43,8 +43,7 @@ namespace SpaceBattle
             new List<ComponentFactory<BehaviorComponent>> {
                 new ComponentFactory<BehaviorComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
                 new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), pos => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), pos => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<BehaviorComponent>("Ring", () => new RingBehavior(), pos => Util.DrawSprite(Textures.RingIcon, pos, 0, 1.0f))
+                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), pos => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, 1.0f))
             };
 
         public static List<ComponentFactory<SeekerComponent>> Seekers =
@@ -135,71 +134,6 @@ namespace SpaceBattle
         public override void Start()
         {
             self.soundids.Add(Sounds.StartSound(Sounds.LightCym));
-        }
-    }
-
-    class RingBehavior : BehaviorComponent
-    {
-        Microsoft.Xna.Framework.Audio.Cue soundid;
-        const float TIMEOUT = 32;
-        const float STRENGTH = 10;
-        const float BEVEL = 2;
-        float timer = 0;
-        bool done = false;
-        public float Strength { get { 
-            if (timer < BEVEL) {
-                return STRENGTH * timer / BEVEL;
-            }
-            else if (timer < TIMEOUT - BEVEL)
-            {
-                return STRENGTH;
-            }
-            else if (timer < TIMEOUT)
-            {
-                return STRENGTH * (1 - (TIMEOUT - timer) / BEVEL);
-            }
-            else
-            {
-                return 0;
-            }
-        } }
-
-        public override void Draw()
-        {
-            if (Strength > 0) {
-                Util.DrawSprite(Textures.RingEnemy, self.position, 0, Strength);
-            }
-        }
-        public override void Update(float dt)
-        {
-            if (!done && timer > TIMEOUT) {
-                Done();
-            }
-            timer += dt;
-        }
-        public override BehaviorComponent Clone()
-        {
-            return null;  // can't clone rings (sorry?)
-        }
-        public override void Start()
-        {
-            Util.Actors.AddRing(self);
-            soundid = Util.Sequencer.StartCue(Sounds.Select(Sounds.SingingBowl));
-        }
-        public override void Finish()
-        {
-            Done();
-        }
-        void Done()
-        {
-            if (!done)
-            {
-                if (self.Damage == null && self.Seeker == null) self.Die();
-                else self.Behavior = null;
-                Util.Sequencer.StopCue(soundid);
-                Util.Actors.RemoveRing(self);
-                done = true;
-            }
         }
     }
 

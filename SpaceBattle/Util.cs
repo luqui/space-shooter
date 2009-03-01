@@ -11,7 +11,7 @@ namespace SpaceBattle
     {
         List<Actor> actors = new List<Actor>();
         List<Actor> backBuffer = new List<Actor>();
-        List<Actor> rings = new List<Actor>();
+        List<Ring> rings = new List<Ring>();
 
         List<Explosion> explosions = new List<Explosion>();
 
@@ -26,12 +26,12 @@ namespace SpaceBattle
             explosions.Add(ex);
         }
 
-        public void AddRing(Actor actor)
+        public void AddRing(Ring actor)
         {
             rings.Add(actor);
         }
 
-        public void RemoveRing(Actor actor)
+        public void RemoveRing(Ring actor)
         {
             rings.Remove(actor);
         }
@@ -40,8 +40,8 @@ namespace SpaceBattle
             float ringstrength = 0;
             foreach (var r in rings)
             {
-                if (a == r) continue;
-                ringstrength += ((r as Enemy).Behavior as RingBehavior).Strength / ((a.Position - r.Position).LengthSquared() + 0.01f);
+                if (a == (Actor)r) continue;
+                ringstrength += r.Strength / ((a.Position - r.Position).LengthSquared() + 0.01f);
             }
             return ringstrength;
         }
@@ -50,11 +50,11 @@ namespace SpaceBattle
         {
             if (Util.MODE == Util.Mode.OnePlayer)
             {
-                float playerscale = 1 + RingStrength(Util.player1)/16;
+                float playerscale = 1 + RingStrength(Util.player1);
                 foreach (var a in actors)
                 {
-                    float strength = 1 + RingStrength(a)/16;
-                    a.Update(dt * strength / playerscale);
+                    float strength = 1 + RingStrength(a);
+                    a.Update(dt * playerscale / strength);
                 }
             }
             else {
@@ -213,7 +213,7 @@ namespace SpaceBattle
         {
             if (RANDOM.Next(11) == 0)
             {
-                int sel = RANDOM.Next(25);
+                int sel = RANDOM.Next(26);
                 Vector2 vel = new Vector2(RandRange(-3, 3), RandRange(-3, 3));
                 if (sel <= 22)
                 {
@@ -227,6 +227,7 @@ namespace SpaceBattle
                         Actors.Add(PowerUps.RandomPowerup(pos, vel));
                     }
                 }
+
                 else if (sel == 23)
                 {
                     Sequencer.PlayOnce("tri1");
@@ -238,6 +239,12 @@ namespace SpaceBattle
                     Sequencer.PlayOnce("tri3");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1.0f),
                                        pos, vel, ship => ship.MoreShots()));
+                }
+                else if (sel == 25)
+                {
+                    Sequencer.PlayOnce("tri2");
+                    Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RingIcon, v, 0, 1.0f),
+                                       pos, vel, ship => ship.AddRing()));
                 }
             }
         }

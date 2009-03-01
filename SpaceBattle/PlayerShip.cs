@@ -27,9 +27,6 @@ namespace SpaceBattle
         GamePadState lastState;
 
         int lives;
-
-        int[,] storage;
-
         float bulletTimeout = 0.0f;
         float enemyTimeout = 0.0f;
         float shotrate = 0.1f;
@@ -43,10 +40,11 @@ namespace SpaceBattle
         const float TRIGGERLENGTH = 10.0f;
         const float SPAWNTHRESH = 10.0f;
 
+        int rings = 0;
+
         public PlayerShip(PlayerIndex player) { 
             this.player = player;
             lives = 5;
-            storage = new int[8, 3];
 
             lastState = new GamePadState();
 
@@ -87,10 +85,17 @@ namespace SpaceBattle
             Func<Func<GamePadButtons, ButtonState>, bool> pressed = f => 
                 f(lastState.Buttons) == ButtonState.Released && f(input.Buttons) == ButtonState.Pressed;
 
+            Vector2 dir = input.ThumbSticks.Right;
+
             bool resetAmmo = false;
             if (pressed(i => i.Y)) { resetAmmo = true; behaviors.Next(); }
             if (pressed(i => i.X)) { resetAmmo = true; seekers.Next(); }
             if (pressed(i => i.A)) { resetAmmo = true; damages.Next(); }
+            if (rings > 0 && pressed(i => i.RightShoulder))
+            {
+                rings--;
+                Util.Actors.Add(new Ring(position + TRIGGERLENGTH * dir));
+            }
 
             immunity -= dt;
             bulletTimeout -= dt;
@@ -99,7 +104,6 @@ namespace SpaceBattle
 
             while (bulletTimeout <= 0) { shots++; bulletTimeout += dt; }
 
-            Vector2 dir = input.ThumbSticks.Right;
             if (dir.LengthSquared() > 0.125f)
             {
                 bool enemyShoot = Util.MODE == Util.Mode.OnePlayer ? true : input.Triggers.Left > 0.5f;
@@ -136,28 +140,6 @@ namespace SpaceBattle
                         }
                         offset += 0.3f;
                     }
-                }
-            }
-
-
-            int dpad = DPadDirection(input);
-            if (input.Buttons.RightShoulder == ButtonState.Pressed)
-            {
-                if (dpad > 0)
-                {
-                    storage[dpad, 0] = behaviors.Index;
-                    storage[dpad, 1] = seekers.Index;
-                    storage[dpad, 2] = damages.Index;
-                }
-            }
-            else
-            {
-                if (dpad > 0)
-                {
-                    behaviors.Index = storage[dpad, 0];
-                    seekers.Index = storage[dpad, 1];
-                    damages.Index = storage[dpad, 2];
-                    resetAmmo = true;
                 }
             }
 
@@ -208,6 +190,10 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(texture, r + new Vector2(i / 2.0f, 0), 0, 0.5f);
                 }
+                for (int i = 0; i < rings; i++)
+                {
+                    Util.DrawSprite(Textures.RingIcon, r + new Vector2(i / 2.0f + 3, 0), 0, 0.5f);
+                }
                 behaviors.Draw(r + new Vector2(0, -1), new Vector2(2, 0));
                 seekers.Draw(r + new Vector2(0, -2), new Vector2(2, 0));
                 damages.Draw(r + new Vector2(0, -3), new Vector2(2, 0));
@@ -218,6 +204,10 @@ namespace SpaceBattle
                 for (int i = 0; i < lives; i++)
                 {
                     Util.DrawSprite(texture, r + new Vector2(-i / 2.0f, 0), 0, 0.5f);
+                }
+                for (int i = 0; i < rings; i++)
+                {
+                    Util.DrawSprite(Textures.RingIcon, r + new Vector2(-i / 2.0f - 3, 0), 0, 0.5f);
                 }
                 behaviors.Draw(r + new Vector2(-1, -1), new Vector2(-2, 0));
                 seekers.Draw(r + new Vector2(-1, -2), new Vector2(-2, 0));
@@ -237,7 +227,7 @@ namespace SpaceBattle
             }
 
             Enemy e = other as Enemy;
-            if (e != null && e.fadeIn <= 0 && !(e.Behavior is RingBehavior))
+            if (e != null && e.fadeIn <= 0)
             {
                 Die();
             }
@@ -272,6 +262,11 @@ namespace SpaceBattle
         {
             numshots++;
             Util.Scheduler.Enqueue(30, () => numshots--);
+        }
+
+        public void AddRing()
+        {
+            rings++;
         }
     }
 }
