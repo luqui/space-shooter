@@ -320,19 +320,19 @@ namespace SpaceBattle
                 {
                     Sequencer.PlayOnce(pos, "tri1");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RatePowerup, v, 0, 1.0f),
-                                       pos, vel, ship => ship.FasterShots()));
+                                       float.PositiveInfinity, pos, vel, ship => ship.FasterShots()));
                 }
                 else if (sel == 24)
                 {
                     Sequencer.PlayOnce(pos, "tri3");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1.0f),
-                                       pos, vel, ship => ship.MoreShots()));
+                                       float.PositiveInfinity, pos, vel, ship => ship.MoreShots()));
                 }
                 else if (sel == 25)
                 {
                     Sequencer.PlayOnce(pos, "tri2");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RingIcon, v, 0, 1.0f),
-                                       pos, vel, ship => ship.AddRing()));
+                                       float.PositiveInfinity, pos, vel, ship => ship.AddRing()));
                 }
             }
         }

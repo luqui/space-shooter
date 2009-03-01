@@ -16,15 +16,17 @@ namespace SpaceBattle
         public override Vector2 Position { get { return position; } }
         public override float Radius { get { return 0.75f; } }
         bool dead = false;
-        public override bool Dead { get { return dead; } }
+        float timeout;
+        public override bool Dead { get { return dead || timeout <= 0; } }
         Action<PlayerShip> action;
 
-        public PowerUp(Action<Vector2> draw, Vector2 position, Vector2 velocity, Action<PlayerShip> action)
+        public PowerUp(Action<Vector2> draw, float timeout, Vector2 position, Vector2 velocity, Action<PlayerShip> action)
         {
             this.draw = draw;
             this.position = position;
             this.action = action;
             this.velocity = velocity;
+            this.timeout = timeout;
         }
 
         public override void Update(float dt)
@@ -34,10 +36,12 @@ namespace SpaceBattle
             if (position.Y + dt * velocity.Y > Util.FIELDHEIGHT / 2
               || position.Y + dt * velocity.Y < -Util.FIELDHEIGHT / 2) { velocity.Y = -velocity.Y; }
             position += dt * velocity;
+            timeout -= dt;
         }
 
         public override void Draw()
         {
+            if (timeout < 3 && (int)(4 * timeout) % 2 == 0) return;
             float prealpha = Util.AlphaHack;
             Util.AlphaHack *= 0.5f;
             Util.DrawSprite(Textures.RandomPowerup, position, 0, 0.75f);
@@ -77,7 +81,7 @@ namespace SpaceBattle
                 f.Draw(v);
                 Util.DrawText(v + new Vector2(0.75f, 0), amount.ToString());
             };
-            return new PowerUp(draw, position, velocity, ship =>
+            return new PowerUp(draw, float.PositiveInfinity, position, velocity, ship =>
             {
                 ship.Equip(f.Name, amount);
             });
