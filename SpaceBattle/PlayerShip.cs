@@ -99,7 +99,7 @@ namespace SpaceBattle
             if (pressed(i => i.Y)) { resetAmmo = true; behaviors.Next(); }
             if (pressed(i => i.X)) { resetAmmo = true; seekers.Next(); }
             if (pressed(i => i.A)) { resetAmmo = true; damages.Next(); }
-            if (rings > 0 && pressed(i => i.RightShoulder))
+            if (rings > 0 && (pressed(i => i.RightShoulder) || pressed(i => i.LeftShoulder)))
             {
                 rings--;
                 Util.Actors.Add(new Ring(position + TRIGGERLENGTH * dir));

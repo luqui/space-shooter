@@ -74,6 +74,10 @@ namespace SpaceBattle
 
         protected override void Update(GameTime gameTime)
         {
+            //no matter what, escape == exit.
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+                Util.MODE = Util.Mode.Exit;
+
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Util.Actors.Update(dt);
             Util.Scheduler.Update(dt);
