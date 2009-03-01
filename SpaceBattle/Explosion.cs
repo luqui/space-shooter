@@ -55,13 +55,18 @@ namespace SpaceBattle
 
         public void Update(float dt)
         {
+            bool subtracted = false;
             // fast pruning
             while (total > CAP)
             {
+                subtracted = true;
                 total -= particles.First.Value.Count;
                 particles.RemoveFirst();
                 particles.AddLast(new LinkedList<Particle>());
             }
+
+            if (subtracted)
+                idx = particles.First;
 
             foreach (var bin in particles)
             {

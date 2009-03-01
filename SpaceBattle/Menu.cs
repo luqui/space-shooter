@@ -58,8 +58,9 @@ namespace SpaceBattle
                 fxn("Two Player Game",null,() => Util.MODE = Util.Mode.TwoPlayer),
                 fxn("Options",new List<MenuItem>()
                 {
-                   fxn("Maximum Particle Effects",new List<MenuItem>()
+                   fxn("Particle Effects",new List<MenuItem>()
                    {
+                       fxnParticleEffects(0),
                        fxnParticleEffects(250),
                        fxnParticleEffects(500),
                        fxnParticleEffects(1000),
