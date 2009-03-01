@@ -82,11 +82,14 @@ namespace SpaceBattle
 
         public override void Update(float dt)
         {
-            velocity = SPEED * GamePad.GetState(player).ThumbSticks.Left;
+            var input = GamePad.GetState(player);
+
+            if (input.Buttons.Back == ButtonState.Pressed) { Util.MODE = Util.Mode.Menu; Util.Destroy();  return; }
+
+            velocity = SPEED * input.ThumbSticks.Left;
             if (velocity.LengthSquared() > 0) velocityMemory = velocity;
             position += dt * velocity;
 
-            var input = GamePad.GetState(player);
             Func<Func<GamePadButtons, ButtonState>, bool> pressed = f => 
                 f(lastState.Buttons) == ButtonState.Released && f(input.Buttons) == ButtonState.Pressed;
 
