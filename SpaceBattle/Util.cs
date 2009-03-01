@@ -131,8 +131,27 @@ namespace SpaceBattle
         public const float FIELDWIDTH = 28.0f;
         public const float FIELDHEIGHT = 21.0f;
 
-        public enum Mode { OnePlayer, TwoPlayer };
-        public static Mode MODE = Mode.OnePlayer;
+        public enum Mode { OnePlayer, TwoPlayer, Menu, Exit};
+        private static Mode _MODE = Mode.Menu;
+        public static Mode MODE
+        {
+            set
+            {
+                //if number of players is set, fix the actors list.
+                if (value == Mode.OnePlayer || value == Mode.TwoPlayer)
+                {
+                    Util.Actors.Reset();
+                    Actors.Add(Util.player1);
+                    if (value == Mode.TwoPlayer)
+                        Actors.Add(Util.player2);
+                }
+                _MODE = value;
+            }
+            get
+            {
+                return _MODE;
+            }
+        }
 
         public static int SCORE = 0;
         public static int BLANKS = 0;
