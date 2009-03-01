@@ -321,6 +321,7 @@ namespace SpaceBattle
         public static void Destroy()
         {
             Sequencer.Stop();
+            Sequencer.Start();
             Actors.Reset();
             player1 = new PlayerShip(PlayerIndex.One);
             player2 = new PlayerShip(PlayerIndex.Two);
