@@ -64,9 +64,7 @@ namespace SpaceBattle
             Util.player1 = new PlayerShip(PlayerIndex.One);
             Util.player2 = new PlayerShip(PlayerIndex.Two);
 
-            Util.Actors = new ActorList();
-            Util.Actors.Add(Util.player1);
-            if (Util.MODE == Util.Mode.TwoPlayer) { Util.Actors.Add(Util.player2); }
+            Util.Actors = new ActorList(8,6);
             Util.Reset();
         }
 
