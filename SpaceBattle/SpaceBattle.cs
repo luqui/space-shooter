@@ -79,7 +79,8 @@ namespace SpaceBattle
         protected override void Update(GameTime gameTime)
         {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed
-             || GamePad.GetState(PlayerIndex.Two).Buttons.Back == ButtonState.Pressed)
+             || GamePad.GetState(PlayerIndex.Two).Buttons.Back == ButtonState.Pressed
+             || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
