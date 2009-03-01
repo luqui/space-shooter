@@ -114,13 +114,14 @@ namespace SpaceBattle
 
         public override void Collision(Actor other)
         {
-            if (fadeIn > 0) return;
             if (dead) return;
             if (Damage != null)
             {
+                if (fadeIn > 0) return;
                 Damage.OnHit(other);
             }
             else {
+                if (fadeIn > 1) return;
                 Bullet b = other as Bullet;
                 if (b != null && !b.Dead) {
                     b.Die();

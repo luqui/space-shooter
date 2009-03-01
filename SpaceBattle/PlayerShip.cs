@@ -25,6 +25,7 @@ namespace SpaceBattle
         ComponentRing<SeekerComponent> seekers = Components.MakeSeekerRing();
         ComponentRing<DamageComponent> damages = Components.MakeDamageRing();
         GamePadState lastState;
+        Vector2 velocityMemory;
 
         int lives;
         float bulletTimeout = 0.0f;
@@ -39,8 +40,9 @@ namespace SpaceBattle
         const float BULLETSPEED = 18.0f;
         const float TRIGGERLENGTH = 10.0f;
         const float SPAWNTHRESH = 10.0f;
+        const float MINDISTANCE = 0.20f;
 
-        int rings = 0;
+        int rings = 1;
 
         public PlayerShip(PlayerIndex player) { 
             this.player = player;
@@ -79,6 +81,7 @@ namespace SpaceBattle
         public override void Update(float dt)
         {
             velocity = SPEED * GamePad.GetState(player).ThumbSticks.Left;
+            if (velocity.LengthSquared() > 0) velocityMemory = velocity;
             position += dt * velocity;
 
             var input = GamePad.GetState(player);
@@ -104,42 +107,44 @@ namespace SpaceBattle
 
             while (bulletTimeout <= 0) { shots++; bulletTimeout += dt; }
 
-            if (dir.LengthSquared() > 0.125f)
+            if (dir.LengthSquared() < MINDISTANCE*MINDISTANCE)
             {
-                bool enemyShoot = Util.MODE == Util.Mode.OnePlayer ? true : input.Triggers.Left > 0.5f;
-                bool bulletShoot = Util.MODE == Util.Mode.OnePlayer ? true : input.Triggers.Right > 0.5f;
+                dir = velocityMemory;
+            }
 
-                var pos = Util.MODE == Util.Mode.OnePlayer ? position - TRIGGERLENGTH * dir : position + TRIGGERLENGTH * dir;
-                var other = Util.MODE == Util.Mode.OnePlayer ? this : Util.GetPlayer(Util.OtherPlayer(player));
+            bool enemyShoot = Util.MODE == Util.Mode.OnePlayer ? input.Triggers.Right > 0.5f : input.Triggers.Left > 0.5f;
+            bool bulletShoot = input.Triggers.Right > 0.5f;
 
-                if (enemyShoot && enemyTimeout <= 0)
+            var pos = Util.MODE == Util.Mode.OnePlayer ? position - TRIGGERLENGTH * dir : position + TRIGGERLENGTH * dir;
+            var other = Util.MODE == Util.Mode.OnePlayer ? this : Util.GetPlayer(Util.OtherPlayer(player));
+
+            if (enemyShoot && enemyTimeout <= 0)
+            {
+                if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0) && Util.OnScreen(pos))
                 {
-                    if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0) && Util.OnScreen(pos))
-                    {
-                        Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
-                        Util.Actors.Add(e);
-                        enemyTimeout = ENEMYTIME;
-                        resetAmmo = true;
-                    }
+                    Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
+                    Util.Actors.Add(e);
+                    enemyTimeout = ENEMYTIME;
+                    resetAmmo = true;
                 }
+            }
 
-                float offset = 1.2f;
-                for (int shot = 0; shot < shots; shot++)
+            float offset = 0.5f;
+            for (int shot = 0; shot < shots; shot++)
+            {
+                bulletTimeout += shotrate;
+                if (bulletShoot)
                 {
-                    bulletTimeout += shotrate;
-                    if (bulletShoot)
+                    float thetastep = 5 * (float)Math.PI / 180;
+                    float theta = (float)Math.Atan2(dir.Y, dir.X) - numshots * thetastep / 2;
+                    for (int i = 0; i < numshots; i++)
                     {
-                        float thetastep = 5 * (float)Math.PI / 180;
-                        float theta = (float)Math.Atan2(dir.Y, dir.X) - numshots * thetastep / 2;
-                        for (int i = 0; i < numshots; i++)
-                        {
-                            Vector2 dir2 = new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta));
-                            Vector4 color = player == PlayerIndex.One ? new Vector4(0, 1, 0, 1) : new Vector4(0.3f, 0.6f, 1, 1);
-                            Util.Actors.Add(new Bullet(position + offset * dir2, BULLETSPEED * dir2, color));
-                            theta += thetastep;
-                        }
-                        offset += 0.3f;
+                        Vector2 dir2 = new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta));
+                        Vector4 color = player == PlayerIndex.One ? new Vector4(0, 1, 0, 1) : new Vector4(0.3f, 0.6f, 1, 1);
+                        Util.Actors.Add(new Bullet(position + offset * dir2, BULLETSPEED * dir2, color));
+                        theta += thetastep;
                     }
+                    offset += 0.3f;
                 }
             }
 
@@ -174,11 +179,11 @@ namespace SpaceBattle
 
         public override void Draw()
         {
-            float rot = (float)Math.Atan2(velocity.Y, velocity.X);
+            float rot = (float)Math.Atan2(velocityMemory.Y, velocityMemory.X);
             Util.DrawSprite(texture, position, rot - (float)Math.PI/2, 1);
 
             Vector2 dir = GamePad.GetState(player).ThumbSticks.Right;
-            if (dir.Length() >= 0.125f)
+            if (dir.LengthSquared() >= MINDISTANCE*MINDISTANCE)
             {
                 Util.DrawSprite(crosshair, position + TRIGGERLENGTH * dir, 0, 0.5f);
             }
