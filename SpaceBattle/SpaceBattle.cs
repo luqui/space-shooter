@@ -90,7 +90,7 @@ namespace SpaceBattle
                     }
 
                     scoreTimer -= dt;
-                    while (!Util.player1.Dead && scoreTimer < 0)
+                    while (Util.player1.Lives > 0 && scoreTimer < 0)
                     {
                         scoreTimer += 0.5f;
                         Util.SCORE--;

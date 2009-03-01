@@ -12,10 +12,11 @@ namespace SpaceBattle
     {
         Vector2 position;
         public override Vector2 Position { get { return position; } }
-        public override bool Dead { get { return lives <= 0; } }
+        public override bool Dead { get { return false; } }
         public override float Radius { get { return 0.30f; } }
         Vector2 velocity;
         public Vector2 Velocity { get { return velocity; } }
+        public int Lives { get { return lives; } }
 
         PlayerIndex player;
         Texture2D texture;
@@ -85,6 +86,7 @@ namespace SpaceBattle
             var input = GamePad.GetState(player);
 
             if (input.Buttons.Back == ButtonState.Pressed) { Util.MODE = Util.Mode.Menu; Util.Destroy();  return; }
+            if (lives <= 0) return;
 
             velocity = SPEED * input.ThumbSticks.Left;
             if (velocity.LengthSquared() > 0) velocityMemory = velocity;
@@ -194,6 +196,8 @@ namespace SpaceBattle
 
         public override void Draw()
         {
+            if (lives <= 0) return;
+
             float rot = (float)Math.Atan2(velocityMemory.Y, velocityMemory.X);
             Util.DrawSprite(texture, position, rot - (float)Math.PI/2, 1);
 
