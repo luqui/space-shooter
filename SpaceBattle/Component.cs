@@ -322,7 +322,7 @@ namespace SpaceBattle
         {
             self.dead = true;
             Util.EnemyDeath(self.position);
-            Util.Actors.Add(new Explosion(self.position, new Vector3(1.0f, 0.5f, 0.0f), 300, 8, 2.0f, 0.4f));
+            Util.EXPLOSIONS.AddExplosion(self.position, new Vector3(1.0f, 0.5f, 0.0f), 300, 8, 2.0f, 0.4f);
             List<Actor> deaths = new List<Actor>(Util.Actors.ActorsNear(self.position, 2.5f).Where(a => a != self && !(a is PowerUp)));
             Util.Scheduler.Enqueue(0.1f, () =>
             {
