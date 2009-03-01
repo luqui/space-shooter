@@ -38,8 +38,11 @@ namespace SpaceBattle
 
         public override void Draw()
         {
+            float prealpha = Util.AlphaHack;
+            Util.AlphaHack *= 0.5f;
             Util.DrawSprite(Textures.RandomPowerup, position, 0, 0.75f);
             draw(position);
+            Util.AlphaHack = prealpha;
         }
 
         public override void Collision(Actor other)

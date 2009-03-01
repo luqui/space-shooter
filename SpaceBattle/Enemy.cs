@@ -85,6 +85,11 @@ namespace SpaceBattle
 
         public override void Update(float dt)
         {
+            if (fadeIn > 0 && fadeIn - dt <= 0)
+            {
+                Util.Actors.Add(new Explosion(position, new Vector3(0, 0.5f, 1), 25, 5, 0.5f, 0.3f));
+            }
+            
             fadeIn -= dt;
             if (fadeIn > 0) return;
             if (Behavior != null) Behavior.Update(dt);

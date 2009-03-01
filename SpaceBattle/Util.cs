@@ -41,7 +41,9 @@ namespace SpaceBattle
             foreach (var r in rings)
             {
                 if (a == (Actor)r) continue;
-                ringstrength += r.Strength / ((a.Position - r.Position).LengthSquared() + 0.01f);
+                float rad = r.Strength - 2*(r.Position - a.Position).Length();
+                if (rad < 0) rad = 0;
+                ringstrength += rad;
             }
             return ringstrength;
         }

@@ -41,8 +41,10 @@ namespace SpaceBattle
         const float TRIGGERLENGTH = 10.0f;
         const float SPAWNTHRESH = 10.0f;
         const float MINDISTANCE = 0.20f;
+        const float RINGTIMER = 60.0f;
 
         int rings = 1;
+        float ringTimer = 0f;
 
         public PlayerShip(PlayerIndex player) { 
             this.player = player;
@@ -98,7 +100,15 @@ namespace SpaceBattle
             {
                 rings--;
                 Util.Actors.Add(new Ring(position + TRIGGERLENGTH * dir));
+                if (rings == 0) ringTimer = RINGTIMER;
             }
+
+            if (ringTimer > 0 && ringTimer - dt <= 0)
+            {
+                Util.Sequencer.PlayOnce(position, "tri2");
+                rings++;
+            }
+            ringTimer -= dt;
 
             immunity -= dt;
             bulletTimeout -= dt;
@@ -107,9 +117,11 @@ namespace SpaceBattle
 
             while (bulletTimeout <= 0) { shots++; bulletTimeout += dt; }
 
-            if (dir.LengthSquared() < MINDISTANCE*MINDISTANCE)
+            if (dir.LengthSquared() < MINDISTANCE * MINDISTANCE)
             {
                 dir = velocityMemory;
+                dir.Normalize();
+                dir *= 0.01f;
             }
 
             bool enemyShoot = Util.MODE == Util.Mode.OnePlayer ? input.Triggers.Right > 0.5f : input.Triggers.Left > 0.5f;
@@ -136,7 +148,7 @@ namespace SpaceBattle
                 if (bulletShoot)
                 {
                     float thetastep = 5 * (float)Math.PI / 180;
-                    float theta = (float)Math.Atan2(dir.Y, dir.X) - numshots * thetastep / 2;
+                    float theta = (float)Math.Atan2(dir.Y, dir.X) - (numshots-1) * thetastep / 2;
                     for (int i = 0; i < numshots; i++)
                     {
                         Vector2 dir2 = new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta));
@@ -235,6 +247,7 @@ namespace SpaceBattle
             if (e != null && e.fadeIn <= 0)
             {
                 Die();
+                Util.Actors.Add(new ProxyEnemy(e));
             }
         }
 
