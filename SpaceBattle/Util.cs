@@ -153,6 +153,7 @@ namespace SpaceBattle
         {
             int x, y;
             Coords(pos, out x, out y);
+            if (x < 1 || x >= xdim + 1 || y < 1 || y >= ydim + 1) yield break;
             for (int i = -1; i <= 1; i++)
             {
                 for (int j = -1; j <= 1; j++)
@@ -202,6 +203,7 @@ namespace SpaceBattle
             {
                 for (int y = 0; y < ydim + 2; y++)
                 {
+                    foreach (var k in actors[x, y]) { k.Finish(); }
                     actors[x, y] = new LinkedList<Actor>();
                 }
             }
