@@ -318,6 +318,15 @@ namespace SpaceBattle
             return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDHEIGHT/2 && pos.Y <= FIELDHEIGHT/2;
         }
 
+        public static void Destroy()
+        {
+            Sequencer.Stop();
+            Actors.Reset();
+            player1 = new PlayerShip(PlayerIndex.One);
+            player2 = new PlayerShip(PlayerIndex.Two);
+            MODE = Mode.Menu;
+        }
+
         public static void EnemyDeath(Vector2 pos)
         {
             if (RANDOM.Next(11) == 0)
