@@ -258,7 +258,7 @@ namespace SpaceBattle
             Util.Reset();
             Util.Sequencer.PlayOnce(new Vector2(0,0), Sounds.Select(Sounds.Gong));
             Vector3 color = player == PlayerIndex.One ? new Vector3(1, 0, 0) : new Vector3(0, 0.3f, 1.0f);
-            Util.Actors.Add(new Explosion(position, color, 300, 25, 5, 0.5f));
+            Util.EXPLOSIONS.AddExplosion(position, color, 300, 25, 5, 0.5f);
             immunity = 5.0f;
         }
 

@@ -87,7 +87,7 @@ namespace SpaceBattle
         {
             if (fadeIn > 0 && fadeIn - dt <= 0)
             {
-                Util.Actors.Add(new Explosion(position, new Vector3(0, 0.5f, 1), 25, 5, 0.5f, 0.3f));
+                Util.EXPLOSIONS.AddExplosion(position, new Vector3(0, 0.5f, 1), 25, 5, 0.5f, 0.3f);
             }
             
             fadeIn -= dt;

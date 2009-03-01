@@ -13,17 +13,10 @@ namespace SpaceBattle
         List<Actor> backBuffer = new List<Actor>();
         List<Ring> rings = new List<Ring>();
 
-        List<Explosion> explosions = new List<Explosion>();
-
         public void Add(Actor actor)
         {
             backBuffer.Add(actor);
             actor.Start();
-        }
-
-        public void Add(Explosion ex)
-        {
-            explosions.Add(ex);
         }
 
         public void AddRing(Ring actor)
@@ -92,9 +85,6 @@ namespace SpaceBattle
 
             actors.AddRange(backBuffer);
             backBuffer = new List<Actor>();
-
-            foreach (var e in explosions) { e.Update(dt); }
-            explosions.RemoveAll(v => v.Done);
         }
 
         public IEnumerable<Actor> ActorsNear(Vector2 pos, float radius)
@@ -106,7 +96,6 @@ namespace SpaceBattle
         public void Draw()
         {
             foreach (var v in actors) { v.Draw(); }
-            foreach (var e in explosions) { e.Draw(); }
         }
 
         public void Reset()
@@ -136,6 +125,8 @@ namespace SpaceBattle
 
         public static PlayerShip player1;
         public static PlayerShip player2;
+
+        public static Explosion EXPLOSIONS;
 
         public const float FIELDWIDTH = 28.0f;
         public const float FIELDHEIGHT = 21.0f;
@@ -202,8 +193,8 @@ namespace SpaceBattle
 
         public static void RandomExplosion(Vector2 pos)
         {
-            Actors.Add(new Explosion(pos, new Vector3(RandRange(0.5f, 1), RandRange(0.5f, 1), RandRange(0.5f, 1)), 
-                       50, RandRange(10,40), RandRange(1,3), RandRange(0.1f, 0.4f)));
+            EXPLOSIONS.AddExplosion(pos, new Vector3(RandRange(0.5f, 1), RandRange(0.5f, 1), RandRange(0.5f, 1)), 
+                       50, RandRange(10,40), RandRange(1,3), RandRange(0.1f, 0.4f));
         }
 
         public static bool OnScreen(Vector2 pos)
