@@ -36,21 +36,31 @@ namespace SpaceBattle
             rings.Remove(actor);
         }
 
+        float RingStrength(Actor a) {
+            float ringstrength = 0;
+            foreach (var r in rings)
+            {
+                if (a == r) continue;
+                ringstrength += ((r as Enemy).Behavior as RingBehavior).Strength / ((a.Position - r.Position).LengthSquared() + 0.01f);
+            }
+            return ringstrength;
+        }
+
         public void Update(float dt)
         {
-            foreach (var a in actors) {
-                float ringstrength = 0;
-                foreach (var r in rings) {
-                    if (a == r) continue;
-                    ringstrength += 4 / ((a.Position - r.Position).LengthSquared() + 0.01f);
-                }
-                if (Util.MODE == Util.Mode.OnePlayer)
+            if (Util.MODE == Util.Mode.OnePlayer)
+            {
+                float playerscale = 1 + RingStrength(Util.player1)/16;
+                foreach (var a in actors)
                 {
-                    a.Update(dt * (1 + ringstrength/16));
+                    float strength = 1 + RingStrength(a)/16;
+                    a.Update(dt * strength / playerscale);
                 }
-                else
+            }
+            else {
+                foreach (var a in actors)
                 {
-                    a.Update(dt / (1 + ringstrength));
+                    a.Update(dt / (1 + RingStrength(a)));
                 }
             }
 

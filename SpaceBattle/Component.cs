@@ -140,19 +140,42 @@ namespace SpaceBattle
 
     class RingBehavior : BehaviorComponent
     {
-        bool started = false;
         Microsoft.Xna.Framework.Audio.Cue soundid;
+        const float TIMEOUT = 32;
+        const float STRENGTH = 10;
+        const float BEVEL = 2;
+        float timer = 0;
+        bool done = false;
+        public float Strength { get { 
+            if (timer < BEVEL) {
+                return STRENGTH * timer / BEVEL;
+            }
+            else if (timer < TIMEOUT - BEVEL)
+            {
+                return STRENGTH;
+            }
+            else if (timer < TIMEOUT)
+            {
+                return STRENGTH * (1 - (TIMEOUT - timer) / BEVEL);
+            }
+            else
+            {
+                return 0;
+            }
+        } }
+
         public override void Draw()
         {
-            Util.DrawSprite(Textures.RingEnemy, self.position, 0, 6.0f);
+            if (Strength > 0) {
+                Util.DrawSprite(Textures.RingEnemy, self.position, 0, Strength);
+            }
         }
         public override void Update(float dt)
         {
-            if (self.fadeIn <= 0 && !started)
-            {
-                started = true;
-                Util.Actors.AddRing(self);
+            if (!done && timer > TIMEOUT) {
+                Done();
             }
+            timer += dt;
         }
         public override BehaviorComponent Clone()
         {
@@ -160,14 +183,22 @@ namespace SpaceBattle
         }
         public override void Start()
         {
+            Util.Actors.AddRing(self);
             soundid = Util.Sequencer.StartCue(Sounds.Select(Sounds.SingingBowl));
         }
         public override void Finish()
         {
-            Util.Sequencer.StopCue(soundid);
-            if (started)
+            Done();
+        }
+        void Done()
+        {
+            if (!done)
             {
+                if (self.Damage == null && self.Seeker == null) self.Die();
+                else self.Behavior = null;
+                Util.Sequencer.StopCue(soundid);
                 Util.Actors.RemoveRing(self);
+                done = true;
             }
         }
     }

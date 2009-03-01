@@ -13,7 +13,7 @@ namespace SpaceBattle
         Vector2 position;
         public override Vector2 Position { get { return position; } }
         public override bool Dead { get { return lives <= 0; } }
-        public override float Radius { get { return 0.50f; } }
+        public override float Radius { get { return 0.30f; } }
         Vector2 velocity;
         public Vector2 Velocity { get { return velocity; } }
 
@@ -237,7 +237,7 @@ namespace SpaceBattle
             }
 
             Enemy e = other as Enemy;
-            if (e != null && e.fadeIn <= 0)
+            if (e != null && e.fadeIn <= 0 && !(e.Behavior is RingBehavior))
             {
                 Die();
             }
