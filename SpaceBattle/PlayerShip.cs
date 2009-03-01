@@ -167,9 +167,9 @@ namespace SpaceBattle
             lastState = input;
 
             if (position.X < -Util.FIELDWIDTH / 2) position.X = -Util.FIELDWIDTH / 2;
-            if (position.X > Util.FIELDWIDTH / 2) position.X = Util.FIELDWIDTH / 2;
+            if (position.X >= Util.FIELDWIDTH / 2) position.X = Util.FIELDWIDTH / 2 - 0.01f;
             if (position.Y < -Util.FIELDHEIGHT / 2) position.Y = -Util.FIELDHEIGHT / 2;
-            if (position.Y > Util.FIELDHEIGHT / 2) position.Y = Util.FIELDHEIGHT / 2;
+            if (position.Y >= Util.FIELDHEIGHT / 2) position.Y = Util.FIELDHEIGHT / 2 - 0.01f;
         }
 
         int DPadDirection(GamePadState input)
