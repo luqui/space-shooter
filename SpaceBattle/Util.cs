@@ -9,19 +9,36 @@ namespace SpaceBattle
 {
     class ActorList
     {
-        List<Actor> actors = new List<Actor>();
-        List<Actor> backBuffer = new List<Actor>();
-        List<Ring> rings = new List<Ring>();
+        LinkedList<Actor>[,] actors;
+        int xdim, ydim;
+        LinkedList<Actor> backBuffer = new LinkedList<Actor>();
+        LinkedList<Actor> bucket = null;
+        LinkedList<Ring> rings = new LinkedList<Ring>();
+
+        public ActorList(int xdim_, int ydim_) {
+            xdim = xdim_; ydim = ydim_;
+            actors = new LinkedList<Actor>[xdim+2, ydim+2];
+            for (int x = 0; x < xdim+2; x++) {
+                for (int y = 0; y < ydim+2; y++) {
+                    actors[x,y] = new LinkedList<Actor>();
+                }
+            }
+        }
+
+        void Coords(Vector2 pos, out int x, out int y) {
+            x = (int)(xdim * (pos.X + Util.FIELDWIDTH/2) / Util.FIELDWIDTH)+1;
+            y = (int)(ydim * (pos.Y + Util.FIELDHEIGHT/2) / Util.FIELDHEIGHT)+1;
+        }
 
         public void Add(Actor actor)
         {
-            backBuffer.Add(actor);
+            backBuffer.AddLast(actor);
             actor.Start();
         }
 
         public void AddRing(Ring actor)
         {
-            rings.Add(actor);
+            rings.AddLast(actor);
         }
 
         public void RemoveRing(Ring actor)
@@ -41,77 +58,155 @@ namespace SpaceBattle
             return ringstrength;
         }
 
-        public void Update(float dt)
+        void UpdateCell(int x, int y, float dt)
         {
-            if (Util.MODE == Util.Mode.OnePlayer)
+            var node = actors[x, y].First;
+            while (node != null)
             {
-                float playerscale = 1 + RingStrength(Util.player1);
-                foreach (var a in actors)
+                node.Value.Update(dt / (1+RingStrength(node.Value)));
+                int xp, yp;
+                Coords(node.Value.Position, out xp, out yp);
+                if (xp != x || yp != y)
                 {
-                    float strength = 1 + RingStrength(a);
-                    a.Update(dt * playerscale / strength);
+                    bucket.AddLast(node.Value);
+                    var next = node.Next;
+                    actors[x, y].Remove(node);
+                    node = next;
+                }
+                else
+                {
+                    node = node.Next;
                 }
             }
-            else {
-                foreach (var a in actors)
+        }
+
+        void Reinsert(Actor a, int x, int y)
+        {
+            if (x < 1 || x >= xdim + 1 || y < 1 || y >= xdim + 1)
+            {
+                a.Finish();
+            }
+            else
+            {
+                actors[x, y].AddLast(a);
+            }
+        }
+
+        public void Update(float dt)
+        {
+            bucket = new LinkedList<Actor>();
+
+            for (int i = 1; i <= xdim; i++)
+            {
+                for (int j = 1; j <= ydim; j++)
                 {
-                    a.Update(dt / (1 + RingStrength(a)));
+                    UpdateCell(i, j, dt);
                 }
             }
 
-            for (int i = 0; i < actors.Count; i++) {
-                for (int j = i+1; j < actors.Count; j++) { 
-                    var a = actors[i];
-                    var b = actors[j];
-                    if ((a.Position - b.Position).Length() < a.Radius + b.Radius) {
-                        a.Collision(b);
-                        b.Collision(a);
+            foreach (var k in bucket)
+            {
+                int x; int y;
+                Coords(k.Position, out x, out y);
+                Reinsert(k, x, y);
+            }
+            
+            bucket = null;
+
+
+            for (int x = 1; x <= xdim; x++) 
+            {
+                for (int y = 1; y <= ydim; y++)
+                {
+                    foreach (var actor in actors[x, y])
+                    {
+                        foreach (var other in InternalActorsNear(actor.Position, actor.Radius))
+                        {
+                            actor.Collision(other);
+                        }
                     }
                 }
             }
 
-            actors.RemoveAll(v =>
+            for (int x = 1; x <= xdim; x++) 
             {
-                if (v.Dead || !Util.OnScreen(v.Position))
+                for (int y = 1; y <= ydim; y++)
                 {
-                    v.Finish();
-                    return true;
+                    actors[x,y] = new LinkedList<Actor>(actors[x,y].Where(v =>  {
+                        if (v.Dead) { 
+                            v.Finish(); 
+                            return false; 
+                        } else { return true; } }));
                 }
-                else
-                {
-                    return false;
-                }
-            });
+            }
 
-            actors.AddRange(backBuffer);
-            backBuffer = new List<Actor>();
+            foreach (var k in backBuffer) {
+                int x; int y;
+                Coords(k.Position, out x, out y);
+                Reinsert(k, x, y);
+            }
+
+            backBuffer = new LinkedList<Actor>();
+        }
+
+        IEnumerable<Actor> InternalActorsNear(Vector2 pos, float radius)
+        {
+            int x, y;
+            Coords(pos, out x, out y);
+            if (x < 1 || x >= xdim + 1 || y < 1 || y >= ydim + 1) yield break;
+            for (int i = -1; i <= 1; i++)
+            {
+                for (int j = -1; j <= 1; j++)
+                {
+                    foreach (var k in actors[x + i, y + j])
+                    {
+                        if ((k.Position - pos).LengthSquared() <= k.Radius + radius)
+                            yield return k;
+                    }
+                }
+            }
         }
 
         public IEnumerable<Actor> ActorsNear(Vector2 pos, float radius)
         {
-            // slooow, need quadtree
-            return actors.Where(a => (a.Position - pos).LengthSquared() < radius * radius);
+            foreach (var k in InternalActorsNear(pos, radius))
+            {
+                yield return k;
+            }
+            if (bucket != null)
+            {
+                foreach (var k in bucket)
+                {
+                    if ((k.Position - pos).LengthSquared() <= k.Radius + radius)
+                        yield return k;
+                }
+            }
         }
 
         public void Draw()
         {
-            foreach (var v in actors) { v.Draw(); }
+            for (int x = 1; x <= xdim; x++)
+            {
+                for (int y = 1; y <= ydim; y++)
+                {
+                    foreach (var k in actors[x, y])
+                    {
+                        k.Draw();
+                    }
+                }
+            }
         }
 
         public void Reset()
         {
-            actors.RemoveAll(v =>
+            for (int x = 0; x < xdim + 2; x++)
             {
-                if (!(v is PlayerShip))
+                for (int y = 0; y < ydim + 2; y++)
                 {
-                    v.Finish();
-                    return true;
+                    foreach (var k in actors[x, y]) { k.Finish(); }
+                    actors[x, y] = new LinkedList<Actor>();
                 }
-                else
-                {
-                    return false;
-                }
-            });
+            }
         }
     }
 
@@ -172,6 +267,8 @@ namespace SpaceBattle
         public static void Reset()
         {
             Actors.Reset();
+            Actors.Add(player1);
+            if (Util.MODE == Mode.TwoPlayer) Actors.Add(player2);
         }
 
         public static float Scale(float min, float max, float x)
@@ -244,19 +341,19 @@ namespace SpaceBattle
                 {
                     Sequencer.PlayOnce(pos, "tri1");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RatePowerup, v, 0, 1.0f),
-                                       pos, vel, ship => ship.FasterShots()));
+                                       float.PositiveInfinity, pos, vel, ship => ship.FasterShots()));
                 }
                 else if (sel == 24)
                 {
                     Sequencer.PlayOnce(pos, "tri3");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1.0f),
-                                       pos, vel, ship => ship.MoreShots()));
+                                       float.PositiveInfinity, pos, vel, ship => ship.MoreShots()));
                 }
                 else if (sel == 25)
                 {
                     Sequencer.PlayOnce(pos, "tri2");
                     Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RingIcon, v, 0, 1.0f),
-                                       pos, vel, ship => ship.AddRing()));
+                                       float.PositiveInfinity, pos, vel, ship => ship.AddRing()));
                 }
             }
         }

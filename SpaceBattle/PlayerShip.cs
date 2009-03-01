@@ -141,7 +141,7 @@ namespace SpaceBattle
                 }
             }
 
-            float offset = 0.5f;
+            float offset = 1.0f;
             for (int shot = 0; shot < shots; shot++)
             {
                 bulletTimeout += shotrate;
