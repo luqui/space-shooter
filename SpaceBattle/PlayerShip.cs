@@ -140,7 +140,7 @@ namespace SpaceBattle
             {
                 if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0))
                 {
-                    if (!Util.OnScreen(pos)) // if spawning offscreen, wrap.
+                    if (Util.MODE == Util.Mode.OnePlayer && !Util.OnScreen(pos)) // if spawning offscreen in single player, wrap.
                     {
                         pos = Util.WrapToScreen(pos);
                     }
