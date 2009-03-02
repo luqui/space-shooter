@@ -14,6 +14,7 @@ namespace SpaceBattle
         LinkedList<Actor> backBuffer = new LinkedList<Actor>();
         LinkedList<Actor> bucket = null;
         LinkedList<Ring> rings = new LinkedList<Ring>();
+        public bool Reject = false;
 
         public ActorList(int xdim_, int ydim_) {
             XDim = xdim_; YDim = ydim_;
@@ -81,7 +82,7 @@ namespace SpaceBattle
 
         void Reinsert(Actor a, int x, int y)
         {
-            if (x < 1 || x >= XDim + 1 || y < 1 || y >= XDim + 1)
+            if (x < 1 || x >= XDim + 1 || y < 1 || y >= YDim + 1)
             {
                 a.Finish();
             }
@@ -126,6 +127,8 @@ namespace SpaceBattle
                     }
                 }
             }
+
+            if (Reject) return;
 
             for (int x = 1; x <= XDim; x++) 
             {
@@ -185,9 +188,9 @@ namespace SpaceBattle
 
         public void Finish()
         {
-            for (int x = 1; x <= XDim; x++)
+            for (int x = 1; x < XDim+1; x++)
             {
-                for (int y = 1; y <= YDim; y++)
+                for (int y = 1; y < YDim+1; y++)
                 {
                     foreach (var k in actors[x, y])
                     {
@@ -276,6 +279,7 @@ namespace SpaceBattle
         public static void ResetActors()
         {
             Actors.Finish();
+            Actors.Reject = true;
             Actors = new ActorList(Actors.XDim, Actors.YDim);
             Actors.Add(Util.player1);
             if (_MODE == Mode.TwoPlayer)
@@ -361,8 +365,6 @@ namespace SpaceBattle
 
         public static void Destroy()
         {
-            Sequencer.Stop();
-            Sequencer.Start();
             DeathCount = 0;
             Explosions = new Explosion();
             player1 = new PlayerShip(PlayerIndex.One, new XBoxInput(PlayerIndex.One));

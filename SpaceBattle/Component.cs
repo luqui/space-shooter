@@ -11,7 +11,9 @@ namespace SpaceBattle
         protected Enemy self;
         public virtual void Reassign(Enemy newself)
         {
+            bool startme = self == null;
             self = newself;
+            if (startme) Start();
         }
         public abstract void Draw();
         public virtual void Start() { }

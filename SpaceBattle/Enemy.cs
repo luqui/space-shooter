@@ -108,9 +108,9 @@ namespace SpaceBattle
                 factories.AddRange(Components.Seekers.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
                 factories.AddRange(Components.Damages.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
                 ComponentFactory f = factories[Util.RANDOM.Next(factories.Count)];
-                if (Behavior == null && f is ComponentFactory<BehaviorComponent>) { Behavior = ((ComponentFactory<BehaviorComponent>)f).Spawn(); Behavior.Reassign(this); Behavior.Start(); }
-                if (Seeker == null && f is ComponentFactory<SeekerComponent>) { Seeker = ((ComponentFactory<SeekerComponent>)f).Spawn(); Seeker.Reassign(this); Seeker.Start();  }
-                if (Damage == null && f is ComponentFactory<DamageComponent>) { Damage = ((ComponentFactory<DamageComponent>)f).Spawn(); Damage.Reassign(this); Damage.Start(); }
+                if (Behavior == null && f is ComponentFactory<BehaviorComponent>) { Behavior = ((ComponentFactory<BehaviorComponent>)f).Spawn(); Behavior.Reassign(this); }
+                if (Seeker == null && f is ComponentFactory<SeekerComponent>) { Seeker = ((ComponentFactory<SeekerComponent>)f).Spawn(); Seeker.Reassign(this); }
+                if (Damage == null && f is ComponentFactory<DamageComponent>) { Damage = ((ComponentFactory<DamageComponent>)f).Spawn(); Damage.Reassign(this); }
             }
         }
 
