@@ -10,24 +10,24 @@ namespace SpaceBattle
     class ActorList
     {
         LinkedList<Actor>[,] actors;
-        int xdim, ydim;
+        public readonly int XDim, YDim;
         LinkedList<Actor> backBuffer = new LinkedList<Actor>();
         LinkedList<Actor> bucket = null;
         LinkedList<Ring> rings = new LinkedList<Ring>();
 
         public ActorList(int xdim_, int ydim_) {
-            xdim = xdim_; ydim = ydim_;
-            actors = new LinkedList<Actor>[xdim+2, ydim+2];
-            for (int x = 0; x < xdim+2; x++) {
-                for (int y = 0; y < ydim+2; y++) {
+            XDim = xdim_; YDim = ydim_;
+            actors = new LinkedList<Actor>[XDim+2, YDim+2];
+            for (int x = 0; x < XDim+2; x++) {
+                for (int y = 0; y < YDim+2; y++) {
                     actors[x,y] = new LinkedList<Actor>();
                 }
             }
         }
 
         void Coords(Vector2 pos, out int x, out int y) {
-            x = (int)(xdim * (pos.X + Util.FIELDWIDTH/2) / Util.FIELDWIDTH)+1;
-            y = (int)(ydim * (pos.Y + Util.FIELDHEIGHT/2) / Util.FIELDHEIGHT)+1;
+            x = (int)(XDim * (pos.X + Util.FIELDWIDTH/2) / Util.FIELDWIDTH)+1;
+            y = (int)(YDim * (pos.Y + Util.FIELDHEIGHT/2) / Util.FIELDHEIGHT)+1;
         }
 
         public void Add(Actor actor)
@@ -82,7 +82,7 @@ namespace SpaceBattle
 
         void Reinsert(Actor a, int x, int y)
         {
-            if (x < 1 || x >= xdim + 1 || y < 1 || y >= xdim + 1)
+            if (x < 1 || x >= XDim + 1 || y < 1 || y >= XDim + 1)
             {
                 a.Finish();
             }
@@ -96,9 +96,9 @@ namespace SpaceBattle
         {
             bucket = new LinkedList<Actor>();
 
-            for (int i = 1; i <= xdim; i++)
+            for (int i = 1; i <= XDim; i++)
             {
-                for (int j = 1; j <= ydim; j++)
+                for (int j = 1; j <= YDim; j++)
                 {
                     UpdateCell(i, j, dt);
                 }
@@ -114,9 +114,9 @@ namespace SpaceBattle
             bucket = null;
 
 
-            for (int x = 1; x <= xdim; x++) 
+            for (int x = 1; x <= XDim; x++) 
             {
-                for (int y = 1; y <= ydim; y++)
+                for (int y = 1; y <= YDim; y++)
                 {
                     foreach (var actor in actors[x, y])
                     {
@@ -128,9 +128,9 @@ namespace SpaceBattle
                 }
             }
 
-            for (int x = 1; x <= xdim; x++) 
+            for (int x = 1; x <= XDim; x++) 
             {
-                for (int y = 1; y <= ydim; y++)
+                for (int y = 1; y <= YDim; y++)
                 {
                     actors[x,y] = new LinkedList<Actor>(actors[x,y].Where(v =>  {
                         if (v.Dead) { 
@@ -153,7 +153,7 @@ namespace SpaceBattle
         {
             int x, y;
             Coords(pos, out x, out y);
-            if (x < 1 || x >= xdim + 1 || y < 1 || y >= ydim + 1) yield break;
+            if (x < 1 || x >= XDim + 1 || y < 1 || y >= YDim + 1) yield break;
             for (int i = -1; i <= 1; i++)
             {
                 for (int j = -1; j <= 1; j++)
@@ -183,11 +183,25 @@ namespace SpaceBattle
             }
         }
 
+        public void Finish()
+        {
+            for (int x = 1; x <= XDim; x++)
+            {
+                for (int y = 1; y <= YDim; y++)
+                {
+                    foreach (var k in actors[x, y])
+                    {
+                        k.Finish();
+                    }
+                }
+            }
+        }
+
         public void Draw()
         {
-            for (int x = 1; x <= xdim; x++)
+            for (int x = 1; x <= XDim; x++)
             {
-                for (int y = 1; y <= ydim; y++)
+                for (int y = 1; y <= YDim; y++)
                 {
                     foreach (var k in actors[x, y])
                     {
@@ -196,18 +210,12 @@ namespace SpaceBattle
                 }
             }
         }
+    }
 
-        public void Reset()
-        {
-            for (int x = 0; x < xdim + 2; x++)
-            {
-                for (int y = 0; y < ydim + 2; y++)
-                {
-                    foreach (var k in actors[x, y]) { k.Finish(); }
-                    actors[x, y] = new LinkedList<Actor>();
-                }
-            }
-        }
+    public class Pair<T,U> {
+        public Pair(T t, U u) { Fst = t; Snd = u; }
+        public readonly T Fst;
+        public readonly U Snd;
     }
 
     static class Util
@@ -221,7 +229,8 @@ namespace SpaceBattle
         public static PlayerShip player1;
         public static PlayerShip player2;
 
-        public static Explosion EXPLOSIONS;
+        public static Explosion Explosions;
+        public static int DeathCount = 0;
 
         public const float FIELDWIDTH = 28.0f;
         public const float FIELDHEIGHT = 21.0f;
@@ -232,20 +241,27 @@ namespace SpaceBattle
         {
             set
             {
-                //if number of players is set, fix the actors list.
-                if (value == Mode.OnePlayer || value == Mode.TwoPlayer)
-                {
-                    Util.Actors.Reset();
-                    Actors.Add(Util.player1);
-                    if (value == Mode.TwoPlayer)
-                        Actors.Add(Util.player2);
-                }
                 _MODE = value;
+                //if number of players is set, fix the actors list.
+                if (_MODE == Mode.OnePlayer || _MODE == Mode.TwoPlayer)
+                {
+                    ResetActors();
+                }
+
             }
             get
             {
                 return _MODE;
             }
+        }
+
+        public static void ResetActors()
+        {
+            Actors.Finish();
+            Actors = new ActorList(Actors.XDim, Actors.YDim);
+            Actors.Add(Util.player1);
+            if (_MODE == Mode.TwoPlayer)
+                Actors.Add(Util.player2);
         }
 
         public static int SCORE = 0;
@@ -262,13 +278,6 @@ namespace SpaceBattle
         public static float RandRange(float min, float max)
         {
             return Scale(min, max, (float)RANDOM.NextDouble());
-        }
-
-        public static void Reset()
-        {
-            Actors.Reset();
-            Actors.Add(player1);
-            if (Util.MODE == Mode.TwoPlayer) Actors.Add(player2);
         }
 
         public static float Scale(float min, float max, float x)
@@ -309,7 +318,7 @@ namespace SpaceBattle
 
         public static void RandomExplosion(Vector2 pos)
         {
-            EXPLOSIONS.AddExplosion(pos, new Vector3(RandRange(0.5f, 1), RandRange(0.5f, 1), RandRange(0.5f, 1)), 
+            Explosions.AddExplosion(pos, new Vector3(RandRange(0.5f, 1), RandRange(0.5f, 1), RandRange(0.5f, 1)), 
                        50, RandRange(10,40), RandRange(1,3), RandRange(0.1f, 0.4f));
         }
 
@@ -336,50 +345,45 @@ namespace SpaceBattle
         {
             Sequencer.Stop();
             Sequencer.Start();
-            Actors.Reset();
-            EXPLOSIONS = new Explosion();
+            DeathCount = 0;
+            Explosions = new Explosion();
             player1 = new PlayerShip(PlayerIndex.One);
             player2 = new PlayerShip(PlayerIndex.Two);
+            ResetActors();
             MODE = Mode.Menu;
+        }
+
+        public static T ProbSelect<T>(params Pair<float, T>[] parms) {
+            float accum = 0;
+            T ret = default(T);
+            foreach (var p in parms)
+            {
+                accum += p.Fst;
+                if (RANDOM.NextDouble() <= p.Fst / accum) ret = p.Snd;
+            }
+            return ret;
         }
 
         public static void EnemyDeath(Vector2 pos)
         {
-            if (RANDOM.Next(11) == 0)
+            if (RANDOM.NextDouble() <= 1.0f/11)
             {
-                int sel = RANDOM.Next(26);
                 Vector2 vel = new Vector2(RandRange(-3, 3), RandRange(-3, 3));
-                if (sel <= 22)
+                Sequencer.PlayOnce(pos, Sounds.Select(Sounds.Crash));
+                if (MODE == Mode.OnePlayer)
                 {
-                    Sequencer.PlayOnce(pos, Sounds.Select(Sounds.Crash));
-                    if (MODE == Mode.OnePlayer)
-                    {
-                        Actors.Add(PowerUps.RandomPowerup(player1.Position, new Vector2()));
-                    }
-                    else
-                    {
-                        Actors.Add(PowerUps.RandomPowerup(pos, vel));
-                    }
+                    Actors.Add(PowerUps.RandomEnemyPowerup(player1.Position, new Vector2()));
                 }
+                else
+                {
+                    Actors.Add(PowerUps.RandomEnemyPowerup(pos, vel));
+                }
+            }
 
-                else if (sel == 23)
-                {
-                    Sequencer.PlayOnce(pos, "tri1");
-                    Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RatePowerup, v, 0, 1.0f),
-                                       float.PositiveInfinity, pos, vel, ship => ship.FasterShots()));
-                }
-                else if (sel == 24)
-                {
-                    Sequencer.PlayOnce(pos, "tri3");
-                    Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1.0f),
-                                       float.PositiveInfinity, pos, vel, ship => ship.MoreShots()));
-                }
-                else if (sel == 25)
-                {
-                    Sequencer.PlayOnce(pos, "tri2");
-                    Actors.Add(new PowerUp(v => Util.DrawSprite(Textures.RingIcon, v, 0, 1.0f),
-                                       float.PositiveInfinity, pos, vel, ship => ship.AddRing()));
-                }
+            if (++DeathCount % 75 == 0) {
+                Vector2 vel = new Vector2(RandRange(-3, 3), RandRange(-3, 3));
+                Sequencer.PlayOnce(pos, "tri1");
+                Actors.Add(PowerUps.RandomUpgradePowerup(pos, vel));
             }
         }
     }
