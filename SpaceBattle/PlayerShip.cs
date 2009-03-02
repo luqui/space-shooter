@@ -172,6 +172,7 @@ namespace SpaceBattle
 
         public override void Draw()
         {
+            const float scaleInventory = 0.5f;
             if (lives <= 0) return;
 
             float rot = (float)Math.Atan2(velocityMemory.Y, velocityMemory.X);
@@ -194,9 +195,9 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(Textures.RingIcon, r + new Vector2(i / 2.0f + 3, 0), 0, 0.5f);
                 }
-                behaviors.Draw(r + new Vector2(0, -1), new Vector2(2, 0));
-                seekers.Draw(r + new Vector2(0, -2), new Vector2(2, 0));
-                damages.Draw(r + new Vector2(0, -3), new Vector2(2, 0));
+                behaviors.Draw(r + new Vector2(0, -1) * scaleInventory, new Vector2(2, 0) * scaleInventory, scaleInventory);
+                seekers.Draw(r + new Vector2(0, -2) * scaleInventory, new Vector2(2, 0) * scaleInventory, scaleInventory);
+                damages.Draw(r + new Vector2(0, -3) * scaleInventory, new Vector2(2, 0) * scaleInventory, scaleInventory);
            }
             else if (player == PlayerIndex.Two)
             {
@@ -209,9 +210,9 @@ namespace SpaceBattle
                 {
                     Util.DrawSprite(Textures.RingIcon, r + new Vector2(-i / 2.0f - 3, 0), 0, 0.5f);
                 }
-                behaviors.Draw(r + new Vector2(-1, -1), new Vector2(-2, 0));
-                seekers.Draw(r + new Vector2(-1, -2), new Vector2(-2, 0));
-                damages.Draw(r + new Vector2(-1, -3), new Vector2(-2, 0));
+                behaviors.Draw(r + new Vector2(-1, -1) * scaleInventory, new Vector2(-2, 0) * scaleInventory, scaleInventory);
+                seekers.Draw(r + new Vector2(-1, -2) * scaleInventory, new Vector2(-2, 0) * scaleInventory, scaleInventory);
+                damages.Draw(r + new Vector2(-1, -3) * scaleInventory, new Vector2(-2, 0) * scaleInventory, scaleInventory);
             }
         }
 

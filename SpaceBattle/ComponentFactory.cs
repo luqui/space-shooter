@@ -15,13 +15,14 @@ namespace SpaceBattle
     class ComponentFactory<T> : ComponentFactory where T : Component
     {
         public readonly Func<T> Spawn;
-        public readonly Action<Vector2> draw;
+        public readonly Action<Vector2, float> draw;
         public readonly string name;
 
         public override string Name { get { return name; } }
-        public override void Draw(Vector2 pos) { draw(pos); }
+        public override void Draw(Vector2 pos) { Draw(pos, 1.0f); }
+        public void Draw(Vector2 pos, float scale) { draw(pos, scale); }
 
-        public ComponentFactory(string name, Func<T> spawn, Action<Vector2> draw)
+        public ComponentFactory(string name, Func<T> spawn, Action<Vector2, float> draw)
         {
             this.name = name;
             Spawn = spawn;
@@ -91,13 +92,17 @@ namespace SpaceBattle
 
         public void Draw(Vector2 pos, Vector2 stride)
         {
+            Draw(pos, stride, 1.0f);
+        }
+        public void Draw(Vector2 pos, Vector2 stride, float scale)
+        {
             Vector2 offset = pos;
             for (int i = 0; i < buf.Count; i++)
             {
                 int j = (i + index) % buf.Count;
                 if (j != 0 && buf[j].ammo == 0) continue;
-                buf[j].factory.Draw(offset);
-                Util.DrawText(offset + new Vector2(1,0), buf[j].ammo.ToString());
+                buf[j].factory.Draw(offset, scale);
+                Util.DrawText(offset + new Vector2(1, 0)*scale, buf[j].ammo.ToString(), scale);
                 offset += stride;
             }
         }

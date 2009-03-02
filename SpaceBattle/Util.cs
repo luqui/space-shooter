@@ -330,8 +330,12 @@ namespace SpaceBattle
 
         public static void DrawText(Vector2 pos, string text)
         {
+            DrawText(pos, text, 1.0f);
+        }
+        public static void DrawText(Vector2 pos, string text, float scale)
+        {
             pos.Y = -pos.Y;
-            Batch.DrawString(Textures.Font, text, pos, Color.White, 0, new Vector2(12,12), 1.0f/24, SpriteEffects.None, 0);
+            Batch.DrawString(Textures.Font, text, pos, Color.White, 0, new Vector2(12,12), scale/24, SpriteEffects.None, 0);
         }
 
         public static void RandomExplosion(Vector2 pos)

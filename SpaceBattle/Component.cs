@@ -41,25 +41,25 @@ namespace SpaceBattle
     {
         public static List<ComponentFactory<BehaviorComponent>> Behaviors = 
             new List<ComponentFactory<BehaviorComponent>> {
-                new ComponentFactory<BehaviorComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), pos => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), pos => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, 1.0f))
+                new ComponentFactory<BehaviorComponent>("Empty", () => null, (pos, scale) => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, scale)),
+                new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), (pos, scale) => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, scale)),
+                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), (pos, scale) => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, scale))
             };
 
         public static List<ComponentFactory<SeekerComponent>> Seekers =
             new List<ComponentFactory<SeekerComponent>> {
-                new ComponentFactory<SeekerComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), pos => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 2.0f)),
-                new ComponentFactory<SeekerComponent>("FastSeeker", () => new FastSeeker(), pos => Util.DrawSprite(Textures.FastEnemy, pos, 0, 2.0f)),
-                new ComponentFactory<SeekerComponent>("ProjectorSeeker", () => new ProjectorSeeker(), pos => Util.DrawSprite(Textures.ProjectorEnemy, pos, 0, 2.0f))
+                new ComponentFactory<SeekerComponent>("Empty", () => null, (pos, scale) => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, scale)),
+                new ComponentFactory<SeekerComponent>("SlinkToward", () => new SlinkTowardSeeker(), (pos, scale) => Util.DrawSprite(Textures.FollowerEnemy, pos, 0, 2.0f*scale)),
+                new ComponentFactory<SeekerComponent>("FastSeeker", () => new FastSeeker(), (pos, scale) => Util.DrawSprite(Textures.FastEnemy, pos, 0, 2.0f*scale)),
+                new ComponentFactory<SeekerComponent>("ProjectorSeeker", () => new ProjectorSeeker(), (pos, scale) => Util.DrawSprite(Textures.ProjectorEnemy, pos, 0, 2.0f*scale))
             };
 
         public static List<ComponentFactory<DamageComponent>> Damages =
             new List<ComponentFactory<DamageComponent>> {
-                new ComponentFactory<DamageComponent>("Empty", () => null, pos => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<DamageComponent>("Splitty", () => new SplittyDamage(), pos => Util.DrawSprite(Textures.SplittyEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<DamageComponent>("Tough", () => new ToughDamage(), pos => Util.DrawSprite(Textures.StrongEnemy, pos, 0, 1.0f)),
-                new ComponentFactory<DamageComponent>("Mine", () => new MineDamage(), pos => Util.DrawSprite(Textures.MineEnemy, pos, 0, 1.0f))
+                new ComponentFactory<DamageComponent>("Empty", () => null, (pos, scale) => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, scale)),
+                new ComponentFactory<DamageComponent>("Splitty", () => new SplittyDamage(), (pos, scale) => Util.DrawSprite(Textures.SplittyEnemy, pos, 0, scale)),
+                new ComponentFactory<DamageComponent>("Tough", () => new ToughDamage(), (pos, scale) => Util.DrawSprite(Textures.StrongEnemy, pos, 0, scale)),
+                new ComponentFactory<DamageComponent>("Mine", () => new MineDamage(), (pos, scale) => Util.DrawSprite(Textures.MineEnemy, pos, 0, scale))
             };
 
         public static ComponentRing<BehaviorComponent> MakeBehaviorRing()
