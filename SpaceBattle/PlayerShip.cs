@@ -172,7 +172,6 @@ namespace SpaceBattle
 
         public override void Draw()
         {
-            const float scaleInventory = 0.5f;
             if (lives <= 0) return;
 
             float rot = (float)Math.Atan2(velocityMemory.Y, velocityMemory.X);
@@ -184,12 +183,20 @@ namespace SpaceBattle
                 Util.DrawSprite(crosshair, position + dir, 0, 0.5f);
             }
 
+ 
+        }
+
+        public void DrawStatus()
+        {
+            const float scaleInventory = 0.6f;
+
             //no transparency on menus:
             var alphaTmp = Util.AlphaHack;
-            Util.AlphaHack = 1.0f;
+            Util.AlphaHack *= 1.0f;
             if (player == PlayerIndex.One)
             {
                 Vector2 r = new Vector2(-Util.FIELDWIDTH / 2 + 1, Util.FIELDHEIGHT / 2 - 1);
+                Util.DrawSprite(Textures.StatusBackground, r + new Vector2(2.4f, -1.0f), 0, new Vector2(6.0f, 3.0f), new Vector4(1,1,1,0.6f));
                 for (int i = 0; i < lives; i++)
                 {
                     Util.DrawSprite(texture, r + new Vector2(i / 2.0f, 0), 0, 0.5f);
@@ -201,10 +208,11 @@ namespace SpaceBattle
                 behaviors.Draw(r + new Vector2(0, -1) * scaleInventory, new Vector2(2, 0) * scaleInventory, scaleInventory);
                 seekers.Draw(r + new Vector2(0, -2) * scaleInventory, new Vector2(2, 0) * scaleInventory, scaleInventory);
                 damages.Draw(r + new Vector2(0, -3) * scaleInventory, new Vector2(2, 0) * scaleInventory, scaleInventory);
-           }
+            }
             else if (player == PlayerIndex.Two)
             {
                 Vector2 r = new Vector2(Util.FIELDWIDTH / 2 - 1, Util.FIELDHEIGHT / 2 - 1);
+                Util.DrawSprite(Textures.StatusBackground, r + new Vector2(-2.4f, -1.0f), 0, new Vector2(6.0f, 3.0f), new Vector4(1, 1, 1, 0.6f));
                 for (int i = 0; i < lives; i++)
                 {
                     Util.DrawSprite(texture, r + new Vector2(-i / 2.0f, 0), 0, 0.5f);

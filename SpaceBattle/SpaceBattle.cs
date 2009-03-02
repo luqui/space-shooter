@@ -133,12 +133,17 @@ namespace SpaceBattle
                     break;
                 case Util.Mode.OnePlayer:
                 case Util.Mode.TwoPlayer:
-                    spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.Immediate, SaveStateMode.SaveState, transform);
+                    spriteBatch.Begin(SpriteBlendMode.AlphaBlend, SpriteSortMode.Immediate, SaveStateMode.SaveState, transform);
                     Util.Actors.Draw();
                     Util.Explosions.Draw();
+                    Util.player1.DrawStatus();
                     if (Util.MODE == Util.Mode.OnePlayer)
                     {
                         Util.DrawText(new Vector2(0, Util.FIELDHEIGHT / 2 - 1), Util.SCORE.ToString());
+                    }
+                    else
+                    {
+                        Util.player2.DrawStatus();
                     }
                     spriteBatch.End();
                     break;

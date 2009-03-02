@@ -320,12 +320,17 @@ namespace SpaceBattle
 
         public static float AlphaHack = 1.0f;
 
-        public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale, Vector4 color)
+        public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, Vector2 scale, Vector4 color)
         {
             float sc = 1.0f / tex.Width;
             pos.Y = -pos.Y;
             color.W *= AlphaHack;
             Batch.Draw(tex, pos, null, new Color(color), -rot, new Vector2(tex.Width / 2, tex.Height / 2), sc * scale, SpriteEffects.None, 0);
+        }
+
+        public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale, Vector4 color)
+        {
+            DrawSprite(tex, pos, rot, new Vector2(scale, scale), color);
         }
 
         public static void DrawSprite(Texture2D tex, Vector2 pos, float rot, float scale)
