@@ -125,7 +125,8 @@ namespace SpaceBattle
             if (dir.LengthSquared() < MINDISTANCE * MINDISTANCE)
             {
                 dir = velocityMemory;
-                dir.Normalize();
+                if (dir != Vector2.Zero) //normalizing a 0 vector results in NAN.
+                    dir.Normalize(); 
                 dir *= 0.01f;
             }
 
@@ -137,8 +138,12 @@ namespace SpaceBattle
 
             if (enemyShoot && enemyTimeout <= 0)
             {
-                if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0) && Util.OnScreen(pos))
+                if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0))
                 {
+                    if (!Util.OnScreen(pos)) // if spawning offscreen, wrap.
+                    {
+                        pos = Util.WrapToScreen(pos);
+                    }
                     Enemy e = new Enemy(pos, other, behaviors.Spawn(), seekers.Spawn(), damages.Spawn());
                     Util.Actors.Add(e);
                     enemyTimeout = ENEMYTIME;

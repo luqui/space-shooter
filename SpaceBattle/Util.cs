@@ -317,6 +317,20 @@ namespace SpaceBattle
         {
             return pos.X >= -FIELDWIDTH/2 && pos.X <= FIELDWIDTH/2 && pos.Y >= -FIELDHEIGHT/2 && pos.Y <= FIELDHEIGHT/2;
         }
+        public static Vector2 WrapToScreen(Vector2 pos)
+        {
+            if(pos.X < -FIELDWIDTH / 2)
+                pos.X += FIELDWIDTH;
+            else if (pos.X > FIELDWIDTH / 2)
+                pos.X -= FIELDWIDTH;
+            
+            if(pos.Y < -FIELDHEIGHT / 2)
+                pos.Y += FIELDHEIGHT;
+            else if(pos.Y > FIELDHEIGHT / 2)
+                pos.Y -= FIELDHEIGHT;
+
+            return pos;
+        }
 
         public static void Destroy()
         {
