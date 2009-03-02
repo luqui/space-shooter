@@ -167,11 +167,7 @@ namespace SpaceBattle
             {
                 if (!fLeftPressed)
                 {
-                    if (stack.Count != 0)
-                    {
-                        left();
-                        menu = stack.Pop();
-                    }
+                    left();
                     fLeftPressed = true;
                 }
             }
