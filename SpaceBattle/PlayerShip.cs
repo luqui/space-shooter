@@ -37,7 +37,7 @@ namespace SpaceBattle
 
         float immunity = 5.0f;
 
-        const float ENEMYTIME = 0.1f;
+        const float ENEMYTIME = 0.12f;
         const float SPEED = 5.0f;
         const float BULLETSPEED = 18.0f;
         const float SPAWNTHRESH = 10.0f;

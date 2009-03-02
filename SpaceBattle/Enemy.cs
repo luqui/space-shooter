@@ -24,7 +24,7 @@ namespace SpaceBattle
         }
 
         public const float FADEINTIME = 2.0f;
-        public float dtUpgrade = 60;
+        public float dtUpgrade = 45;
         float upgrade = 0;
 
         // only for use in components:
