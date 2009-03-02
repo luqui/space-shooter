@@ -39,10 +39,10 @@ namespace SpaceBattle
         const float ENEMYTIME = 0.1f;
         const float SPEED = 5.0f;
         const float BULLETSPEED = 18.0f;
-        const float TRIGGERLENGTH = 10.0f;
         const float SPAWNTHRESH = 10.0f;
         const float MINDISTANCE = 0.20f;
         const float RINGTIMER = 60.0f;
+        const float TRIGGERLENGTH = 10.0f;
 
         int rings = 1;
         float ringTimer = 0f;
