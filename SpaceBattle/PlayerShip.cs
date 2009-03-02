@@ -230,8 +230,12 @@ namespace SpaceBattle
             Enemy e = other as Enemy;
             if (e != null && e.fadeIn <= 0)
             {
-                Die();
-                Util.Actors.Add(new ProxyEnemy(e));
+                if (immunity > 0) e.Die();
+                else
+                {
+                    Die();
+                    Util.Actors.Add(new ProxyEnemy(e));
+                }
             }
         }
 
