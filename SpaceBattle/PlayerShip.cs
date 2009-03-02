@@ -12,6 +12,7 @@ namespace SpaceBattle
     {
         Vector2 position;
         public override Vector2 Position { get { return position; } }
+        public void PositionSetter(Vector2 position) {this.position = position;}
         public override bool Dead { get { return false; } }
         public override float Radius { get { return 0.30f; } }
         Vector2 velocity;
