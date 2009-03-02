@@ -33,7 +33,6 @@ namespace SpaceBattle
         public void Add(Actor actor)
         {
             backBuffer.AddLast(actor);
-            actor.Start();
         }
 
         public void AddRing(Ring actor)
@@ -143,6 +142,7 @@ namespace SpaceBattle
             foreach (var k in backBuffer) {
                 int x; int y;
                 Coords(k.Position, out x, out y);
+                k.Start();
                 Reinsert(k, x, y);
             }
 
