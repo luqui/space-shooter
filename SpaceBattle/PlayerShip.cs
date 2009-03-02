@@ -10,6 +10,7 @@ namespace SpaceBattle
 {
     class PlayerShip : Actor
     {
+        Input input;
         Vector2 position;
         public override Vector2 Position { get { return position; } }
         public void PositionSetter(Vector2 position) {this.position = position;}
@@ -26,7 +27,6 @@ namespace SpaceBattle
         ComponentRing<BehaviorComponent> behaviors = Components.MakeBehaviorRing();
         ComponentRing<SeekerComponent> seekers = Components.MakeSeekerRing();
         ComponentRing<DamageComponent> damages = Components.MakeDamageRing();
-        GamePadState lastState;
         Vector2 velocityMemory;
 
         int lives;
@@ -43,16 +43,14 @@ namespace SpaceBattle
         const float SPAWNTHRESH = 10.0f;
         const float MINDISTANCE = 0.20f;
         const float RINGTIMER = 60.0f;
-        const float TRIGGERLENGTH = 10.0f;
 
         int rings = 1;
         float ringTimer = 0f;
 
-        public PlayerShip(PlayerIndex player) { 
+        public PlayerShip(PlayerIndex player, Input input) { 
             this.player = player;
+            this.input = input;
             lives = 5;
-
-            lastState = new GamePadState();
 
             if (player == PlayerIndex.One)
             {
@@ -84,28 +82,24 @@ namespace SpaceBattle
 
         public override void Update(float dt)
         {
-            var input = GamePad.GetState(player);
-
-            if (input.Buttons.Back == ButtonState.Pressed) { Util.MODE = Util.Mode.Menu; Util.Destroy();  return; }
+            input.Update();
+            if (input.Back()) { Util.MODE = Util.Mode.Menu; Util.Destroy();  return; }
             if (lives <= 0) return;
 
-            velocity = SPEED * input.ThumbSticks.Left;
+            velocity = SPEED * input.Direction();
             if (velocity.LengthSquared() > 0) velocityMemory = velocity;
             position += dt * velocity;
 
-            Func<Func<GamePadButtons, ButtonState>, bool> pressed = f => 
-                f(lastState.Buttons) == ButtonState.Released && f(input.Buttons) == ButtonState.Pressed;
-
-            Vector2 dir = input.ThumbSticks.Right;
+            Vector2 dir = input.Aim(position) - position;
 
             bool resetAmmo = false;
-            if (pressed(i => i.Y)) { resetAmmo = true; behaviors.Next(); }
-            if (pressed(i => i.X)) { resetAmmo = true; seekers.Next(); }
-            if (pressed(i => i.A)) { resetAmmo = true; damages.Next(); }
-            if (rings > 0 && (pressed(i => i.RightShoulder) || pressed(i => i.LeftShoulder)))
+            if (input.SwitchBehaviors()) { resetAmmo = true; behaviors.Next(); }
+            if (input.SwitchSeekers()) { resetAmmo = true; seekers.Next(); }
+            if (input.SwitchDamages()) { resetAmmo = true; damages.Next(); }
+            if (rings > 0 && input.FireRing())
             {
                 rings--;
-                Util.Actors.Add(new Ring(position + TRIGGERLENGTH * dir));
+                Util.Actors.Add(new Ring(position + dir));
                 if (rings == 0) ringTimer = RINGTIMER;
             }
 
@@ -131,13 +125,10 @@ namespace SpaceBattle
                 dir *= 0.01f;
             }
 
-            bool enemyShoot = Util.MODE == Util.Mode.OnePlayer ? input.Triggers.Right > 0.5f : input.Triggers.Left > 0.5f;
-            bool bulletShoot = input.Triggers.Right > 0.5f;
-
-            var pos = Util.MODE == Util.Mode.OnePlayer ? position - TRIGGERLENGTH * dir : position + TRIGGERLENGTH * dir;
+            var pos = Util.MODE == Util.Mode.OnePlayer ? position - dir : position + dir;
             var other = Util.MODE == Util.Mode.OnePlayer ? this : Util.GetPlayer(Util.OtherPlayer(player));
 
-            if (enemyShoot && enemyTimeout <= 0)
+            if ((input.FiringEnemy() || input.FiringBullet() && Util.MODE == Util.Mode.OnePlayer) && enemyTimeout <= 0)
             {
                 if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0))
                 {
@@ -156,7 +147,7 @@ namespace SpaceBattle
             for (int shot = 0; shot < shots; shot++)
             {
                 bulletTimeout += shotrate;
-                if (bulletShoot)
+                if (input.FiringBullet())
                 {
                     float thetastep = 5 * (float)Math.PI / 180;
                     float theta = (float)Math.Atan2(dir.Y, dir.X) - (numshots-1) * thetastep / 2;
@@ -172,32 +163,11 @@ namespace SpaceBattle
             }
 
             if (resetAmmo) ResetAmmo();
-            lastState = input;
 
             if (position.X < -Util.FIELDWIDTH / 2) position.X = -Util.FIELDWIDTH / 2;
             if (position.X >= Util.FIELDWIDTH / 2) position.X = Util.FIELDWIDTH / 2 - 0.01f;
             if (position.Y < -Util.FIELDHEIGHT / 2) position.Y = -Util.FIELDHEIGHT / 2;
             if (position.Y >= Util.FIELDHEIGHT / 2) position.Y = Util.FIELDHEIGHT / 2 - 0.01f;
-        }
-
-        int DPadDirection(GamePadState input)
-        {
-            bool u = input.DPad.Up == ButtonState.Pressed;
-            bool d = input.DPad.Down == ButtonState.Pressed;
-            bool l = input.DPad.Left == ButtonState.Pressed;
-            bool r = input.DPad.Right == ButtonState.Pressed;
-
-            // starting from top, clockwise: 0-7
-            int dir =
-                u && l ? 7 :
-                u && r ? 1 :
-                d && r ? 3 :
-                d && l ? 5 :
-                u ? 0 :
-                r ? 2 :
-                d ? 4 :
-                l ? 6 : -1;
-            return dir;
         }
 
         public override void Draw()
@@ -206,11 +176,11 @@ namespace SpaceBattle
 
             float rot = (float)Math.Atan2(velocityMemory.Y, velocityMemory.X);
             Util.DrawSprite(texture, position, rot - (float)Math.PI/2, 1);
-
-            Vector2 dir = GamePad.GetState(player).ThumbSticks.Right;
+            
+            Vector2 dir = input.Aim(position) - position;
             if (dir.LengthSquared() >= MINDISTANCE*MINDISTANCE)
             {
-                Util.DrawSprite(crosshair, position + TRIGGERLENGTH * dir, 0, 0.5f);
+                Util.DrawSprite(crosshair, position + dir, 0, 0.5f);
             }
 
             if (player == PlayerIndex.One)

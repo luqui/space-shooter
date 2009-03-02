@@ -14,6 +14,10 @@ namespace SpaceBattle
         public abstract bool FiringEnemy();
         public abstract bool FiringBullet();
         public abstract bool FireRing();
+        public abstract bool SwitchBehaviors();
+        public abstract bool SwitchSeekers();
+        public abstract bool SwitchDamages();
+        public abstract bool Back();
         public abstract void Update();
     }
 
@@ -52,13 +56,34 @@ namespace SpaceBattle
 
         public override bool FireRing()
         {
-            return state.Buttons.LeftShoulder == ButtonState.Pressed && prevState.Buttons.LeftShoulder == ButtonState.Released;
+            return state.Buttons.LeftShoulder == ButtonState.Pressed && prevState.Buttons.LeftShoulder == ButtonState.Released
+                || state.Buttons.RightShoulder == ButtonState.Pressed && prevState.Buttons.RightShoulder == ButtonState.Released;
         }
 
         public override void Update()
         {
             prevState = state;
             state = GamePad.GetState(player);
+        }
+
+        public override bool SwitchBehaviors()
+        {
+            return state.Buttons.Y == ButtonState.Pressed && prevState.Buttons.Y == ButtonState.Released;
+        }
+
+        public override bool SwitchSeekers()
+        {
+            return state.Buttons.X == ButtonState.Pressed && prevState.Buttons.X == ButtonState.Released;
+        }
+
+        public override bool SwitchDamages()
+        {
+            return state.Buttons.A == ButtonState.Pressed && prevState.Buttons.A == ButtonState.Released;
+        }
+
+        public override bool Back()
+        {
+            return state.Buttons.Back == ButtonState.Pressed && prevState.Buttons.Back == ButtonState.Released;
         }
     }
 }

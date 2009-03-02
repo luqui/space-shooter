@@ -47,8 +47,8 @@ namespace SpaceBattle
             Util.Scheduler = new Scheduler();
             Util.Explosions = new Explosion();
 
-            Util.player1 = new PlayerShip(PlayerIndex.One);
-            Util.player2 = new PlayerShip(PlayerIndex.Two);
+            Util.player1 = new PlayerShip(PlayerIndex.One, new XBoxInput(PlayerIndex.One));
+            Util.player2 = new PlayerShip(PlayerIndex.Two, new XBoxInput(PlayerIndex.Two));
             
             Util.Actors = new ActorList(8,6);
 

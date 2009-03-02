@@ -237,9 +237,7 @@ namespace SpaceBattle
 
         public static void LoadSinglePlayerGame()
         {
-            Util.ResetActors();
             Util.player1.PositionSetter(new Vector2(-FIELDWIDTH/4,0));
-            Actors.Add(Util.player1);
             for (int ix = 0; ix < 10; ix++)
             {
                 var enemy = new Enemy(new Vector2(0, (float)Math.Sin(ix-5 / 10) * FIELDHEIGHT / 2), Util.player1, null, null, null) { dtUpgrade = 0.0f }; 
@@ -248,11 +246,8 @@ namespace SpaceBattle
         }
         public static void LoadMultiPlayerGame()
         {
-            Util.ResetActors();
             Util.player1.PositionSetter(new Vector2(-FIELDWIDTH/4,0));
             Util.player2.PositionSetter(new Vector2(FIELDWIDTH/4,0));
-            Actors.Add(Util.player1);
-            Actors.Add(Util.player2);
         }
 
         public enum Mode { OnePlayer, TwoPlayer, Menu, Exit};
@@ -262,6 +257,7 @@ namespace SpaceBattle
             set
             {
                 _MODE = value;
+                ResetActors();
                 //if number of players is set, fix the actors list.
                 if (_MODE == Mode.OnePlayer || _MODE == Mode.TwoPlayer)
                 {
@@ -369,8 +365,8 @@ namespace SpaceBattle
             Sequencer.Start();
             DeathCount = 0;
             Explosions = new Explosion();
-            player1 = new PlayerShip(PlayerIndex.One);
-            player2 = new PlayerShip(PlayerIndex.Two);
+            player1 = new PlayerShip(PlayerIndex.One, new XBoxInput(PlayerIndex.One));
+            player2 = new PlayerShip(PlayerIndex.Two, new XBoxInput(PlayerIndex.Two));
             ResetActors();
             MODE = Mode.Menu;
         }
