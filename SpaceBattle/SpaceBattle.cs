@@ -102,7 +102,7 @@ namespace SpaceBattle
                     emptyTimer -= dt;
                     while (emptyTimer < 0)
                     {
-                        emptyTimer += 0.5f;
+                        emptyTimer += 0.36f;
                         Util.player1.Equip("Empty", 1);
                         Util.player2.Equip("Empty", 1);
                     }
