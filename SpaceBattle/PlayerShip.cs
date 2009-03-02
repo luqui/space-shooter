@@ -184,6 +184,9 @@ namespace SpaceBattle
                 Util.DrawSprite(crosshair, position + dir, 0, 0.5f);
             }
 
+            //no transparency on menus:
+            var alphaTmp = Util.AlphaHack;
+            Util.AlphaHack = 1.0f;
             if (player == PlayerIndex.One)
             {
                 Vector2 r = new Vector2(-Util.FIELDWIDTH / 2 + 1, Util.FIELDHEIGHT / 2 - 1);
@@ -214,6 +217,9 @@ namespace SpaceBattle
                 seekers.Draw(r + new Vector2(-1, -2) * scaleInventory, new Vector2(-2, 0) * scaleInventory, scaleInventory);
                 damages.Draw(r + new Vector2(-1, -3) * scaleInventory, new Vector2(-2, 0) * scaleInventory, scaleInventory);
             }
+
+            //restore hack
+            Util.AlphaHack = alphaTmp;
         }
 
         public override void Collision(Actor other)
