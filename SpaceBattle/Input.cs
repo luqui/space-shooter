@@ -25,11 +25,11 @@ namespace SpaceBattle
     {
         public XBoxInput(PlayerIndex pidx)
         {
-            player = pidx;
+            Player = pidx;
             state = new GamePadState();
             prevState = new GamePadState();
         }
-        PlayerIndex player;
+        public readonly PlayerIndex Player;
         GamePadState prevState;
         GamePadState state;
         const float TRIGGERLENGTH = 10.0f;
@@ -63,7 +63,7 @@ namespace SpaceBattle
         public override void Update()
         {
             prevState = state;
-            state = GamePad.GetState(player);
+            state = GamePad.GetState(Player);
         }
 
         public override bool SwitchBehaviors()
@@ -84,6 +84,75 @@ namespace SpaceBattle
         public override bool Back()
         {
             return state.Buttons.Back == ButtonState.Pressed && prevState.Buttons.Back == ButtonState.Released;
+        }
+    }
+
+    class MouseKBInput : Input
+    {
+        KeyboardState kState;
+        KeyboardState lastKState;
+        MouseState mState;
+        MouseState lastMState;
+
+        public override Vector2 Direction()
+        {
+            Func<Keys,float> sc = k => kState.IsKeyDown(k) ? 1 : 0;
+            Vector2 r = sc(Keys.W) * new Vector2(0, 1)
+                      + sc(Keys.S) * new Vector2(0, -1)
+                      + sc(Keys.A) * new Vector2(-1, 0)
+                      + sc(Keys.D) * new Vector2(1, 0);
+            if (r.LengthSquared() > 0) r.Normalize();
+            return r;
+        }
+
+        public override Vector2 Aim(Vector2 pos)
+        {
+            Vector3 scr = new Vector3(mState.X, mState.Y, 0);
+            Vector3 world = Vector3.Transform(scr, Matrix.Invert(Util.WorldToScreen));
+            return new Vector2(world.X, -world.Y);
+        }
+
+        public override bool FiringEnemy()
+        {
+            return mState.RightButton == ButtonState.Pressed;
+        }
+
+        public override bool FiringBullet()
+        {
+            return mState.LeftButton == ButtonState.Pressed;
+        }
+
+        public override bool FireRing()
+        {
+            return kState.IsKeyDown(Keys.Space) && lastKState.IsKeyUp(Keys.Space);
+        }
+
+        public override bool SwitchBehaviors()
+        {
+            return kState.IsKeyDown(Keys.D1) && lastKState.IsKeyUp(Keys.D1);
+        }
+
+        public override bool SwitchSeekers()
+        {
+            return kState.IsKeyDown(Keys.D2) && lastKState.IsKeyUp(Keys.D2);
+        }
+
+        public override bool SwitchDamages()
+        {
+            return kState.IsKeyDown(Keys.D3) && lastKState.IsKeyUp(Keys.D3);
+        }
+
+        public override bool Back()
+        {
+            return kState.IsKeyDown(Keys.Back) && lastKState.IsKeyUp(Keys.Back);
+        }
+
+        public override void Update()
+        {
+            lastMState = mState;
+            mState = Mouse.GetState();
+            lastKState = kState;
+            kState = Keyboard.GetState();
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SpaceBattle
 {
     class PlayerShip : Actor
     {
-        Input input;
+        public Input Input;
         Vector2 position;
         public override Vector2 Position { get { return position; } }
         public void PositionSetter(Vector2 position) {this.position = position;}
@@ -49,7 +49,7 @@ namespace SpaceBattle
 
         public PlayerShip(PlayerIndex player, Input input) { 
             this.player = player;
-            this.input = input;
+            this.Input = input;
             lives = 5;
 
             if (player == PlayerIndex.One)
@@ -82,21 +82,21 @@ namespace SpaceBattle
 
         public override void Update(float dt)
         {
-            input.Update();
-            if (input.Back()) { Util.MODE = Util.Mode.Menu; Util.Destroy();  return; }
+            Input.Update();
+            if (Input.Back()) { Util.MODE = Util.Mode.Menu; Util.Destroy();  return; }
             if (lives <= 0) return;
 
-            velocity = SPEED * input.Direction();
+            velocity = SPEED * Input.Direction();
             if (velocity.LengthSquared() > 0) velocityMemory = velocity;
             position += dt * velocity;
 
-            Vector2 dir = input.Aim(position) - position;
+            Vector2 dir = Input.Aim(position) - position;
 
             bool resetAmmo = false;
-            if (input.SwitchBehaviors()) { resetAmmo = true; behaviors.Next(); }
-            if (input.SwitchSeekers()) { resetAmmo = true; seekers.Next(); }
-            if (input.SwitchDamages()) { resetAmmo = true; damages.Next(); }
-            if (rings > 0 && input.FireRing())
+            if (Input.SwitchBehaviors()) { resetAmmo = true; behaviors.Next(); }
+            if (Input.SwitchSeekers()) { resetAmmo = true; seekers.Next(); }
+            if (Input.SwitchDamages()) { resetAmmo = true; damages.Next(); }
+            if (rings > 0 && Input.FireRing())
             {
                 rings--;
                 Util.Actors.Add(new Ring(position + dir));
@@ -128,7 +128,7 @@ namespace SpaceBattle
             var pos = Util.MODE == Util.Mode.OnePlayer ? position - dir : position + dir;
             var other = Util.MODE == Util.Mode.OnePlayer ? this : Util.GetPlayer(Util.OtherPlayer(player));
 
-            if ((input.FiringEnemy() || input.FiringBullet() && Util.MODE == Util.Mode.OnePlayer) && enemyTimeout <= 0)
+            if ((Input.FiringEnemy() || Input.FiringBullet() && Util.MODE == Util.Mode.OnePlayer) && enemyTimeout <= 0)
             {
                 if ((behaviors.Ammo > 0 || seekers.Ammo > 0 || damages.Ammo > 0))
                 {
@@ -147,7 +147,7 @@ namespace SpaceBattle
             for (int shot = 0; shot < shots; shot++)
             {
                 bulletTimeout += shotrate;
-                if (input.FiringBullet())
+                if (Input.FiringBullet())
                 {
                     float thetastep = 5 * (float)Math.PI / 180;
                     float theta = (float)Math.Atan2(dir.Y, dir.X) - (numshots-1) * thetastep / 2;
@@ -178,7 +178,7 @@ namespace SpaceBattle
             float rot = (float)Math.Atan2(velocityMemory.Y, velocityMemory.X);
             Util.DrawSprite(texture, position, rot - (float)Math.PI/2, 1);
             
-            Vector2 dir = input.Aim(position) - position;
+            Vector2 dir = Input.Aim(position) - position;
             if (dir.LengthSquared() >= MINDISTANCE*MINDISTANCE)
             {
                 Util.DrawSprite(crosshair, position + dir, 0, 0.5f);

@@ -30,6 +30,8 @@ namespace SpaceBattle
         bool fDownPressed, fUpPressed, fLeftPressed, fRightPressed;
         Vector2 v2StickLast;
         readonly Vector2 v2StickThreshold = new Vector2(7.5f, 5.0f);
+        KeyboardState kState;
+        KeyboardState lastKState;
 
 
 
@@ -54,6 +56,19 @@ namespace SpaceBattle
                 return fxnWithPredicate(count.ToString(),null,() => Explosion.CAP = count, () => {return Explosion.CAP == count;});
             };
 
+            Func<Func<PlayerShip>, List<MenuItem>> inputList = player => new List<MenuItem>()
+            {
+               fxnWithPredicate("Keyboard/Mouse", null, 
+                        () => player().Input = new MouseKBInput(), 
+                        () => { return player().Input is MouseKBInput; }),
+               fxnWithPredicate("XBox Controller 1", null, 
+                        () => player().Input = new XBoxInput(PlayerIndex.One), 
+                        () => { return player().Input is XBoxInput && (player().Input as XBoxInput).Player == PlayerIndex.One; }),
+               fxnWithPredicate("XBox Controller 2", null, 
+                        () => player().Input = new XBoxInput(PlayerIndex.Two), 
+                        () => { return player().Input is XBoxInput && (player().Input as XBoxInput).Player == PlayerIndex.Two; }),
+            };
+
             //Menu content:
             menu = fxn("Main Menu", new List<MenuItem>() 
             {
@@ -69,7 +84,9 @@ namespace SpaceBattle
                        fxnParticleEffects(1000),
                        fxnParticleEffects(1500),
                        fxnWithPredicate("Unlimited",null,() => Explosion.CAP = int.MaxValue, () => {return Explosion.CAP == int.MaxValue;})
-                   },fxnEnter)
+                   },fxnEnter),
+                   fxn("Player 1 Input", inputList(() => Util.player1), fxnEnter),
+                   fxn("Player 2 Input", inputList(() => Util.player2), fxnEnter)
                 }, fxnEnter),
                 fxn("Exit",null,() => Util.MODE  = Util.Mode.Exit)
             }, null);
@@ -77,6 +94,17 @@ namespace SpaceBattle
         }
         public void Update(GamePadState[] rgState)
         {
+            Action up = () => { ixSubItems = ixSubItems == 0 ? menu.listSubItems.Count - 1 : ixSubItems - 1; };
+            Action down = () => { ixSubItems = (ixSubItems + 1) % menu.listSubItems.Count; };
+            Action left = () => {                   
+                if (stack.Count != 0)
+                    {
+                        ixSubItems = stack.Peek().listSubItems.IndexOf(menu);
+                        menu = stack.Pop();
+                    }
+            };
+            Action right = () => { menu.listSubItems[ixSubItems].fxnAction(); };
+
             //Stick Detection:
             Vector2 v2StickInput = Vector2.Zero;
             foreach (GamePadState state in rgState)
@@ -88,12 +116,12 @@ namespace SpaceBattle
             v2StickLast.Y += v2StickInput.Y;
             if (v2StickLast.Y < -v2StickThreshold.Y)
             {
-                ixSubItems = (ixSubItems + 1) % menu.listSubItems.Count;
+                down();
                 v2StickLast.Y += v2StickThreshold.Y;
             }
             else if (v2StickLast.Y > v2StickThreshold.Y)
             {
-                ixSubItems = ixSubItems == 0 ? menu.listSubItems.Count - 1 : ixSubItems - 1;
+                up();
                 v2StickLast.Y -= v2StickThreshold.Y;
             }
 
@@ -105,26 +133,21 @@ namespace SpaceBattle
             v2StickLast.X += v2StickInput.X;
             if (v2StickLast.X < -v2StickThreshold.X)
             {
-                if (stack.Count != 0)
-                {
-                    ixSubItems = stack.Peek().listSubItems.IndexOf(menu);
-                    menu = stack.Pop();
-                }
+                left();
                 v2StickLast.X += v2StickThreshold.X;
             }
             else if (v2StickLast.X > v2StickThreshold.X)
             {
-                menu.listSubItems[ixSubItems].fxnAction();
+                right();
                 v2StickLast.X -= v2StickThreshold.X;
             }
 
             
-            //DPad detection -- depricated!
             if (rgState[0].DPad.Down == ButtonState.Pressed)
             {
                 if (!fDownPressed)
                 {
-                    ixSubItems = (ixSubItems + 1) % menu.listSubItems.Count;
+                    down();
                     fDownPressed = true;
                 }
             }
@@ -134,7 +157,7 @@ namespace SpaceBattle
             {
                 if (!fUpPressed)
                 {
-                    ixSubItems = ixSubItems == 0 ? menu.listSubItems.Count - 1 : ixSubItems - 1;
+                    up();
                     fUpPressed = true;
                 }
             }
@@ -146,7 +169,7 @@ namespace SpaceBattle
                 {
                     if (stack.Count != 0)
                     {
-                        ixSubItems = stack.Peek().listSubItems.IndexOf(menu);
+                        left();
                         menu = stack.Pop();
                     }
                     fLeftPressed = true;
@@ -160,12 +183,23 @@ namespace SpaceBattle
             {
                 if (!fRightPressed)
                 {
-                    menu.listSubItems[ixSubItems].fxnAction();
+                    right();
                     fRightPressed = true;
                 }
             }
             else
                 fRightPressed = false;
+
+            // keyboard detection
+            lastKState = kState;
+            kState = Keyboard.GetState();
+            if (kState.IsKeyDown(Keys.Down) && lastKState.IsKeyUp(Keys.Down)) down();
+            if (kState.IsKeyDown(Keys.Up) && lastKState.IsKeyUp(Keys.Up)) up();
+            if (kState.IsKeyDown(Keys.Left) && lastKState.IsKeyUp(Keys.Left)) left();
+            if (kState.IsKeyDown(Keys.Right) && lastKState.IsKeyUp(Keys.Right)
+             || kState.IsKeyDown(Keys.Space) && lastKState.IsKeyUp(Keys.Space)
+             || kState.IsKeyDown(Keys.Enter) && lastKState.IsKeyUp(Keys.Enter)) right();
+
         }
         public void Draw(SpriteBatch sb, Rectangle rectViewport)
         {

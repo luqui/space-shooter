@@ -237,6 +237,7 @@ namespace SpaceBattle
 
         public const float FIELDWIDTH = 28.0f;
         public const float FIELDHEIGHT = 21.0f;
+        public static Matrix WorldToScreen;
 
         public static void LoadSinglePlayerGame()
         {
@@ -371,8 +372,8 @@ namespace SpaceBattle
         {
             DeathCount = 0;
             Explosions = new Explosion();
-            player1 = new PlayerShip(PlayerIndex.One, new XBoxInput(PlayerIndex.One));
-            player2 = new PlayerShip(PlayerIndex.Two, new XBoxInput(PlayerIndex.Two));
+            player1 = new PlayerShip(PlayerIndex.One, player1.Input);
+            player2 = new PlayerShip(PlayerIndex.Two, player2.Input);
             ResetActors();
             MODE = Mode.Menu;
         }
