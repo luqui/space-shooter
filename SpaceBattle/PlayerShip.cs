@@ -98,8 +98,13 @@ namespace SpaceBattle
             if (Input.SwitchDamages()) { resetAmmo = true; damages.Next(); }
             if (rings > 0 && Input.FireRing())
             {
+                var ringdir = dir;
+                if (position.X + ringdir.X < -Util.FIELDWIDTH / 2) { ringdir *= (-Util.FIELDWIDTH / 2 + 1 - position.X) / ringdir.X; }
+                if (position.X + ringdir.X >= Util.FIELDWIDTH / 2) { ringdir *= (Util.FIELDWIDTH / 2 - 1 - position.X) / ringdir.X; }
+                if (position.Y + ringdir.Y < -Util.FIELDHEIGHT / 2) { ringdir *= (-Util.FIELDHEIGHT / 2 + 1 - position.Y) / ringdir.Y; }
+                if (position.Y + ringdir.Y >= Util.FIELDHEIGHT / 2) { ringdir *= (Util.FIELDHEIGHT / 2 - 1 - position.Y) / ringdir.Y; }
                 rings--;
-                Util.Actors.Add(new Ring(position + dir));
+                Util.Actors.Add(new Ring(position + ringdir));
                 if (rings == 0) ringTimer = RINGTIMER;
             }
 

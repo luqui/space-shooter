@@ -26,7 +26,7 @@ namespace SpaceBattle
         public Explosion()
         {
             particles = new LinkedList<LinkedList<Particle>>();
-            for (int i = 0; i < 30; i++)
+            for (int i = 0; i < 29; i++)
             {
                 particles.AddLast(new LinkedList<Particle>());
             }
