@@ -33,6 +33,8 @@ namespace SpaceBattle
             RingEnemy = Content.Load<Texture2D>("RingEnemy");
             RingIcon = Content.Load<Texture2D>("RingIcon");
             StatusBackground = Content.Load<Texture2D>("StatusBackground");
+            PrismPowerup = Content.Load<Texture2D>("PrismPowerup");
+            PrismBullet = Content.Load<Texture2D>("PrismBullet");
 
             Font = Content.Load<SpriteFont>("Font");
         }
@@ -59,6 +61,8 @@ namespace SpaceBattle
         public static Texture2D RingEnemy;
         public static Texture2D RingIcon;
         public static Texture2D StatusBackground;
+        public static Texture2D PrismPowerup;
+        public static Texture2D PrismBullet;
 
         public static SpriteFont Font;
     }

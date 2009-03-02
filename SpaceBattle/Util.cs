@@ -376,6 +376,7 @@ namespace SpaceBattle
         public static void Destroy()
         {
             DeathCount = 0;
+            SCORE = 0;
             Explosions = new Explosion();
             player1 = new PlayerShip(PlayerIndex.One, player1.Input);
             player2 = new PlayerShip(PlayerIndex.Two, player2.Input);
@@ -394,6 +395,11 @@ namespace SpaceBattle
             return ret;
         }
 
+        public static Vector2 FromAngle(float theta)
+        {
+            return new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta));
+        }
+
         public static void EnemyDeath(Vector2 pos)
         {
             if (RANDOM.NextDouble() <= 1.0f/11)
@@ -410,7 +416,7 @@ namespace SpaceBattle
                 }
             }
 
-            if (++DeathCount % 75 == 0) {
+            if (++DeathCount % 175 == 0) {
                 Vector2 vel = new Vector2(RandRange(-3, 3), RandRange(-3, 3));
                 Sequencer.PlayOnce(pos, "tri1");
                 Actors.Add(PowerUps.RandomUpgradePowerup(pos, vel));

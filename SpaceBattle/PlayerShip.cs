@@ -32,12 +32,14 @@ namespace SpaceBattle
         int lives;
         float bulletTimeout = 0.0f;
         float enemyTimeout = 0.0f;
-        float shotrate = 0.1f;
-        int numshots = 1;
+
+        float fastShotTimer = 0.0f;
+        float tripleShotTimer = 0.0f;
+        float prismShotTimer = 0.0f;
 
         float immunity = 5.0f;
 
-        const float ENEMYTIME = 0.12f;
+        const float ENEMYTIME = 0.10f;
         const float SPEED = 5.0f;
         const float BULLETSPEED = 18.0f;
         const float SPAWNTHRESH = 10.0f;
@@ -118,9 +120,9 @@ namespace SpaceBattle
             immunity -= dt;
             bulletTimeout -= dt;
             enemyTimeout -= dt;
-            int shots = 0;
-
-            while (bulletTimeout <= 0) { shots++; bulletTimeout += dt; }
+            fastShotTimer -= dt;
+            tripleShotTimer -= dt;
+            prismShotTimer -= dt;
 
             if (dir.LengthSquared() < MINDISTANCE * MINDISTANCE)
             {
@@ -148,10 +150,14 @@ namespace SpaceBattle
                 }
             }
 
+            int shots = 0;
+            while (bulletTimeout <= 0) { shots++; bulletTimeout += dt; }
+            int numshots = tripleShotTimer <= 0 ? 1 : 3;
+
             float offset = 1.0f;
             for (int shot = 0; shot < shots; shot++)
             {
-                bulletTimeout += shotrate;
+                bulletTimeout += fastShotTimer <= 0 ? 0.1f : 0.033f;
                 if (Input.FiringBullet())
                 {
                     float thetastep = 5 * (float)Math.PI / 180;
@@ -160,7 +166,8 @@ namespace SpaceBattle
                     {
                         Vector2 dir2 = new Vector2((float)Math.Cos(theta), (float)Math.Sin(theta));
                         Vector4 color = player == PlayerIndex.One ? new Vector4(0, 1, 0, 1) : new Vector4(0.3f, 0.6f, 1, 1);
-                        Util.Actors.Add(new Bullet(position + offset * dir2, BULLETSPEED * dir2, color));
+                        Util.Actors.Add(prismShotTimer <= 0 ? new Bullet(position + offset * dir2, BULLETSPEED * dir2, color)
+                                                            : new PrismBullet(position + offset * dir2, BULLETSPEED * dir2, new Vector4(1, 1, 1, 1))); 
                         theta += thetastep;
                     }
                     offset += 0.3f;
@@ -281,14 +288,17 @@ namespace SpaceBattle
 
         public void FasterShots()
         {
-            shotrate *= 0.8f;
-            Util.Scheduler.Enqueue(30, () => shotrate /= 0.8f);
+            fastShotTimer = 30.0f;
         }
 
         public void MoreShots()
         {
-            numshots++;
-            Util.Scheduler.Enqueue(30, () => numshots--);
+            tripleShotTimer = 30.0f;
+        }
+
+        public void PrismShots()
+        {
+            prismShotTimer = 30.0f;
         }
 
         public void AddRing()

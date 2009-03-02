@@ -95,6 +95,8 @@ namespace SpaceBattle
                                       float.PositiveInfinity, position, velocity, ship => ship.FasterShots())),
                 mkPair(1, new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1),
                                       float.PositiveInfinity, position, velocity, ship => ship.MoreShots())),
+                mkPair(1, new PowerUp(v => Util.DrawSprite(Textures.PrismPowerup, v, 0, 1),
+                                      float.PositiveInfinity, position, velocity, ship => ship.PrismShots())),
                 mkPair(1, new PowerUp(v => Util.DrawSprite(Textures.RingIcon, v, 0, 1),
                                       float.PositiveInfinity, position, velocity, ship => ship.AddRing())));
         }

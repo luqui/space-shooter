@@ -111,7 +111,7 @@ namespace SpaceBattle
             accel = new Vector2();
 
             upgrade += dt;
-            if (upgrade >= dtUpgrade)
+            if (upgrade >= dtUpgrade && Behavior == null && Seeker == null && Damage == null)
             {
                 upgrade -= dtUpgrade;
                 List<ComponentFactory> factories = new List<ComponentFactory>();

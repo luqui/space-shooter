@@ -291,6 +291,20 @@ namespace SpaceBattle
             {
                 self.Die();
             }
+
+            if (bullet is PrismBullet)
+            {
+                Vector2 v = bullet.Velocity;
+                Vector2 vn = v; vn.Normalize();
+                PrismBullet a = new PrismBullet(bullet.Position + new Vector2(vn.X, vn.Y), new Vector2(v.X, v.Y), bullet.Color);
+                PrismBullet b = new PrismBullet(bullet.Position + new Vector2(-vn.Y, vn.X), new Vector2(-v.Y, v.X), bullet.Color);
+                PrismBullet c = new PrismBullet(bullet.Position + new Vector2(vn.Y, -vn.X), new Vector2(v.Y, -v.X), bullet.Color);
+                PrismBullet d = new PrismBullet(bullet.Position + new Vector2(-vn.X, -vn.Y), new Vector2(-v.X, -v.Y), bullet.Color);
+                Util.Actors.Add(a);
+                Util.Actors.Add(b);
+                Util.Actors.Add(c);
+                Util.Actors.Add(d);
+            }
         }
         public override void Die()
         {
