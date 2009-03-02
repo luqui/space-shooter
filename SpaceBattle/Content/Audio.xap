@@ -16,8 +16,8 @@ Global Settings
     Header File = Audio.h;
     Exclude Category Names = 0;
     Exclude Variable Names = 0;
-    Last Modified Low = 1889904295;
-    Last Modified High = 29989255;
+    Last Modified Low = 1096683648;
+    Last Modified High = 29989687;
 
     Category
     {
@@ -227,10 +227,10 @@ Wave Bank
     Compression Preset Name = <none>;
     Xbox Bank Last Modified Low = 0;
     Xbox Bank Last Modified High = 0;
-    PC Bank Last Modified Low = 1298902407;
-    PC Bank Last Modified High = 29989258;
-    Bank Last Revised Low = 1298842407;
-    Bank Last Revised High = 29989258;
+    PC Bank Last Modified Low = 1096833648;
+    PC Bank Last Modified High = 29989687;
+    Bank Last Revised Low = 1096823648;
+    Bank Last Revised High = 29989687;
 
     Wave
     {
@@ -3115,6 +3115,8 @@ Sound Bank
     Windows File = Win\Sound Bank.xsb;
     Xbox Bank Path Edited = 0;
     Windows Bank Path Edited = 0;
+    Bank Last Modified Low = 1100773648;
+    Bank Last Modified High = 29989687;
     Header Last Modified High = 0;
     Header Last Modified Low = 0;
 
@@ -8733,7 +8735,7 @@ Sound Bank
     Sound
     {
         Name = singingbowl1;
-        Volume = -1900;
+        Volume = 0;
         Pitch = 0;
         Priority = 0;
 
@@ -8780,7 +8782,7 @@ Sound Bank
     Sound
     {
         Name = singingbowl2;
-        Volume = -1900;
+        Volume = 0;
         Pitch = 0;
         Priority = 0;
 
@@ -8827,7 +8829,7 @@ Sound Bank
     Sound
     {
         Name = singingbowl3;
-        Volume = -1900;
+        Volume = 0;
         Pitch = 0;
         Priority = 0;
 

@@ -15,6 +15,7 @@ namespace SpaceBattle
         const float STRENGTH = 10;
         
         float timer = 0;
+        Microsoft.Xna.Framework.Audio.Cue cue;
 
         public float Strength
         {
@@ -27,9 +28,16 @@ namespace SpaceBattle
             }
         }
 
-        public override void Start() { Util.Actors.AddRing(this); }
+        public override void Start()
+        {
+            Util.Actors.AddRing(this);
+            cue = Util.Sequencer.StartCue(position, Sounds.Select(Sounds.SingingBowl));
+        }
 
-        public override void Finish() { Util.Actors.RemoveRing(this); }
+        public override void Finish() {
+            Util.Sequencer.StopCue(cue);
+            Util.Actors.RemoveRing(this); 
+        }
 
         public override bool Dead { get { return timer >= DURATION; } }
         public override float Radius { get { return 0.5f; } }
