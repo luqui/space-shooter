@@ -110,7 +110,7 @@ namespace SpaceBattle
                     }
                     break;
                 case Util.Mode.Menu:
-                    menu.Update(GamePad.GetState(PlayerIndex.One));
+                    menu.Update(new GamePadState[] {GamePad.GetState(PlayerIndex.One),GamePad.GetState(PlayerIndex.Two),GamePad.GetState(PlayerIndex.Three),GamePad.GetState(PlayerIndex.Four)});
                     break;
                 case Util.Mode.Exit:
                     Exit();

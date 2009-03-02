@@ -28,6 +28,9 @@ namespace SpaceBattle
         int ixSubItems;
         SpriteFont font;
         bool fDownPressed, fUpPressed, fLeftPressed, fRightPressed;
+        Vector2 v2StickLast;
+        readonly Vector2 v2StickThreshold = new Vector2(10.0f, 5.0f);
+
 
 
         public Menu(SpriteFont font)
@@ -72,9 +75,52 @@ namespace SpaceBattle
             }, null);
 
         }
-        public void Update(GamePadState state)
+        public void Update(GamePadState[] rgState)
         {
-            if (state.DPad.Down == ButtonState.Pressed)
+            //Stick Detection:
+            Vector2 v2StickInput = Vector2.Zero;
+            foreach (GamePadState state in rgState)
+                v2StickInput += state.ThumbSticks.Left;
+
+            //if changed direction, zero us out.
+            if (v2StickLast.Y * v2StickInput.Y < 0)
+                v2StickLast.Y = 0;
+            v2StickLast.Y += v2StickInput.Y;
+            if (v2StickLast.Y < -v2StickThreshold.Y)
+            {
+                ixSubItems = (ixSubItems + 1) % menu.listSubItems.Count;
+                v2StickLast.Y += v2StickThreshold.Y;
+            }
+            else if (v2StickLast.Y > v2StickThreshold.Y)
+            {
+                ixSubItems = ixSubItems == 0 ? menu.listSubItems.Count - 1 : ixSubItems - 1;
+                v2StickLast.Y -= v2StickThreshold.Y;
+            }
+
+            //horizontal:
+            //only care if we can go left or right.
+            //if changed direction, zero us out.
+            if (v2StickLast.X * v2StickInput.X < 0)
+                v2StickLast.X = 0;
+            v2StickLast.X += v2StickInput.X;
+            if (v2StickLast.X < -v2StickThreshold.X)
+            {
+                if (stack.Count != 0)
+                {
+                    ixSubItems = stack.Peek().listSubItems.IndexOf(menu);
+                    menu = stack.Pop();
+                }
+                v2StickLast.X += v2StickThreshold.X;
+            }
+            else if (v2StickLast.X > v2StickThreshold.X)
+            {
+                menu.listSubItems[ixSubItems].fxnAction();
+                v2StickLast.X -= v2StickThreshold.X;
+            }
+
+            
+            //DPad detection -- depricated!
+            if (rgState[0].DPad.Down == ButtonState.Pressed)
             {
                 if (!fDownPressed)
                 {
@@ -84,7 +130,7 @@ namespace SpaceBattle
             }
             else
                 fDownPressed = false;
-            if (state.DPad.Up == ButtonState.Pressed)
+            if (rgState[0].DPad.Up == ButtonState.Pressed)
             {
                 if (!fUpPressed)
                 {
@@ -94,7 +140,7 @@ namespace SpaceBattle
             }
             else
                 fUpPressed = false;
-            if (state.DPad.Left == ButtonState.Pressed)
+            if (rgState[0].DPad.Left == ButtonState.Pressed)
             {
                 if (!fLeftPressed)
                 {
@@ -108,9 +154,9 @@ namespace SpaceBattle
             }
             else
                 fLeftPressed = false;
-            if (state.DPad.Right == ButtonState.Pressed
-                || state.Buttons.A == ButtonState.Pressed
-                || state.Buttons.RightShoulder == ButtonState.Pressed)
+            if (rgState[0].DPad.Right == ButtonState.Pressed
+                || rgState[0].Buttons.A == ButtonState.Pressed
+                || rgState[0].Buttons.RightShoulder == ButtonState.Pressed)
             {
                 if (!fRightPressed)
                 {
