@@ -95,7 +95,7 @@ namespace SpaceBattle
             for (int i = 0; i < buf.Count; i++)
             {
                 int j = (i + index) % buf.Count;
-                if (buf[j].ammo == 0) continue;
+                if (j != 0 && buf[j].ammo == 0) continue;
                 buf[j].factory.Draw(offset);
                 Util.DrawText(offset + new Vector2(1,0), buf[j].ammo.ToString());
                 offset += stride;
