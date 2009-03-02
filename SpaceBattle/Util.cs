@@ -226,6 +226,26 @@ namespace SpaceBattle
         public const float FIELDWIDTH = 28.0f;
         public const float FIELDHEIGHT = 21.0f;
 
+        public static void LoadSinglePlayerGame()
+        {
+            Util.Actors.Reset();
+            Util.player1.PositionSetter(new Vector2(-FIELDWIDTH/4,0));
+            Actors.Add(Util.player1);
+            for (int ix = 0; ix < 10; ix++)
+            {
+                var enemy = new Enemy(new Vector2(0, (float)Math.Sin(ix-5 / 10) * FIELDHEIGHT / 2), Util.player1, null, null, null) { dtUpgrade = 0.0f }; 
+                Actors.Add(enemy);
+            }
+        }
+        public static void LoadMultiPlayerGame()
+        {
+            Util.Actors.Reset();
+            Util.player1.PositionSetter(new Vector2(-FIELDWIDTH/4,0));
+            Util.player2.PositionSetter(new Vector2(FIELDWIDTH/4,0));
+            Actors.Add(Util.player1);
+            Actors.Add(Util.player2);
+        }
+
         public enum Mode { OnePlayer, TwoPlayer, Menu, Exit};
         private static Mode _MODE = Mode.Menu;
         public static Mode MODE
@@ -235,10 +255,10 @@ namespace SpaceBattle
                 //if number of players is set, fix the actors list.
                 if (value == Mode.OnePlayer || value == Mode.TwoPlayer)
                 {
-                    Util.Actors.Reset();
-                    Actors.Add(Util.player1);
+                    if (value == Mode.OnePlayer)
+                        LoadSinglePlayerGame();
                     if (value == Mode.TwoPlayer)
-                        Actors.Add(Util.player2);
+                        LoadMultiPlayerGame();
                 }
                 _MODE = value;
             }
@@ -247,7 +267,7 @@ namespace SpaceBattle
                 return _MODE;
             }
         }
-
+        
         public static int SCORE = 0;
         public static int BLANKS = 0;
 

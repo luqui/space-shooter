@@ -24,6 +24,7 @@ namespace SpaceBattle
         }
 
         public const float FADEINTIME = 2.0f;
+        public float dtUpgrade = 60;
         float upgrade = 0;
 
         // only for use in components:
@@ -99,9 +100,9 @@ namespace SpaceBattle
             accel = new Vector2();
 
             upgrade += dt;
-            if (upgrade >= 60)
+            if (upgrade >= dtUpgrade)
             {
-                upgrade -= 60;
+                upgrade -= dtUpgrade;
                 List<ComponentFactory> factories = new List<ComponentFactory>();
                 factories.AddRange(Components.Behaviors.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
                 factories.AddRange(Components.Seekers.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));

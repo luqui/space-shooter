@@ -29,7 +29,7 @@ namespace SpaceBattle
         SpriteFont font;
         bool fDownPressed, fUpPressed, fLeftPressed, fRightPressed;
         Vector2 v2StickLast;
-        readonly Vector2 v2StickThreshold = new Vector2(10.0f, 5.0f);
+        readonly Vector2 v2StickThreshold = new Vector2(7.5f, 5.0f);
 
 
 
