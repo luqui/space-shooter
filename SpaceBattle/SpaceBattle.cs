@@ -45,14 +45,12 @@ namespace SpaceBattle
             Util.Sequencer = new Sequencer();
             Util.Sequencer.Start();
             Util.Scheduler = new Scheduler();
-            Util.EXPLOSIONS = new Explosion();
+            Util.Explosions = new Explosion();
 
             Util.player1 = new PlayerShip(PlayerIndex.One);
             Util.player2 = new PlayerShip(PlayerIndex.Two);
             
             Util.Actors = new ActorList(8,6);
-            
-            Util.Reset();
 
             Util.MODE = Util.Mode.Menu;
         }
@@ -81,7 +79,7 @@ namespace SpaceBattle
             float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
             Util.Actors.Update(dt);
             Util.Scheduler.Update(dt);
-            Util.EXPLOSIONS.Update(dt);
+            Util.Explosions.Update(dt);
 
             switch(Util.MODE)
             {
@@ -136,7 +134,7 @@ namespace SpaceBattle
                 case Util.Mode.TwoPlayer:
                     spriteBatch.Begin(SpriteBlendMode.Additive, SpriteSortMode.Immediate, SaveStateMode.SaveState, transform);
                     Util.Actors.Draw();
-                    Util.EXPLOSIONS.Draw();
+                    Util.Explosions.Draw();
                     if (Util.MODE == Util.Mode.OnePlayer)
                     {
                         Util.DrawText(new Vector2(0, Util.FIELDHEIGHT / 2 - 1), Util.SCORE.ToString());

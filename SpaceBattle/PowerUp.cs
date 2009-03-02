@@ -67,7 +67,7 @@ namespace SpaceBattle
 
     static class PowerUps
     {
-        public static PowerUp RandomPowerup(Vector2 position, Vector2 velocity)
+        public static PowerUp RandomEnemyPowerup(Vector2 position, Vector2 velocity)
         {
             List<ComponentFactory> factories = new List<ComponentFactory>();
             factories.AddRange(Components.Behaviors.Cast<ComponentFactory>().Where(b => b.Name != "Empty"));
@@ -85,6 +85,18 @@ namespace SpaceBattle
             {
                 ship.Equip(f.Name, amount);
             });
+        }
+
+        public static PowerUp RandomUpgradePowerup(Vector2 position, Vector2 velocity)
+        {
+            Func<float, PowerUp, Pair<float, PowerUp>> mkPair = (p,pow) => new Pair<float,PowerUp>(p,pow);
+            return Util.ProbSelect(
+                mkPair(1, new PowerUp(v => Util.DrawSprite(Textures.RatePowerup, v, 0, 1),
+                                      float.PositiveInfinity, position, velocity, ship => ship.FasterShots())),
+                mkPair(1, new PowerUp(v => Util.DrawSprite(Textures.NumPowerup, v, 0, 1),
+                                      float.PositiveInfinity, position, velocity, ship => ship.MoreShots())),
+                mkPair(1, new PowerUp(v => Util.DrawSprite(Textures.RingIcon, v, 0, 1),
+                                      float.PositiveInfinity, position, velocity, ship => ship.AddRing())));
         }
     };
 }
