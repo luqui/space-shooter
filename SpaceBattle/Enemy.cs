@@ -73,7 +73,18 @@ namespace SpaceBattle
             if (fadeIn > 0) { Util.AlphaHack = 1 - fadeIn / FADEINTIME; }
             if (Behavior == null && Seeker == null && Damage == null)
             {
-                Util.DrawSprite(Textures.EmptyEnemy, position, 0, 1.0f);
+                if (upgrade > dtUpgrade - 5)
+                {
+                    Util.DrawSprite(Textures.EmptyEnemy3, position + new Vector2(Util.RandRange(-0.05f, 0.05f), Util.RandRange(-0.05f, 0.05f)), 0, 1.0f);
+                }
+                else if (upgrade > dtUpgrade - 10)
+                {
+                    Util.DrawSprite(Textures.EmptyEnemy2, position, 0, 1.0f);
+                }
+                else
+                {
+                    Util.DrawSprite(Textures.EmptyEnemy, position, 0, 1.0f);
+                }
             }
             else
             {

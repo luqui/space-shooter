@@ -18,6 +18,8 @@ namespace SpaceBattle
             RedCrosshair = Content.Load<Texture2D>("RedCrosshair");
             BlueCrosshair = Content.Load<Texture2D>("BlueCrosshair");
             EmptyEnemy = Content.Load<Texture2D>("EmptyEnemy");
+            EmptyEnemy2 = Content.Load<Texture2D>("EmptyEnemy2");
+            EmptyEnemy3 = Content.Load<Texture2D>("EmptyEnemy3");
             RandomPowerup = Content.Load<Texture2D>("RandomPowerup");
             StrongEnemy = Content.Load<Texture2D>("StrongEnemy");
             TwirlyEnemy = Content.Load<Texture2D>("TwirlyEnemy");
@@ -42,6 +44,8 @@ namespace SpaceBattle
         public static Texture2D RedCrosshair;
         public static Texture2D BlueCrosshair;
         public static Texture2D EmptyEnemy;
+        public static Texture2D EmptyEnemy2;
+        public static Texture2D EmptyEnemy3;
         public static Texture2D RandomPowerup;
         public static Texture2D StrongEnemy;
         public static Texture2D TwirlyEnemy;

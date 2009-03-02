@@ -190,6 +190,8 @@ namespace SpaceBattle
         {
             const float scaleInventory = 0.6f;
 
+            if (lives <= 0) return;
+
             //no transparency on menus:
             var alphaTmp = Util.AlphaHack;
             Util.AlphaHack *= 1.0f;
