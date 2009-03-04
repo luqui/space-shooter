@@ -45,7 +45,8 @@ namespace SpaceBattle
             new List<ComponentFactory<BehaviorComponent>> {
                 new ComponentFactory<BehaviorComponent>("Empty", () => null, (pos, scale) => Util.DrawSprite(Textures.EmptyEnemy, pos, 0, scale)),
                 new ComponentFactory<BehaviorComponent>("Twirly", () => new TwirlyBehavior(), (pos, scale) => Util.DrawSprite(Textures.TwirlyEnemy, pos, 0, scale)),
-                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), (pos, scale) => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, scale))
+                new ComponentFactory<BehaviorComponent>("Dodge", () => new DodgeBehavior(), (pos, scale) => Util.DrawSprite(Textures.DodgeEnemy, pos, 0, scale)),
+                new ComponentFactory<BehaviorComponent>("Bounce", () => new BounceBehavior(), (pos, scale) => Util.DrawSprite(Textures.BouncyEnemy, pos, 0, scale))
             };
 
         public static List<ComponentFactory<SeekerComponent>> Seekers =
@@ -138,6 +139,34 @@ namespace SpaceBattle
             self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.LightCym));
         }
     }
+
+    class BounceBehavior : BehaviorComponent
+    {
+        float timer = 0;
+        public override void Draw()
+        {
+            Util.DrawSprite(Textures.BouncyEnemy, self.position, timer / 2, 1.0f);
+        }
+        public override void Update(float dt)
+        {
+            timer += dt;
+            if (self.position.X + dt * self.velocity.X >= Util.FIELDWIDTH / 2) { self.velocity.X *= -1; }
+            if (self.position.X + dt * self.velocity.X <= -Util.FIELDWIDTH / 2) { self.velocity.X *= -1; }
+            if (self.position.Y + dt * self.velocity.Y >= Util.FIELDHEIGHT / 2) { self.velocity.Y *= -1; }
+            if (self.position.Y + dt * self.velocity.Y <= -Util.FIELDHEIGHT / 2) { self.velocity.Y *= -1; }
+        }
+
+        public override void Start()
+        {
+            self.velocity = new Vector2(Util.RandRange(-2, 2), Util.RandRange(-2, 2));
+            self.soundids.Add(Sounds.StartSound(() => self.position, Sounds.Tambourine));
+        }
+
+        public override BehaviorComponent Clone()
+        {
+            return new BounceBehavior();
+        }
+    };
 
     class SlinkTowardSeeker : SeekerComponent
     {

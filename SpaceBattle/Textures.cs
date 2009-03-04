@@ -35,6 +35,7 @@ namespace SpaceBattle
             StatusBackground = Content.Load<Texture2D>("StatusBackground");
             PrismPowerup = Content.Load<Texture2D>("PrismPowerup");
             PrismBullet = Content.Load<Texture2D>("PrismBullet");
+            BouncyEnemy = Content.Load<Texture2D>("BouncyEnemy");
 
             Font = Content.Load<SpriteFont>("Font");
         }
@@ -63,6 +64,7 @@ namespace SpaceBattle
         public static Texture2D StatusBackground;
         public static Texture2D PrismPowerup;
         public static Texture2D PrismBullet;
+        public static Texture2D BouncyEnemy;
 
         public static SpriteFont Font;
     }
