@@ -13,6 +13,7 @@ namespace SpaceBattle
         public abstract Vector2 Aim(Vector2 pos);
         public abstract bool FiringEnemy();
         public abstract bool FiringBullet();
+        public abstract float BulletWeight();
         public abstract bool FireRing();
         public abstract bool SwitchBehaviors();
         public abstract bool SwitchSeekers();
@@ -51,7 +52,12 @@ namespace SpaceBattle
 
         public override bool FiringBullet()
         {
-            return state.Triggers.Right > 0.5f;
+            return state.Triggers.Right > 0.25f;
+        }
+
+        public override float BulletWeight()
+        {
+            return 4.0f/3 * (state.Triggers.Right - 0.25f);
         }
 
         public override bool FireRing()
@@ -120,6 +126,11 @@ namespace SpaceBattle
         public override bool FiringBullet()
         {
             return mState.LeftButton == ButtonState.Pressed;
+        }
+
+        public override float BulletWeight()
+        {
+            return 0.5f;
         }
 
         public override bool FireRing()

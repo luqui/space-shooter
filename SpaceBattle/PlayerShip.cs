@@ -160,7 +160,7 @@ namespace SpaceBattle
                 bulletTimeout += fastShotTimer <= 0 ? 0.1f : 0.033f;
                 if (Input.FiringBullet())
                 {
-                    float thetastep = 5 * (float)Math.PI / 180;
+                    float thetastep = 30 * Input.BulletWeight() * (float)Math.PI / 180;
                     float theta = (float)Math.Atan2(dir.Y, dir.X) - (numshots-1) * thetastep / 2;
                     for (int i = 0; i < numshots; i++)
                     {
