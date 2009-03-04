@@ -20,6 +20,7 @@ namespace SpaceBattle
         public abstract bool SwitchDamages();
         public abstract bool Back();
         public abstract void Update();
+        public abstract bool Pause();
     }
 
     class XBoxInput : Input
@@ -90,6 +91,11 @@ namespace SpaceBattle
         public override bool Back()
         {
             return state.Buttons.Back == ButtonState.Pressed && prevState.Buttons.Back == ButtonState.Released;
+        }
+
+        public override bool Pause()
+        {
+            return state.Buttons.Start == ButtonState.Pressed && prevState.Buttons.Start == ButtonState.Released;
         }
     }
 
@@ -164,6 +170,11 @@ namespace SpaceBattle
             mState = Mouse.GetState();
             lastKState = kState;
             kState = Keyboard.GetState();
+        }
+
+        public override bool Pause()
+        {
+            return kState.IsKeyDown(Keys.Pause) && lastKState.IsKeyUp(Keys.Pause);
         }
     }
 }

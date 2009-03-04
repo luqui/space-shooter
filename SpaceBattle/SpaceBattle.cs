@@ -77,7 +77,7 @@ namespace SpaceBattle
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Util.MODE = Util.Mode.Exit;
 
-            float dt = (float)gameTime.ElapsedGameTime.TotalSeconds;
+            float dt = Util.Paused ? 0 : (float)gameTime.ElapsedGameTime.TotalSeconds;
             Util.Actors.Update(dt);
             Util.Scheduler.Update(dt);
             Util.Explosions.Update(dt);

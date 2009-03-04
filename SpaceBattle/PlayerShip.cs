@@ -86,6 +86,7 @@ namespace SpaceBattle
         {
             Input.Update();
             if (Input.Back()) { Util.MODE = Util.Mode.Menu; Util.Destroy();  return; }
+            if (Input.Pause()) { Util.Paused = !Util.Paused; return; }
             if (lives <= 0) return;
 
             velocity = SPEED * Input.Direction();

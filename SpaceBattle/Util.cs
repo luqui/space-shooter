@@ -239,6 +239,8 @@ namespace SpaceBattle
         public const float FIELDHEIGHT = 21.0f;
         public static Matrix WorldToScreen;
 
+        public static bool Paused;
+
         public static void LoadSinglePlayerGame()
         {
             Util.player1.PositionSetter(new Vector2(-FIELDWIDTH/4,0));
@@ -382,6 +384,7 @@ namespace SpaceBattle
             player2 = new PlayerShip(PlayerIndex.Two, player2.Input);
             ResetActors();
             MODE = Mode.Menu;
+            Paused = false;
         }
 
         public static T ProbSelect<T>(params Pair<float, T>[] parms) {
